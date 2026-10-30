@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Kartu masuk · LENTERA{% endblock %}
+{% block body %}
+<div class="noprint" style="padding:16px 20px;display:flex;gap:12px;align-items:center"><button class="btn navy" onclick="window.print()">Cetak kartu</button><a href="/guru/pengaturan/">← Kembali</a></div>
+<div class="kartu-grid">{% for s in siswa %}
+  <div class="kartu-masuk"><div class="logo" style="justify-content:center;color:var(--navy)"><i>✦</i>LENTERA</div>
+    <div class="av2">{{ s.avatar }}</div><b>{{ s.nama }}</b><p>Kelas {{ kelas.nama }}</p><p>Kode kelas</p><b class="kode-kartu">{{ kelas.kode }}</b>
+    <small>Masuk: ketik kode kelas, lalu pilih avatarmu.</small></div>{% endfor %}</div>
+{% endblock %}

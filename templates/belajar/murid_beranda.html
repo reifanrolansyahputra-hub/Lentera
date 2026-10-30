@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Beranda · LENTERA{% endblock %}
+{% block body %}
+<header class="mtop">
+  <div class="logo"><i>✦</i><span>LENTERA</span></div>
+  <div class="bar">
+    <span class="chip hijau">● Mode Touchless aktif</span>
+    <span class="chip kuning">★ {{ siswa.poin }} poin</span>
+    <span class="av" aria-hidden="true">{{ siswa.avatar }}</span>
+    <a class="chip merah" href="/logout/">Keluar</a>
+  </div>
+</header>
+<main class="mmain">
+  <div class="mleft">
+    <section class="hero">
+      <div><small>Kelas {{ siswa.kelas.nama }} · {{ sekolah }}</small>
+        <h1 class="kids">Halo, {{ siswa.nama }}! Siap menyalakan lenteramu?</h1>
+        <p>Hari ini Lumi menyiapkan {{ kartu|length }} misi yang pas dengan kemampuanmu.</p></div>
+      <div class="lumi">💡</div>
+    </section>
+    <section class="misi2" id="misi" aria-label="Misi hari ini">
+      {% for k in kartu %}
+      <article class="misi {{ k.r3 }}">
+        <span class="lab {{ k.r3 }}-t">MISI {{ forloop.counter }} · {{ k.m.kompetensi.get_ranah_display|upper }}</span>
+        <h3>{{ k.m.kompetensi.judul }}</h3>
+        <p class="sub">Fase {{ k.fase }} · Level {{ k.m.level }} dari 5 · ±{{ k.menit }} menit{% if k.diag %} · asesmen diagnostik{% elif k.m.dari_guru %} · dari guru{% endif %}</p>
+        <div class="pratinjau" aria-hidden="true">
+          {% if k.angka %}<div class="blok">{% for i in k.puluhan %}<span class="bar-p"></span>{% endfor %}<span>{% for i in k.satuan %}<span class="sq"></span>{% endfor %}</span><strong>{{ k.angka }}</strong></div>
+          {% else %}{% for w in k.kata %}<span class="kata">{{ w }}</span>{% endfor %}{% endif %}
+        </div>
+        <a class="btn {{ k.r3 }}" href="{% url 'mulai_game' k.m.id %}">▶ Mulai misi</a>
+      </article>
+      {% empty %}<p class="card">Belum ada misi untuk hari ini.</p>{% endfor %}
+    </section>
+    <section class="card" id="progres">
+      <h3>Perkembanganku</h3>
+      <div class="prog">{% for p in pen %}<div><p><span>{{ p.kompetensi.nama }}</span><span>{{ p.status }} · {{ p.persen }}%</span></p>
+        <div><i class="{{ p.kompetensi.ranah|slice:':3' }}" style="width:{{ p.persen }}%"></i></div></div>{% endfor %}</div>
+    </section>
+  </div>
+  <aside class="mright">
+    <section class="card" id="jalur">
+      <h3>Jalur Lenteraku</h3><p class="hint">Setiap lentera menyala = 1 kompetensi dikuasai ({{ menyala }} dari {{ pen|length }})</p>
+      <svg class="jalur" viewBox="0 0 300 190" role="img" aria-label="{{ menyala }} dari {{ pen|length }} lentera menyala">
+        <path d="{{ jalur.d }}" fill="none" stroke="#e3e9f5" stroke-width="7" stroke-linecap="round"/>
+        {% for n in jalur.nodes %}<g class="node {{ n.st }}"><title>{{ n.nama }}</title><circle cx="{{ n.x }}" cy="{{ n.y }}" r="{% if n.st == 'kini' %}13{% else %}9{% endif %}"/>
+          {% if n.st == 'done' %}<text x="{{ n.x }}" y="{{ n.y|add:4 }}" text-anchor="middle">✓</text>{% elif n.st == 'kini' %}<text x="{{ n.x }}" y="{{ n.y|add:3 }}" text-anchor="middle">kini</text>{% endif %}</g>{% endfor %}
+      </svg>
+    </section>
+    <section class="card" id="lencana"><h3>Lencana minggu ini</h3>
+      <div class="badges">{% for ikon, nama, dapat in lencana %}<div class="badge {% if not dapat %}off{% endif %}"><span>{{ ikon }}</span>{{ nama }}</div>{% endfor %}</div>
+    </section>
+  </aside>
+</main>
+{% endblock %}

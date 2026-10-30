@@ -1,0 +1,14 @@
+{% load static %}<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}LENTERA{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/lentera.css' %}">
+</head>
+<body>
+{% for m in messages %}<div class="toast {{ m.tags }}" role="status">{% if m.tags == 'error' %}⚠️{% else %}✅{% endif %} {{ m }}</div>{% endfor %}
+{% block body %}{% endblock %}
+{% block js %}{% endblock %}
+<script>setTimeout(function(){document.querySelectorAll('.toast').forEach(function(t){t.remove()})},6000)</script>
+</body>
+</html>

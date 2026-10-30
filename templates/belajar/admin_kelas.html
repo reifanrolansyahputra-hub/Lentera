@@ -1,0 +1,34 @@
+{% extends 'belajar/admin_base.html' %}
+{% block title %}Kelola Kelas · LENTERA{% endblock %}
+{% block isi %}
+<header class="top"><h1>Kelola Kelas</h1>
+  <div class="bar"><span class="chip biru">{{ daftar_kelas|length }} kelas</span></div></header>
+<section class="card"><h2>Buat kelas baru</h2><p class="hint">Contoh penamaan: 1A, 1B, 2A ... 6C. Kode kelas dibuat otomatis dan dipakai murid untuk masuk.</p>
+  <form method="post" class="f baris" style="margin-top:10px">{% csrf_token %}<input type="hidden" name="aksi" value="buat_kelas">
+    <label>Nama kelas<input name="nama" required maxlength="20" placeholder="mis. 1A"></label>
+    <div style="grid-column:1/-1;margin-top:4px"><button class="btn biru-b">Buat kelas</button></div></form></section>
+
+<div class="grid-kartu" style="margin-top:16px">
+{% for k in daftar_kelas %}
+  <article class="card akt">
+    <div class="bar"><span class="chip biru">{{ k.jumlah_siswa }} siswa</span>{% if k.wali_kelas %}<span class="chip hijau">Wali: {{ k.wali_kelas.first_name|default:k.wali_kelas.username }}</span>{% else %}<span class="chip kuning">Belum ada wali kelas</span>{% endif %}</div>
+    <h3>Kelas {{ k.nama }}</h3>
+    <p class="hint">Kode kelas untuk murid masuk</p>
+    <p class="kode-besar">{{ k.kode }}</p>
+    <div class="aksi">
+      <a class="btn navy" href="{% url 'admin_kartu' k.id %}" target="_blank">Cetak kartu masuk</a>
+      <form method="post">{% csrf_token %}<input type="hidden" name="aksi" value="ganti_kode"><input type="hidden" name="kelas" value="{{ k.id }}"><button class="btn abu">Ganti kode</button></form>
+    </div>
+    <details style="margin-top:10px"><summary><b>Siswa ({{ k.jumlah_siswa }})</b></summary>
+      <div class="scroll" style="margin-top:10px"><table class="tabel"><thead><tr><th></th><th>Nama</th><th>ID samaran</th><th></th></tr></thead><tbody>
+        {% for s in k.siswa.all %}<tr><td>{{ s.avatar }}</td><td>{{ s.nama }}</td><td><code>{{ s.kode_samaran }}</code></td>
+          <td><form method="post" onsubmit="return confirm('Hapus siswa ini beserta seluruh datanya?')">{% csrf_token %}<input type="hidden" name="aksi" value="hapus_siswa"><input type="hidden" name="kelas" value="{{ k.id }}"><input type="hidden" name="id" value="{{ s.id }}"><button class="btn abu">Hapus</button></form></td></tr>
+        {% empty %}<tr><td colspan="4">Belum ada siswa.</td></tr>{% endfor %}</tbody></table></div>
+      <form method="post" class="f" style="margin-top:14px">{% csrf_token %}<input type="hidden" name="aksi" value="tambah_siswa"><input type="hidden" name="kelas" value="{{ k.id }}">
+        <label>Tambah siswa (satu nama per baris, bisa belasan sekaligus)<textarea name="nama" rows="4" placeholder="Raka&#10;Alya&#10;Bima"></textarea></label>
+        <div style="margin-top:8px"><button class="btn biru-b">Tambah siswa</button></div></form>
+    </details>
+  </article>
+{% empty %}<p class="card">Belum ada kelas. Buat kelas pertama di atas.</p>{% endfor %}
+</div>
+{% endblock %}

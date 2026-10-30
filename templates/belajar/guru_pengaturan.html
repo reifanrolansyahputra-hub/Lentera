@@ -1,0 +1,29 @@
+{% extends 'belajar/guru_base.html' %}
+{% block title %}Pengaturan · LENTERA{% endblock %}
+{% block isi %}
+<header class="top"><h1>Pengaturan</h1></header>
+{% if not kelas %}
+<section class="card"><h2>Buat kelas pertama</h2><p class="hint">Setelah kelas dibuat, sistem membuat kode kelas untuk login murid.</p>
+  <form method="post" class="f baris" style="margin-top:10px">{% csrf_token %}<input type="hidden" name="aksi" value="buat_kelas"><label>Nama kelas<input name="nama" required maxlength="20" placeholder="mis. 3B"></label><button class="btn biru-b">Buat kelas</button></form></section>
+{% else %}
+<div class="cols">
+  <section class="card"><h2>Siswa kelas {{ kelas.nama }} ({{ siswa|length }})</h2>
+    <div class="scroll"><table class="tabel"><thead><tr><th></th><th>Nama</th><th>ID samaran</th><th></th></tr></thead><tbody>
+      {% for s in siswa %}<tr><td>{{ s.avatar }}</td><td>{{ s.nama }}</td><td><code>{{ s.kode_samaran }}</code></td>
+        <td><form method="post" onsubmit="return confirm('Hapus siswa ini beserta seluruh datanya?')">{% csrf_token %}<input type="hidden" name="aksi" value="hapus_siswa"><input type="hidden" name="id" value="{{ s.id }}"><button class="btn abu">Hapus</button></form></td></tr>
+      {% empty %}<tr><td colspan="4">Belum ada siswa.</td></tr>{% endfor %}</tbody></table></div>
+    <form method="post" class="f" style="margin-top:14px">{% csrf_token %}<input type="hidden" name="aksi" value="tambah_siswa">
+      <label>Tambah siswa (satu nama per baris)<textarea name="nama" rows="4" placeholder="Raka&#10;Alya"></textarea></label><button class="btn biru-b">Tambah siswa</button></form>
+  </section>
+  <div>
+    <section class="card"><h2>Kode kelas</h2><p class="kode-besar">{{ kelas.kode }}</p><p class="hint">Murid masuk dengan kode ini, lalu memilih avatar.</p>
+      <div class="aksi" style="margin-top:10px"><a class="btn navy" href="{% url 'kartu' %}" target="_blank">Cetak kartu masuk</a>
+        <form method="post">{% csrf_token %}<input type="hidden" name="aksi" value="ganti_kode"><button class="btn abu">Ganti kode</button></form></div></section>
+    <section class="card"><h2>Ambang “Perlu perhatian”</h2><p class="hint">Siswa ditandai bila sebanyak ini kompetensinya masih berstatus Mulai (dari 8).</p>
+      <form method="post" class="f baris" style="margin-top:8px">{% csrf_token %}<input type="hidden" name="aksi" value="ambang"><label>Jumlah kompetensi<input name="ambang" type="number" min="1" max="8" value="{{ kelas.ambang_perhatian }}"></label><button class="btn biru-b">Simpan</button></form></section>
+    <section class="card"><h2>Ganti kata sandi</h2>
+      <form method="post" class="f baris">{% csrf_token %}<input type="hidden" name="aksi" value="sandi"><label>Kata sandi baru<input name="sandi" type="password" minlength="6" required></label><button class="btn biru-b">Ganti</button></form></section>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

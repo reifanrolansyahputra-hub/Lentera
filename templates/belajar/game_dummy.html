@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Game belum tersedia · LENTERA{% endblock %}
+{% block body %}
+<main class="lgn"><section class="lgn-card" style="max-width:34rem"><div class="lgn-body">
+  <h2>Game untuk kompetensi ini belum tersedia</h2>
+  <p style="font-size:.78rem;color:#667394">Halaman simulasi: tombol di bawah memanggil API yang sama dengan game asli.</p>
+  <pre id="info" style="background:#f3f6fb;border-radius:12px;padding:10px;font-size:.68rem;overflow:auto"></pre>
+  <div class="row"><button class="btn num" onclick="kirim(true)">✔ Benar</button><button class="btn lit" onclick="kirim(false)">✖ Salah</button><button class="btn navy" onclick="kirim(null,true)">🏁 Selesai</button></div>
+  <pre id="hasil" style="background:#f3f6fb;border-radius:12px;padding:10px;font-size:.68rem;overflow:auto">Respons API tampil di sini.</pre>
+  <a class="back" href="/murid/">← Kembali ke dashboard</a>
+</div></section></main>
+{% endblock %}
+{% block js %}<script>
+const token = new URLSearchParams(location.search).get("ssoToken");
+const info = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+document.getElementById("info").textContent = JSON.stringify(info, null, 2);
+async function kirim(benar, selesai = false) {
+  const events = selesai ? [] : [{item_id: "demo-1", benar, pola: "", waktu_ms: 6000, petunjuk: false}];
+  const r = await fetch(info.api, {method: "POST", headers: {"Authorization": "Bearer " + token, "Content-Type": "application/json"}, body: JSON.stringify({events, selesai})});
+  document.getElementById("hasil").textContent = JSON.stringify(await r.json(), null, 2);
+}
+</script>{% endblock %}

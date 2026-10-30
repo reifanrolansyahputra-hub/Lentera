@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="app">
+  <aside class="side">
+    <div><div class="logo"><i>✦</i><span>LENTERA</span></div>{% include 'belajar/_nav_admin.html' %}</div>
+    <div class="who"><p>{{ admin.first_name|default:admin.username }} · Admin</p><a class="out" href="/logout/">Keluar</a></div>
+  </aside>
+  <main class="main">{% block isi %}{% endblock %}</main>
+</div>
+{% endblock %}

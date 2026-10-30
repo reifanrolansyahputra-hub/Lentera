@@ -1,0 +1,29 @@
+{% extends 'belajar/guru_base.html' %}
+{% block title %}Asesmen Diagnostik · LENTERA{% endblock %}
+{% block isi %}
+<header class="top"><h1>Asesmen Diagnostik · Kelas {{ kelas.nama }}</h1>
+  <div class="bar"><span class="chip biru">{{ d.selesai }} dari {{ d.total }} hasil terisi</span></div></header>
+<div class="cols">
+  <section class="card"><h2>Level awal per siswa</h2>
+    <div class="scroll"><table class="peta lebar">
+      <thead><tr><th></th>{% for k in d.kompetensi %}<th title="{{ k.cakupan }}">{{ k.nama }}</th>{% endfor %}</tr></thead>
+      <tbody>{% for b in d.baris %}<tr><th class="nama" scope="row">{{ b.siswa.avatar }} {{ b.siswa.nama }}</th>
+        {% for c in b.sel %}<td>{% if c.h %}<div class="cell angka {% if c.h.level_awal >= 4 %}Cakap{% elif c.h.level_awal >= 3 %}Berkembang{% else %}Mulai{% endif %}" title="{{ c.h.benar }} dari {{ c.h.total }} benar ({{ c.h.get_sumber_display }})">L{{ c.h.level_awal }}</div>
+          {% elif c.tunggu %}<div class="cell angka kosong" title="Menunggu murid memainkan misi asesmen">⏳</div>{% else %}<div class="cell angka kosong">-</div>{% endif %}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>
+    <p class="legend"><span>L = level awal (1–5)</span><span>⏳ menunggu murid</span><span>- belum ada hasil</span></p>
+  </section>
+  <div>
+    <section class="card"><h2>Asesmen lewat game</h2>
+      <p class="hint">Kirim misi asesmen ke semua murid untuk kompetensi yang sudah punya game ({{ d.main|join:", " }}). Skor dihitung dari soal yang benar pada percobaan pertama, lalu otomatis menentukan level awal dan P(L) awal.</p>
+      <form method="post" style="margin-top:10px">{% csrf_token %}<input type="hidden" name="aksi" value="aktifkan"><button class="btn biru-b">Aktifkan untuk kelas</button></form></section>
+    <section class="card"><h2>Input hasil manual</h2>
+      <p class="hint">Untuk kompetensi tanpa game, atau asesmen di kertas. Isi jumlah benar dari total soal.</p>
+      <form method="post" class="f" style="margin-top:8px">{% csrf_token %}<input type="hidden" name="aksi" value="manual">
+        <label>Siswa<select name="siswa">{% for s in siswa %}<option value="{{ s.id }}">{{ s.avatar }} {{ s.nama }}</option>{% endfor %}</select></label>
+        <table class="tabel"><thead><tr><th>Kompetensi</th><th>Benar</th><th>dari</th></tr></thead><tbody>
+          {% for k in d.kompetensi %}<tr><td>{{ k.nama }}</td><td><input class="kecil-i" type="number" min="0" max="50" name="b_{{ k.kode }}"></td><td><input class="kecil-i" type="number" min="0" max="50" name="t_{{ k.kode }}" value="5"></td></tr>{% endfor %}</tbody></table>
+        <button class="btn biru-b">Simpan hasil</button></form></section>
+  </div>
+</div>
+<p class="note">Aturan: skor = benar ÷ total. Level awal = 1 + lantai(skor × 5), maksimal 5. P(L) awal = 0,10 + 0,75 × skor. Sesudah itu estimasi dilanjutkan oleh BKT dari jawaban murid di misi harian.</p>
+{% endblock %}

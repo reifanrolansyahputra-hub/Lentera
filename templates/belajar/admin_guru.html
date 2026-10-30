@@ -1,0 +1,31 @@
+{% extends 'belajar/admin_base.html' %}
+{% block title %}Kelola Guru · LENTERA{% endblock %}
+{% block isi %}
+<header class="top"><h1>Kelola Guru</h1>
+  <div class="bar"><span class="chip biru">{{ daftar_guru|length }} guru</span></div></header>
+<section class="card"><h2>Buat akun guru baru</h2><p class="hint">Guru masuk dengan username dan kata sandi ini, lalu langsung melihat kelas yang ditentukan di sini.</p>
+  <form method="post" class="f baris" style="margin-top:10px">{% csrf_token %}<input type="hidden" name="aksi" value="buat_guru">
+    <label>Username<input name="username" required maxlength="150" placeholder="mis. guru_sari"></label>
+    <label>Nama<input name="nama" required maxlength="30" placeholder="mis. Bu Sari"></label>
+    <label>Kata sandi<input name="sandi" type="password" minlength="6" required></label>
+    <label>Wali kelas<select name="kelas"><option value="">Belum ditentukan</option>{% for k in daftar_kelas %}<option value="{{ k.id }}">Kelas {{ k.nama }}</option>{% endfor %}</select></label>
+    <div style="grid-column:1/-1;margin-top:4px"><button class="btn biru-b">Buat akun guru</button></div></form></section>
+
+<div class="grid-kartu" style="margin-top:16px">
+{% for g in daftar_guru %}
+  <article class="card akt">
+    <div class="bar"><span class="chip biru">@{{ g.username }}</span>{% if g.kelas %}<span class="chip hijau">Wali kelas {{ g.kelas.nama }}</span>{% else %}<span class="chip kuning">Belum ada kelas</span>{% endif %}</div>
+    <h3>{{ g.first_name|default:g.username }}</h3>
+    <form method="post" class="f baris" style="margin-top:8px">{% csrf_token %}<input type="hidden" name="aksi" value="pindah_kelas"><input type="hidden" name="id" value="{{ g.id }}">
+      <label>Pindahkan ke kelas<select name="kelas"><option value="">Tidak ada kelas</option>{% for k in daftar_kelas %}<option value="{{ k.id }}" {% if g.kelas.id == k.id %}selected{% endif %}>Kelas {{ k.nama }}</option>{% endfor %}</select></label>
+      <button class="btn abu">Simpan</button></form>
+    <div class="aksi">
+      <details><summary class="btn abu">Reset sandi</summary>
+        <form method="post" class="f">{% csrf_token %}<input type="hidden" name="aksi" value="reset_sandi"><input type="hidden" name="id" value="{{ g.id }}">
+          <label>Sandi baru<input name="sandi" type="password" minlength="6" required></label><button class="btn biru-b">Reset sandi</button></form></details>
+      <form method="post" onsubmit="return confirm('Hapus akun guru {{ g.first_name|default:g.username }}? Kelas yang diampunya akan kehilangan wali kelas.')">{% csrf_token %}<input type="hidden" name="aksi" value="hapus_guru"><input type="hidden" name="id" value="{{ g.id }}"><button class="btn abu">Hapus guru</button></form>
+    </div>
+  </article>
+{% empty %}<p class="card">Belum ada akun guru. Buat yang pertama di atas.</p>{% endfor %}
+</div>
+{% endblock %}

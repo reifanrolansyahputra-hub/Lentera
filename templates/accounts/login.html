@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Masuk · LENTERA{% endblock %}
+{% block body %}
+<main class="lgn"><section class="lgn-card">
+  <div class="lgn-head"><div class="lumi">💡</div><h1 class="kids">LENTERA</h1><p>Belajar sesuai kemampuan, berkembang dengan pendampingan.</p></div>
+  <div class="lgn-body">
+    {% if error %}<p class="err">⚠️ {{ error }}</p>{% endif %}
+    {% if daftar %}
+    <form method="post">{% csrf_token %}<input type="hidden" name="kode" value="{{ kode }}">
+      <h2>Kelas {{ kelas.nama }}: pilih avatarmu</h2>
+      <div class="avatars">{% for s in daftar %}<button name="siswa" value="{{ s.id }}"><span>{{ s.avatar }}</span>{{ s.nama }}</button>{% endfor %}</div>
+    </form>
+    <a class="back" href="/login/">← Kembali</a>
+    {% else %}
+    <form method="post">{% csrf_token %}
+      <label for="kode">Aku murid. Masukkan kode kelas</label>
+      <div class="row"><input id="kode" name="kode" value="{{ kode }}" required placeholder="mis. 3B-LENTERA" autocomplete="off"><button class="btn num">Lanjut</button></div>
+    </form>
+    <hr>
+    <form method="post">{% csrf_token %}
+      <label for="u">Aku guru / admin</label>
+      <input id="u" name="username" required placeholder="Username" autocomplete="username">
+      <input name="password" type="password" required placeholder="Kata sandi" autocomplete="current-password">
+      <button class="btn navy wide" style="margin-top:10px">Masuk</button>
+    </form>
+    {% endif %}
+  </div>
+</section></main>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'belajar/admin_base.html' %}
+{% block title %}Laporan · LENTERA{% endblock %}
+{% block isi %}
+<header class="top"><h1>Laporan &amp; Ekspor</h1>{% if kelas_terpilih %}<div class="bar noprint"><button class="btn navy" onclick="window.print()">Cetak / simpan PDF</button></div>{% endif %}</header>
+<section class="card noprint"><h2>Pilih kelas</h2>
+  <form method="get" class="f baris" style="margin-top:10px">
+    <label>Kelas<select name="kelas" required><option value="">— pilih kelas —</option>{% for k in daftar_kelas %}<option value="{{ k.id }}" {% if kelas_terpilih.id == k.id %}selected{% endif %}>Kelas {{ k.nama }}</option>{% endfor %}</select></label>
+    <div style="margin-top:4px"><button class="btn biru-b">Lihat laporan</button></div></form></section>
+
+{% if kelas_terpilih %}
+<section class="card noprint" style="margin-top:16px"><h2>Unduh data (CSV) · Kelas {{ kelas_terpilih.nama }}</h2><p class="hint">Bisa dibuka di Excel atau Google Sheets.</p>
+  <div class="aksi" style="margin-top:10px">
+    <a class="btn biru-b" href="?kelas={{ kelas_terpilih.id }}&amp;jenis=peta">Peta kompetensi per siswa</a>
+    <a class="btn biru-b" href="?kelas={{ kelas_terpilih.id }}&amp;jenis=jawaban">Log jawaban 30 hari</a>
+    <a class="btn biru-b" href="?kelas={{ kelas_terpilih.id }}&amp;jenis=diagnostik">Hasil asesmen diagnostik</a>
+  </div></section>
+<section class="card" style="margin-top:16px"><h2>Ringkasan kelas {{ kelas_terpilih.nama }} · {{ hari_ini|date:"j F Y" }}</h2>
+  <table class="tabel"><tbody>
+    {% for r in d.ranah %}<tr><th>Rata-rata penguasaan {{ r.nama }}</th><td>{{ r.nilai }}% ({% if r.naik %}naik{% else %}turun{% endif %} {{ r.delta }} poin dalam 7 hari)</td></tr>{% endfor %}
+    <tr><th>Waktu belajar aktif per siswa (7 hari)</th><td>{{ d.waktu }} menit</td></tr>
+    <tr><th>Siswa perlu perhatian</th><td>{{ d.perhatian }} dari {{ d.n }} siswa</td></tr></tbody></table>
+  <h2 style="margin-top:16px">Penguasaan per siswa (%)</h2>
+  <div class="scroll"><table class="peta lebar"><thead><tr><th></th>{% for k in d.kompetensi %}<th>{{ k.nama }}</th>{% endfor %}</tr></thead>
+    <tbody>{% for b in d.baris %}<tr><th class="nama" scope="row">{{ b.siswa.nama }}</th>{% for c in b.sel %}<td><div class="cell angka {{ c.st }}">{{ c.pct }}%</div></td>{% endfor %}</tr>{% endfor %}</tbody></table></div>
+  <p class="legend"><span>Mulai: di bawah 40%</span><span>Berkembang: 40–79%</span><span>Cakap: 80% ke atas</span></p>
+</section>
+{% else %}
+<p class="card" style="margin-top:16px">Pilih kelas di atas untuk melihat ringkasan dan mengunduh laporannya.</p>
+{% endif %}
+{% endblock %}

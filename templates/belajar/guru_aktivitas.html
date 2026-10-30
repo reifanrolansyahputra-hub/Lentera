@@ -1,0 +1,58 @@
+{% extends 'belajar/guru_base.html' %}
+{% block title %}Bank Aktivitas · LENTERA{% endblock %}
+{% block isi %}
+<header class="top"><h1>Bank Aktivitas</h1>
+  <div class="bar"><span class="chip biru">{{ daftar|length }} aktivitas</span><span class="chip hijau">Hanya yang tervalidasi bisa ditugaskan</span></div></header>
+<form method="get" class="card f baris">
+  <label>Kompetensi<select name="kompetensi"><option value="">Semua</option>{% for k in kompetensi %}<option value="{{ k.kode }}" {% if k.kode == f.kompetensi %}selected{% endif %}>{{ k.nama }}</option>{% endfor %}</select></label>
+  <label>Level<select name="level"><option value="">Semua</option>{% for i in "12345" %}<option {% if i == f.level %}selected{% endif %}>{{ i }}</option>{% endfor %}</select></label>
+  <div style="align-self:end"><button class="btn navy">Terapkan filter</button></div>
+</form>
+<div class="grid-akt" style="margin-top:16px">
+{% for a in daftar %}
+  <article class="card akt">
+    <div class="bar"><span class="chip biru">{{ a.kompetensi.nama }}</span>
+      {% if a.tervalidasi %}<span class="chip hijau">Tervalidasi</span>{% else %}<span class="chip kuning">Belum divalidasi</span>{% endif %}</div>
+    <h3>🎮 {{ a.judul }}</h3>
+    <p class="hint">Level {{ a.level_min }}–{{ a.level_maks }} · ±{{ a.menit }} menit{% if a.main %} · murid memainkannya di game{% else %} · game belum tersedia{% endif %}</p>
+    <p>{{ a.deskripsi }}</p>
+    <div class="aksi">
+      {% if a.tervalidasi %}
+      <details><summary class="btn biru-b">Tugaskan</summary>
+        <form method="post" class="f">{% csrf_token %}<input type="hidden" name="aksi" value="tugaskan"><input type="hidden" name="id" value="{{ a.id }}">
+          <label>Target<select name="target"><option value="kelas">Seluruh kelas</option><option value="Mulai">Kelompok Mulai</option><option value="Berkembang">Kelompok Berkembang</option><option value="Cakap">Kelompok Cakap</option><option value="pilih">Siswa tertentu (pilih di bawah)</option></select></label>
+          <label>Siswa tertentu<select name="siswa" multiple size="4">{% for s in siswa %}<option value="{{ s.id }}">{{ s.nama }}</option>{% endfor %}</select></label>
+          <button class="btn biru-b">Kirim penugasan</button></form></details>
+      {% endif %}
+      <details><summary class="btn abu">Edit</summary>
+        <form method="post" class="f baris">{% csrf_token %}<input type="hidden" name="aksi" value="edit"><input type="hidden" name="id" value="{{ a.id }}">
+          <label style="grid-column:1/-1">Judul<input name="judul" required maxlength="80" value="{{ a.judul }}"></label>
+          <label>Kompetensi<select name="kompetensi">{% for k in kompetensi %}<option value="{{ k.kode }}" {% if k.kode == a.kompetensi.kode %}selected{% endif %}>{{ k.nama }}</option>{% endfor %}</select></label>
+          <label>Level terendah<input name="level_min" type="number" min="1" max="5" value="{{ a.level_min }}"></label>
+          <label>Level tertinggi<input name="level_maks" type="number" min="1" max="5" value="{{ a.level_maks }}"></label>
+          <label>Menit<input name="menit" type="number" min="1" max="90" value="{{ a.menit }}"></label>
+          <label style="grid-column:1/-1">Deskripsi<textarea name="deskripsi" rows="3">{{ a.deskripsi }}</textarea></label>
+          <div style="grid-column:1/-1;margin-top:4px"><button class="btn biru-b">Simpan perubahan</button></div></form></details>
+      <form method="post">{% csrf_token %}<input type="hidden" name="aksi" value="validasi"><input type="hidden" name="id" value="{{ a.id }}"><button class="btn abu">{% if a.tervalidasi %}Cabut validasi{% else %}Validasi{% endif %}</button></form>
+      <form method="post" onsubmit="return confirm('Hapus aktivitas “{{ a.judul }}” dari bank aktivitas?')">{% csrf_token %}<input type="hidden" name="aksi" value="hapus"><input type="hidden" name="id" value="{{ a.id }}"><button class="btn abu">Hapus</button></form>
+    </div>
+  </article>
+{% empty %}<p class="card">Tidak ada aktivitas yang cocok dengan filter.</p>{% endfor %}
+</div>
+<details class="card" style="margin-top:16px"><summary><b>+ Tambah aktivitas sendiri</b></summary>
+  <p class="hint" style="margin-top:8px">Kompetensi yang bisa dipilih dibatasi pada yang sudah punya game asli tersambung.</p>
+  <form method="post" class="f baris" style="margin-top:12px">{% csrf_token %}<input type="hidden" name="aksi" value="tambah">
+    <label style="grid-column:1/-1">Judul<input name="judul" required maxlength="80"></label>
+    <label>Kompetensi<select name="kompetensi">{% for k in kompetensi %}<option value="{{ k.kode }}">{{ k.nama }}</option>{% endfor %}</select></label>
+    <label>Level terendah<input name="level_min" type="number" min="1" max="5" value="1"></label>
+    <label>Level tertinggi<input name="level_maks" type="number" min="1" max="5" value="5"></label>
+    <label>Menit<input name="menit" type="number" min="1" max="90" value="10"></label>
+    <label style="grid-column:1/-1">Deskripsi / langkah kegiatan<textarea name="deskripsi" rows="3"></textarea></label>
+    <div style="grid-column:1/-1;margin-top:6px"><button class="btn biru-b">Simpan aktivitas</button></div></form></details>
+<section class="card" style="margin-top:16px"><h2>Penugasan terbaru</h2>
+  <table class="tabel"><thead><tr><th>Aktivitas</th><th>Target</th><th>Siswa</th><th>Waktu</th><th>Status</th></tr></thead><tbody>
+  {% for t in penugasan %}<tr><td>{{ t.aktivitas.judul }}</td><td>{{ t.target }}</td><td>{{ t.jumlah }}</td><td>{{ t.dibuat|date:"j M H:i" }}</td>
+    <td><form method="post">{% csrf_token %}<input type="hidden" name="aksi" value="selesai_penugasan"><input type="hidden" name="id" value="{{ t.id }}"><button class="btn abu">{% if t.selesai %}✓ Selesai{% else %}Tandai selesai{% endif %}</button></form></td></tr>
+  {% empty %}<tr><td colspan="5">Belum ada penugasan.</td></tr>{% endfor %}</tbody></table>
+</section>
+{% endblock %}

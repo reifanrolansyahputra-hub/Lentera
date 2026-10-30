@@ -1,0 +1,42 @@
+{% extends 'belajar/guru_base.html' %}
+{% block title %}Teacher Insight · LENTERA{% endblock %}
+{% block isi %}
+<header class="top">
+  <h1>Teacher Insight · Kelas {{ d.kelas.nama }}</h1>
+  <div class="bar"><span class="chip biru">{{ d.n }} siswa</span><span class="chip hijau">Data 7 hari terakhir</span></div>
+</header>
+<section class="stats" aria-label="Ringkasan kelas">
+  {% for r in d.ranah %}<div class="card stat"><small>Rata-rata penguasaan {{ r.nama }}</small>
+    <b class="{{ r.kode|slice:':3' }}-t">{{ r.nilai }}%</b><em class="{% if r.naik %}up{% else %}down{% endif %}">{% if r.naik %}▲{% else %}▼{% endif %} {{ r.delta }}</em></div>{% endfor %}
+  <div class="card stat"><small>Waktu belajar aktif / siswa</small><b>{{ d.waktu }} mnt</b></div>
+  <div class="card stat"><small>Perlu perhatian</small><b class="merah-t">{{ d.perhatian }} siswa</b></div>
+</section>
+<div class="cols">
+  <section class="card" id="peta">
+    <h2>Peta kompetensi <a class="tautan" href="/guru/peta/">lihat detail →</a></h2>
+    <div class="scroll"><table class="peta">
+      <thead><tr><th></th>{% for k in d.kompetensi %}<th title="{{ k.cakupan }}">{{ k.nama }}</th>{% endfor %}</tr></thead>
+      <tbody>{% for b in d.baris %}<tr><th class="nama" scope="row">{{ b.siswa.avatar }} {{ b.siswa.nama }}</th>
+        {% for c in b.sel %}<td><div class="cell {{ c.st }}" title="{{ c.st }} · {{ c.pct }}%"></div></td>{% endfor %}</tr>{% endfor %}</tbody></table></div>
+    <p class="legend"><span style="color:#c4402f">■ Mulai</span><span style="color:#b98300">■ Berkembang</span><span style="color:#1c8a55">■ Cakap</span></p>
+  </section>
+  <div>
+    <section class="card" id="kesulitan"><h2>Kesulitan yang sering muncul</h2>
+      {% for s in d.kesulitan %}<div class="sulit"><span>{{ s.label }}</span><span class="chip {% if forloop.first %}merah{% else %}kuning{% endif %}">{{ s.n }} siswa</span></div>
+      {% if s.saran %}<p class="hint saran">💡 Rekomendasi remedial: {{ s.saran }}</p>{% endif %}
+      {% empty %}<p class="hint">Belum ada pola kesalahan minggu ini.</p>{% endfor %}
+    </section>
+    {% if d.rek %}
+    <section class="card rek" id="rekomendasi"><h2>Rekomendasi tindak lanjut</h2>
+      <p>Bentuk 3 kelompok sesuai level untuk <b>{{ d.rek.kompetensi.ranah }}</b> besok (fokus: {{ d.rek.kompetensi.nama }}).</p>
+      <ul>{% for g in d.rek.kelompok %}<li><b>Kelompok “{{ g.status }}” ({{ g.n }} siswa):</b>
+        {% for a in g.aktivitas %}{{ a.judul }}{% if not forloop.last %}, {% endif %}{% empty %}{{ g.teks }}{% endfor %}</li>{% endfor %}</ul>
+      <div class="aksi">
+        <form method="post" action="{% url 'terapkan' %}">{% csrf_token %}
+          <input type="hidden" name="kompetensi" value="{{ d.rek.kompetensi.kode }}"><button class="btn biru-b">Terapkan ke kelompok</button></form>
+        <a class="btn abu" href="/guru/aktivitas/?kompetensi={{ d.rek.kompetensi.kode }}">Lihat bank aktivitas</a>
+      </div>
+    </section>{% endif %}
+  </div>
+</div>
+{% endblock %}

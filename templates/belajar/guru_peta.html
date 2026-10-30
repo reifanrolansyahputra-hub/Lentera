@@ -1,0 +1,16 @@
+{% extends 'belajar/guru_base.html' %}
+{% block title %}Peta Kompetensi · LENTERA{% endblock %}
+{% block isi %}
+<header class="top"><h1>Peta Kompetensi · Kelas {{ d.kelas.nama }}</h1>
+  <div class="bar"><span class="chip biru">{{ d.n }} siswa</span><span class="chip hijau">Data 7 hari terakhir</span><span class="chip merah">{{ d.perhatian }} perlu perhatian</span></div></header>
+<section class="card">
+  <p class="hint" style="margin-bottom:10px">Tiap sel: level (1–5) dan peluang penguasaan P(L). Arahkan kursor pada nama kolom untuk melihat cakupan kompetensi, dan pada “Pola terbanyak” untuk saran remedialnya.</p>
+  <div class="scroll"><table class="peta lebar">
+    <thead><tr><th></th>{% for k in d.kompetensi %}<th title="{{ k.cakupan }}">{{ k.nama }}</th>{% endfor %}<th>Jawaban</th><th>Akurasi</th><th>Terakhir aktif</th><th>Pola terbanyak</th></tr></thead>
+    <tbody>{% for b in d.baris %}<tr>
+      <th class="nama" scope="row">{{ b.siswa.avatar }} {{ b.siswa.nama }}{% if b.perhatian %} <span class="chip merah">perhatian</span>{% endif %}</th>
+      {% for c in b.sel %}<td><div class="cell angka {{ c.st }}" title="{{ c.st }}">L{{ c.level }} · {{ c.pct }}%</div></td>{% endfor %}
+      <td>{{ b.n_jawab }}</td><td>{% if b.akurasi != "" %}{{ b.akurasi }}%{% else %}-{% endif %}</td><td class="kecil">{{ b.terakhir|default:"-" }}</td><td class="kecil"{% if b.pola_saran %} title="💡 Saran: {{ b.pola_saran }}"{% endif %}>{{ b.pola|default:"-" }}</td></tr>{% endfor %}</tbody></table></div>
+  <p class="legend"><span style="color:#c4402f">■ Mulai (di bawah 40%)</span><span style="color:#b98300">■ Berkembang (40–79%)</span><span style="color:#1c8a55">■ Cakap (80% ke atas)</span></p>
+</section>
+{% endblock %}

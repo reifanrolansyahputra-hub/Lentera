@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="app">
+  <aside class="side">
+    <div><div class="logo"><i>✦</i><span>LENTERA</span></div>{% include 'belajar/_nav.html' %}</div>
+    <div class="who"><p>{{ guru.first_name|default:guru.username }}{% if kelas %} · Wali Kelas {{ kelas.nama }}{% endif %}</p><a class="out" href="/logout/">Keluar</a></div>
+  </aside>
+  <main class="main">{% block isi %}{% endblock %}</main>
+</div>
+{% endblock %}
