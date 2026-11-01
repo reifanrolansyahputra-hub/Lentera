@@ -3,6 +3,7 @@
 {% block isi %}
 <header class="top"><h1>Bank Aktivitas</h1>
   <div class="bar"><span class="chip biru">{{ daftar|length }} aktivitas</span><span class="chip hijau">Hanya yang tervalidasi bisa ditugaskan</span></div></header>
+<section class="card note-waktu"><p>⏱ <b>Menit = batas waktu di game.</b> Waktu berlaku untuk satu level (5 soal). Setelah waktu habis, poin berkurang <b>{{ aturan.penalti_poin }} tiap {{ aturan.tick_detik }} detik</b>, paling lama {{ aturan.toleransi_detik }} detik. Lebih dari itu level dinyatakan <b>gagal</b> dan murid mengulang dengan soal baru. Isi <b>0</b> bila tanpa batas waktu.</p></section>
 <form method="get" class="card f baris">
   <label>Kompetensi<select name="kompetensi"><option value="">Semua</option>{% for k in kompetensi %}<option value="{{ k.kode }}" {% if k.kode == f.kompetensi %}selected{% endif %}>{{ k.nama }}</option>{% endfor %}</select></label>
   <label>Level<select name="level"><option value="">Semua</option>{% for i in "12345" %}<option {% if i == f.level %}selected{% endif %}>{{ i }}</option>{% endfor %}</select></label>
@@ -14,7 +15,8 @@
     <div class="bar"><span class="chip biru">{{ a.kompetensi.nama }}</span>
       {% if a.tervalidasi %}<span class="chip hijau">Tervalidasi</span>{% else %}<span class="chip kuning">Belum divalidasi</span>{% endif %}</div>
     <h3>🎮 {{ a.judul }}</h3>
-    <p class="hint">Level {{ a.level_min }}–{{ a.level_maks }} · ±{{ a.menit }} menit{% if a.main %} · murid memainkannya di game{% else %} · game belum tersedia{% endif %}</p>
+    <p class="hint">Level {{ a.level_min }}–{{ a.level_maks }} · {% if a.menit %}⏱ {{ a.menit }} menit{% else %}tanpa batas waktu{% endif %}{% if a.main %} · murid memainkannya di {{ a.game }}{% else %} · game belum tersedia{% endif %}</p>
+    {% if a.main %}<p class="hint">{% if a.pengatur_waktu %}Menjadi batas waktu satu level di {{ a.game }}{% else %}Batas waktu berlaku saat aktivitas ini ditugaskan ke murid{% endif %}.</p>{% endif %}
     <p>{{ a.deskripsi }}</p>
     <div class="aksi">
       {% if a.tervalidasi %}
@@ -30,7 +32,7 @@
           <label>Kompetensi<select name="kompetensi">{% for k in kompetensi %}<option value="{{ k.kode }}" {% if k.kode == a.kompetensi.kode %}selected{% endif %}>{{ k.nama }}</option>{% endfor %}</select></label>
           <label>Level terendah<input name="level_min" type="number" min="1" max="5" value="{{ a.level_min }}"></label>
           <label>Level tertinggi<input name="level_maks" type="number" min="1" max="5" value="{{ a.level_maks }}"></label>
-          <label>Menit<input name="menit" type="number" min="1" max="90" value="{{ a.menit }}"></label>
+          <label>Batas waktu (menit)<input name="menit" type="number" min="0" max="90" value="{{ a.menit }}"><span class="hint">0 = tanpa batas</span></label>
           <label style="grid-column:1/-1">Deskripsi<textarea name="deskripsi" rows="3">{{ a.deskripsi }}</textarea></label>
           <div style="grid-column:1/-1;margin-top:4px"><button class="btn biru-b">Simpan perubahan</button></div></form></details>
       <form method="post">{% csrf_token %}<input type="hidden" name="aksi" value="validasi"><input type="hidden" name="id" value="{{ a.id }}"><button class="btn abu">{% if a.tervalidasi %}Cabut validasi{% else %}Validasi{% endif %}</button></form>
@@ -46,7 +48,7 @@
     <label>Kompetensi<select name="kompetensi">{% for k in kompetensi %}<option value="{{ k.kode }}">{{ k.nama }}</option>{% endfor %}</select></label>
     <label>Level terendah<input name="level_min" type="number" min="1" max="5" value="1"></label>
     <label>Level tertinggi<input name="level_maks" type="number" min="1" max="5" value="5"></label>
-    <label>Menit<input name="menit" type="number" min="1" max="90" value="10"></label>
+    <label>Batas waktu (menit)<input name="menit" type="number" min="0" max="90" value="10"><span class="hint">0 = tanpa batas</span></label>
     <label style="grid-column:1/-1">Deskripsi / langkah kegiatan<textarea name="deskripsi" rows="3"></textarea></label>
     <div style="grid-column:1/-1;margin-top:6px"><button class="btn biru-b">Simpan aktivitas</button></div></form></details>
 <section class="card" style="margin-top:16px"><h2>Penugasan terbaru</h2>

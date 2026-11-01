@@ -1,7 +1,7 @@
 
 from django.urls import path
 
-from . import admin_views, game_api, views
+from . import admin_views, game_api, soal_views, views
 
 
 urlpatterns = [
@@ -13,6 +13,9 @@ urlpatterns = [
     path("guru/", views.guru_insight, name="guru"),
     path("guru/peta/", views.guru_peta, name="peta"),
     path("guru/aktivitas/", views.guru_aktivitas, name="aktivitas"),
+    path("guru/soal/", soal_views.guru_soal, name="soal"),
+    path("guru/soal/baru/", soal_views.guru_soal_form, name="soal_baru"),
+    path("guru/soal/<int:soal_id>/", soal_views.guru_soal_form, name="soal_ubah"),
     path("guru/diagnostik/", views.guru_diagnostik, name="diagnostik"),
     path("guru/laporan/", views.guru_laporan, name="laporan"),
     path("guru/pengaturan/", views.guru_pengaturan, name="pengaturan"),
@@ -36,7 +39,9 @@ urlpatterns = [
         name="mulai_game",
     ),
 
-    # API untuk mencatat jawaban dan penyelesaian misi
+    # API game: soal level, mulai jam batas waktu, dan pencatatan jawaban / selesai / gagal
+    path("api/game/soal/", game_api.api_soal, name="api_soal"),
+    path("api/game/mulai/", game_api.api_mulai, name="api_mulai"),
     path(
         "api/game/event/",
         game_api.api_event,

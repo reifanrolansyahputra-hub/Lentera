@@ -11,9 +11,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from accounts.utils import HOME, get_role, role_required
-from . import engine
+from . import engine, jalur
 from .models import Aktivitas, HasilDiagnostik, Jawaban, Kelas, Kompetensi, Penugasan
 from django.utils import timezone
+from .bank_soal import KOMPETENSI_UTAMA_LITERASI
 from .services import (aktifkan_diagnostik, buat_kelas, kode_kelas_baru, misi_aktif, penguasaan_lengkap, ringkasan_kelas, status_diagnostik,
                        tambah_siswa, terapkan_diagnostik, terapkan_ke_kelompok, tugaskan_aktivitas)
 
@@ -22,10 +23,16 @@ def root(request):
     return redirect(HOME.get(get_role(request.user), "/login/"))
 
 
-def _kartu(m):
-    """Data pratinjau kartu misi (Gambar 4)."""
+def _kartu(m, jalan=None):
+    """Data kartu misi di beranda murid: bagian, level, lampu, dan batas waktu dari Bank Aktivitas."""
     c = engine.CONTOH.get(m.kompetensi.kode)
-    k = {"m": m, "fase": engine.fase(m.level), "menit": 8 if m.kompetensi.ranah == "literasi" else 10, "r3": m.kompetensi.ranah[:3], "diag": m.jenis == "diagnostik"}
+    batas = jalur.batas_detik(m)
+    benar, total = jalur.lampu_misi(m)
+    k = {
+        "m": m, "fase": engine.fase(m.level), "r3": m.kompetensi.ranah[:3], "diag": m.jenis == "diagnostik",
+        "batas_detik": batas, "menit": batas // 60, "lampu": [i < len(benar) for i in range(total)], "nyala": len(benar), "total": total,
+        "judul_bagian": next((b["judul"] for b in (jalan or {}).get(jalur.game_dari_kompetensi(m.kompetensi), {}).get("bagian", []) if b["no"] == m.bagian), ""),
+    }
     if isinstance(c, int):
         k.update(angka=c, puluhan=range(c // 10), satuan=range(c % 10))
     else:
@@ -33,31 +40,20 @@ def _kartu(m):
     return k
 
 
-def _jalur(pen):
-    """Jalur Lenteraku: kurva mulus melewati 8 lentera; Cakap = menyala, kompetensi pertama yang belum Cakap = 'kini'."""
-    n = len(pen)
-    pts = [(22 + i * 256 / max(n - 1, 1), 160 - i * 124 / max(n - 1, 1) + (8 if i % 2 else -8)) for i in range(n)]
-    d = f"M{pts[0][0]:.0f} {pts[0][1]:.0f}"
-    for i in range(n - 1):
-        p0, p1, p2, p3 = pts[max(i - 1, 0)], pts[i], pts[i + 1], pts[min(i + 2, n - 1)]
-        d += (f" C{p1[0] + (p2[0] - p0[0]) / 6:.0f} {p1[1] + (p2[1] - p0[1]) / 6:.0f} "
-              f"{p2[0] - (p3[0] - p1[0]) / 6:.0f} {p2[1] - (p3[1] - p1[1]) / 6:.0f} {p2[0]:.0f} {p2[1]:.0f}")
-    kini = next((i for i, p in enumerate(pen) if p.status != "Cakap"), -1)
-    nodes = [{"x": round(x), "y": round(y), "nama": p.kompetensi.nama, "st": "done" if p.status == "Cakap" else "kini" if i == kini else "next"}
-             for i, ((x, y), p) in enumerate(zip(pts, pen))]
-    return {"d": d, "nodes": nodes}
-
-
 @role_required("murid")
 def murid_beranda(request):
     siswa = request.user.siswa
     pen = penguasaan_lengkap(siswa)
-    st = {p.kompetensi.kode: p.status for p in pen}
-    jml = Jawaban.objects.filter(siswa=siswa, kompetensi__ranah="literasi", dibuat__gte=timezone.now() - timedelta(days=7)).count()
-    lencana = [("📖", "Pembaca Tekun", jml >= 15), ("🔢", "Ahli Puluhan", st.get("NM-NILAI-TEMPAT") == "Cakap"), ("🏆", "Juara Pola", st.get("NM-POLA") == "Cakap")]
+    aktif = misi_aktif(siswa)
+    jalan = jalur.jalur_siswa(siswa, aktif)
+    target = siswa.kelas.target_bagian
+    peta = jalur.peta_siswa(siswa, pen, target)
+    diagnostik = list(siswa.misi.filter(jenis="diagnostik", status="baru").select_related("kompetensi"))
     return render(request, "belajar/murid_beranda.html", {
-        "siswa": siswa, "kartu": [_kartu(m) for m in misi_aktif(siswa)], "pen": pen, "jalur": _jalur(pen), "lencana": lencana,
-        "menyala": sum(p.status == "Cakap" for p in pen), "sekolah": settings.LENTERA_SEKOLAH})
+        "siswa": siswa, "kartu": [_kartu(m, jalan) for m in aktif], "peta": [{"p": p, "i": i} for p, i in peta],
+        "jalan": [jalan["literasi"], jalan["numerasi"]], "lencana": jalur.lencana_siswa(jalan, target),
+        "lencana_menyala": sum(1 for x in jalur.lencana_siswa(jalan, target) if x[3]),
+        "diagnostik": diagnostik, "target_bagian": target, "aturan": jalur.aturan_waktu(), "sekolah": settings.LENTERA_SEKOLAH})
 
 
 def guru_view(fn):
@@ -84,7 +80,10 @@ def guru_insight(request, kelas):
 
 @guru_view
 def guru_peta(request, kelas):
-    return render(request, "belajar/guru_peta.html", _ctx(request, kelas, "peta", d=ringkasan_kelas(kelas)))
+    # Peta tiap kategori baru bisa mencapai 100% bila kategori itu punya bagian sebanyak target kelas.
+    catatan = [(jalur.NAMA_GAME[g], len(jalur.bagian_bisa_dimainkan(g))) for g in jalur.GAMES
+               if len(jalur.bagian_bisa_dimainkan(g)) < kelas.target_bagian]
+    return render(request, "belajar/guru_peta.html", _ctx(request, kelas, "peta", d=ringkasan_kelas(kelas), catatan_bagian=catatan, target=kelas.target_bagian))
 
 
 @guru_view
@@ -95,6 +94,15 @@ def guru_terapkan(request, kelas):
     n = terapkan_ke_kelompok(request.user, kelas, k)
     messages.success(request, f"Misi “{k.nama}” dikirim ke {n} siswa sesuai level kelompoknya.")
     return redirect("/guru/")
+
+
+def _menit(p):
+    """Menit aktivitas = batas waktu game. 0 berarti tanpa batas waktu; maksimal 90 menit."""
+    mentah = str(p.get("menit", "")).strip()
+    menit = 10 if mentah == "" else int(mentah)
+    if not 0 <= menit <= 90:
+        raise ValueError
+    return menit
 
 
 def _kompetensi_game(kode):
@@ -114,7 +122,7 @@ def guru_aktivitas(request, kelas):
                 if not p["judul"].strip():
                     raise ValueError
                 Aktivitas.objects.create(judul=p["judul"].strip()[:80], kompetensi=_kompetensi_game(p["kompetensi"]),
-                                         level_min=max(1, a), level_maks=min(5, b), menit=int(p.get("menit") or 10), deskripsi=p.get("deskripsi", ""), dibuat_oleh=request.user)
+                                         level_min=max(1, a), level_maks=min(5, b), menit=_menit(p), deskripsi=p.get("deskripsi", ""), dibuat_oleh=request.user)
                 messages.success(request, "Aktivitas ditambahkan. Validasi dulu sebelum bisa ditugaskan.")
             elif aksi == "edit":
                 obj = get_object_or_404(Aktivitas, id=p["id"])
@@ -124,7 +132,7 @@ def guru_aktivitas(request, kelas):
                 obj.judul = p["judul"].strip()[:80]
                 obj.kompetensi = _kompetensi_game(p["kompetensi"])
                 obj.level_min, obj.level_maks = max(1, a), min(5, b)
-                obj.menit = int(p.get("menit") or 10)
+                obj.menit = _menit(p)
                 obj.deskripsi = p.get("deskripsi", "")
                 obj.save()
                 messages.success(request, f"“{obj.judul}” diperbarui.")
@@ -160,8 +168,11 @@ def guru_aktivitas(request, kelas):
     daftar = list(daftar)
     for a in daftar:
         a.main = a.kompetensi.kode in settings.LENTERA_GAMES
+        a.game = (jalur.GAME_KE[jalur.game_dari_kompetensi(a.kompetensi)] if a.main else "")
+        # Game 1 memakai waktu aktivitas dengan kompetensi utamanya (Menyusun Kalimat); Game 2 per kompetensi bagian.
+        a.pengatur_waktu = a.main and (a.kompetensi.ranah == "numerasi" or a.kompetensi.kode == KOMPETENSI_UTAMA_LITERASI)
     return render(request, "belajar/guru_aktivitas.html", _ctx(request, kelas, "aktivitas", daftar=daftar, f=f, kompetensi=Kompetensi.objects.filter(kode__in=settings.LENTERA_GAMES),
-                  siswa=kelas.siswa.select_related("user"), penugasan=Penugasan.objects.filter(kelas=kelas).select_related("aktivitas")[:10]))
+                  siswa=kelas.siswa.select_related("user"), aturan=jalur.aturan_waktu(), penugasan=Penugasan.objects.filter(kelas=kelas).select_related("aktivitas")[:10]))
 
 
 @guru_view
@@ -408,6 +419,10 @@ def guru_pengaturan(request):
                 kelas.ambang_perhatian = max(1, min(8, int(p["ambang"])))
                 kelas.save()
                 messages.success(request, "Ambang “Perlu perhatian” disimpan.")
+            elif aksi == "target_bagian" and kelas:
+                kelas.target_bagian = max(1, min(10, int(p["target_bagian"])))
+                kelas.save()
+                messages.success(request, f"Peta Kompetensi mencapai 100% setelah murid menyelesaikan {kelas.target_bagian} bagian.")
             elif aksi == "sandi":
                 if len(p["sandi"]) < 6:
                     raise ValueError

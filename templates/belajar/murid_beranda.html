@@ -15,41 +15,151 @@
     <section class="hero">
       <div><small>Kelas {{ siswa.kelas.nama }} · {{ sekolah }}</small>
         <h1 class="kids">Halo, {{ siswa.nama }}! Siap menyalakan lenteramu?</h1>
-        <p>Hari ini Lumi menyiapkan {{ kartu|length }} misi yang pas dengan kemampuanmu.</p></div>
+        <p>{% if kartu %}Hari ini Lumi menyiapkan {{ kartu|length }} misi yang pas dengan kemampuanmu. Jawab benar, lampu menyala!{% else %}Semua level yang tersedia sudah kamu selesaikan. Hebat!{% endif %}</p></div>
       <div class="lumi">💡</div>
     </section>
+
+    {% if diagnostik %}
+    <section class="card diag" id="diagnostik" aria-label="Asesmen diagnostik">
+      <h3>Asesmen diagnostik</h3>
+      <p class="hint">Kerjakan dulu supaya Lumi tahu titik awalmu. Tidak ada batas waktu dan tidak mengurangi poin.</p>
+      <div class="aksi" style="margin-top:10px">{% for m in diagnostik %}<a class="btn {{ m.kompetensi.ranah|slice:':3' }}" href="{% url 'mulai_game' m.id %}">▶ {{ m.kompetensi.nama }}</a>{% endfor %}</div>
+    </section>
+    {% endif %}
+
     <section class="misi2" id="misi" aria-label="Misi hari ini">
       {% for k in kartu %}
       <article class="misi {{ k.r3 }}">
         <span class="lab {{ k.r3 }}-t">MISI {{ forloop.counter }} · {{ k.m.kompetensi.get_ranah_display|upper }}</span>
         <h3>{{ k.m.kompetensi.judul }}</h3>
-        <p class="sub">Fase {{ k.fase }} · Level {{ k.m.level }} dari 5 · ±{{ k.menit }} menit{% if k.diag %} · asesmen diagnostik{% elif k.m.dari_guru %} · dari guru{% endif %}</p>
+        <p class="sub">Bagian {{ k.m.bagian }}{% if k.judul_bagian %} · {{ k.judul_bagian }}{% endif %} · Level {{ k.m.level }} dari 5{% if k.m.dari_guru %} · tugas dari guru{% endif %}</p>
+        <div class="lampu-baris besar" role="img" aria-label="{{ k.nyala }} dari {{ k.total }} lampu sudah menyala">{% for l in k.lampu %}<span class="lampu{% if l %} on{% endif %}">{% if l %}✓{% endif %}</span>{% endfor %}</div>
         <div class="pratinjau" aria-hidden="true">
           {% if k.angka %}<div class="blok">{% for i in k.puluhan %}<span class="bar-p"></span>{% endfor %}<span>{% for i in k.satuan %}<span class="sq"></span>{% endfor %}</span><strong>{{ k.angka }}</strong></div>
           {% else %}{% for w in k.kata %}<span class="kata">{{ w }}</span>{% endfor %}{% endif %}
         </div>
-        <a class="btn {{ k.r3 }}" href="{% url 'mulai_game' k.m.id %}">▶ Mulai misi</a>
+        <p class="waktu">{% if k.batas_detik %}⏱ Batas waktu <b>{{ k.menit }} menit</b>. Lewat waktu: −{{ aturan.penalti_poin }} poin tiap {{ aturan.tick_detik }} detik, paling lama {{ aturan.toleransi_detik }} detik. Lebih dari itu level gagal.{% else %}⏱ Level ini tanpa batas waktu.{% endif %}</p>
+        <a class="btn {{ k.r3 }}" href="{% url 'mulai_game' k.m.id %}">{% if k.nyala %}▶ Lanjutkan misi{% else %}▶ Mulai misi{% endif %}</a>
       </article>
-      {% empty %}<p class="card">Belum ada misi untuk hari ini.</p>{% endfor %}
+      {% endfor %}
+      {% for g in jalan %}{% if not g.misi %}
+      <article class="misi {{ g.game|slice:':3' }} kosong">
+        <span class="lab {{ g.game|slice:':3' }}-t">{{ g.nama|upper }}</span>
+        {% if g.selesai_semua %}<h3>🎉 Semua bagian {{ g.nama }} selesai!</h3><p class="sub">Lencanamu sudah menyala. Bagian berikutnya akan muncul di sini begitu gurumu menambahkannya.</p>
+        {% else %}<h3>Misi {{ g.nama }} belum tersedia</h3><p class="sub">Gurumu masih menyiapkan soal {{ g.nama }}. Coba lagi nanti ya.</p>{% endif %}
+      </article>
+      {% endif %}{% endfor %}
     </section>
+
     <section class="card" id="progres">
       <h3>Perkembanganku</h3>
-      <div class="prog">{% for p in pen %}<div><p><span>{{ p.kompetensi.nama }}</span><span>{{ p.status }} · {{ p.persen }}%</span></p>
-        <div><i class="{{ p.kompetensi.ranah|slice:':3' }}" style="width:{{ p.persen }}%"></i></div></div>{% endfor %}</div>
+      <p class="hint">Persen naik sedikit demi sedikit setiap level yang kamu selesaikan. Peta penuh 100% setelah {{ target_bagian }} bagian selesai.</p>
+      <div class="prog">{% for x in peta %}<div><p><span>{{ x.p.kompetensi.nama }}</span><span>{{ x.i.st }} · {{ x.i.pct }}%</span></p>
+        <div><i class="{{ x.p.kompetensi.ranah|slice:':3' }}" style="width:{{ x.i.pct }}%"></i></div>
+        <small class="posisi">{% if x.i.penuh %}✓ Semua level yang tersedia sudah selesai{% elif x.i.bagian %}Berikutnya: Bagian {{ x.i.bagian }} · Level {{ x.i.level }}{% else %}Menunggu soal dari guru{% endif %}</small></div>{% endfor %}</div>
     </section>
   </div>
+
   <aside class="mright">
-    <section class="card" id="jalur">
-      <h3>Jalur Lenteraku</h3><p class="hint">Setiap lentera menyala = 1 kompetensi dikuasai ({{ menyala }} dari {{ pen|length }})</p>
-      <svg class="jalur" viewBox="0 0 300 190" role="img" aria-label="{{ menyala }} dari {{ pen|length }} lentera menyala">
-        <path d="{{ jalur.d }}" fill="none" stroke="#e3e9f5" stroke-width="7" stroke-linecap="round"/>
-        {% for n in jalur.nodes %}<g class="node {{ n.st }}"><title>{{ n.nama }}</title><circle cx="{{ n.x }}" cy="{{ n.y }}" r="{% if n.st == 'kini' %}13{% else %}9{% endif %}"/>
-          {% if n.st == 'done' %}<text x="{{ n.x }}" y="{{ n.y|add:4 }}" text-anchor="middle">✓</text>{% elif n.st == 'kini' %}<text x="{{ n.x }}" y="{{ n.y|add:3 }}" text-anchor="middle">kini</text>{% endif %}</g>{% endfor %}
-      </svg>
+    <section class="card jalan" id="jalur" aria-label="Jalan Lenteraku">
+      <h3>Jalan Lenteraku</h3>
+      <p class="hint">Jawaban benar = 1 lampu menyala ✓. 5 lampu = 1 level, 5 level = 1 bagian.</p>
+      <div class="tabs" role="tablist" aria-label="Pilih kategori jalan">
+        {% for g in jalan %}<button type="button" role="tab" class="tab t-{{ g.game|slice:':3' }}" id="tab-{{ g.game }}" data-game="{{ g.game }}" aria-controls="panel-{{ g.game }}" aria-selected="false">{{ g.nama }}</button>{% endfor %}
+      </div>
+      {% for g in jalan %}
+      <div class="game-panel" id="panel-{{ g.game }}" role="tabpanel" aria-labelledby="tab-{{ g.game }}" data-game="{{ g.game }}">
+        {% if not g.ada_main %}
+        <p class="kosong-info">Belum ada bagian {{ g.nama }} yang siap. Gurumu sedang menyiapkan soalnya.</p>
+        {% else %}
+        <p class="ringkas"><b>{{ g.jumlah_penuh }}</b> dari {{ g.jumlah_main }} bagian selesai · <b>{{ g.lampu_nyala }}</b> lampu menyala</p>
+        <div class="pills" role="group" aria-label="Pilih bagian {{ g.nama }}">
+          {% for b in g.bagian %}{% if b.bisa_main %}<button type="button" class="pill{% if b.penuh %} penuh{% elif not b.terbuka %} kunci{% endif %}" data-bagian="{{ g.game }}-{{ b.no }}" aria-pressed="false">Bagian {{ b.no }}{% if b.penuh %} ✓{% elif not b.terbuka %} 🔒{% endif %}</button>{% endif %}{% endfor %}
+        </div>
+        {% for b in g.bagian %}{% if b.bisa_main %}
+        <div class="bagian{% if b.penuh %} penuh{% endif %}" id="bagian-{{ g.game }}-{{ b.no }}" data-bagian="{{ g.game }}-{{ b.no }}"{% if g.buka == b.no %} data-buka="1"{% endif %}>
+          <p class="b-judul"><b>Bagian {{ b.no }} · {{ b.judul }}</b><span class="chip {% if b.penuh %}kuning{% else %}biru{% endif %}">{{ b.selesai }}/{{ b.level|length }} level</span></p>
+          {% if not b.terbuka %}<p class="kosong-info">🔒 Selesaikan bagian sebelumnya dulu untuk membuka bagian ini.</p>{% endif %}
+          <ol class="lv-list">
+            {% for x in b.level %}
+            <li class="lv {{ x.status }}">
+              <span class="lv-node" aria-hidden="true">{% if x.status == 'selesai' %}✓{% else %}{{ x.nomor }}{% endif %}</span>
+              <div class="lv-body">
+                <div class="lv-top"><b>Level {{ x.nomor }}</b>
+                  <span class="chip {% if x.status == 'selesai' %}hijau{% elif x.status == 'kini' %}kuning{% else %}abu{% endif %}">{% if x.status == 'selesai' %}Selesai ✓{% elif x.status == 'kini' %}Sedang dimainkan{% else %}Belum{% endif %}</span></div>
+                <div class="lampu-baris" role="img" aria-label="Level {{ x.nomor }}: {% if x.status == 'selesai' %}semua lampu menyala{% elif x.status == 'kini' %}sebagian lampu menyala{% else %}lampu belum menyala{% endif %}">{% for l in x.lampu %}<span class="lampu{% if l %} on{% endif %}">{% if l %}✓{% endif %}</span>{% endfor %}</div>
+              </div>
+            </li>
+            {% endfor %}
+          </ol>
+          {% if b.penuh %}
+          <div class="selamat">🎉 Bagian {{ b.no }} penuh! Semua lampunya menyala.
+            {% if b.berikut %}<button type="button" class="btn navy lanjut" data-pilih="{{ g.game }}-{{ b.berikut }}">Lanjut ke Bagian {{ b.berikut }} →</button>{% else %}<span>Bagian berikutnya sedang disiapkan gurumu.</span>{% endif %}</div>
+          {% endif %}
+        </div>
+        {% endif %}{% endfor %}
+        {% endif %}
+      </div>
+      {% endfor %}
     </section>
-    <section class="card" id="lencana"><h3>Lencana minggu ini</h3>
-      <div class="badges">{% for ikon, nama, dapat in lencana %}<div class="badge {% if not dapat %}off{% endif %}"><span>{{ ikon }}</span>{{ nama }}</div>{% endfor %}</div>
+
+    <section class="card" id="lencana">
+      <h3>Lencana</h3>
+      <p class="hint">Lencana menyala setiap kamu menyelesaikan satu bagian ({{ lencana_menyala }} dari {{ lencana|length }} menyala).</p>
+      <div class="lencana-grid">{% for ikon, nama, ket, nyala in lencana %}<div class="lencana {% if nyala %}on{% else %}off{% endif %}" title="{{ ket }}"><span class="ik" aria-hidden="true">{{ ikon }}</span><b>{{ nama }}</b><small>{% if nyala %}Menyala ✓{% else %}{{ ket }}{% endif %}</small></div>{% endfor %}</div>
     </section>
   </aside>
 </main>
 {% endblock %}
+{% block js %}<script>
+(function () {
+  var tabs = [].slice.call(document.querySelectorAll('.jalan .tab'));
+  var panels = [].slice.call(document.querySelectorAll('.jalan .game-panel'));
+  if (!tabs.length) return;
+  function simpan(v) { try { localStorage.setItem('lentera.tab', v); } catch (e) {} }
+  function baca() { try { return localStorage.getItem('lentera.tab'); } catch (e) { return null; } }
+
+  function pilihBagian(kode) {
+    var game = kode.split('-')[0];
+    var panel = document.getElementById('panel-' + game);
+    if (!panel) return;
+    panel.querySelectorAll('.pill').forEach(function (p) { p.setAttribute('aria-pressed', p.dataset.bagian === kode ? 'true' : 'false'); });
+    panel.querySelectorAll('.bagian').forEach(function (b) { b.hidden = b.dataset.bagian !== kode; });
+  }
+  function pilihGame(game, fokus) {
+    tabs.forEach(function (t) {
+      var aktif = t.dataset.game === game;
+      t.setAttribute('aria-selected', aktif ? 'true' : 'false');
+      t.tabIndex = aktif ? 0 : -1;
+      if (aktif && fokus) t.focus();
+    });
+    panels.forEach(function (p) { p.hidden = p.dataset.game !== game; });
+    simpan(game);
+  }
+
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { pilihGame(t.dataset.game, false); });
+    t.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      var n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+      pilihGame(n.dataset.game, true);
+      e.preventDefault();
+    });
+  });
+  document.querySelectorAll('.jalan .pill').forEach(function (p) {
+    p.addEventListener('click', function () { pilihBagian(p.dataset.bagian); });
+  });
+  document.querySelectorAll('.jalan [data-pilih]').forEach(function (b) {
+    b.addEventListener('click', function () { pilihBagian(b.dataset.pilih); });
+  });
+
+  // Bagian yang dibuka bawaan = bagian yang sedang dimainkan (atau bagian terakhir bila semua selesai).
+  panels.forEach(function (panel) {
+    var buka = panel.querySelector('.bagian[data-buka]') || panel.querySelector('.bagian');
+    if (buka) pilihBagian(buka.dataset.bagian);
+  });
+  var awal = baca();
+  if (!tabs.some(function (t) { return t.dataset.game === awal; })) awal = tabs[0].dataset.game;
+  pilihGame(awal, false);
+})();
+</script>{% endblock %}

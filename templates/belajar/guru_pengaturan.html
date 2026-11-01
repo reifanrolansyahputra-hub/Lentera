@@ -21,6 +21,8 @@
         <form method="post">{% csrf_token %}<input type="hidden" name="aksi" value="ganti_kode"><button class="btn abu">Ganti kode</button></form></div></section>
     <section class="card"><h2>Ambang “Perlu perhatian”</h2><p class="hint">Siswa ditandai bila sebanyak ini kompetensinya masih berstatus Mulai (dari 8).</p>
       <form method="post" class="f baris" style="margin-top:8px">{% csrf_token %}<input type="hidden" name="aksi" value="ambang"><label>Jumlah kompetensi<input name="ambang" type="number" min="1" max="8" value="{{ kelas.ambang_perhatian }}"></label><button class="btn biru-b">Simpan</button></form></section>
+    <section class="card"><h2>Target Peta Kompetensi</h2><p class="hint">Peta Kompetensi naik sedikit demi sedikit setiap murid menyelesaikan level, dan baru mencapai 100% setelah murid menyelesaikan sebanyak ini <b>bagian</b> (1 bagian = 5 level). Sekarang: {{ kelas.target_bagian }} bagian.</p>
+      <form method="post" class="f baris" style="margin-top:8px">{% csrf_token %}<input type="hidden" name="aksi" value="target_bagian"><label>Jumlah bagian (1–10)<input name="target_bagian" type="number" min="1" max="10" value="{{ kelas.target_bagian }}"></label><button class="btn biru-b">Simpan</button></form></section>
     <section class="card"><h2>Ganti kata sandi</h2>
       <form method="post" class="f baris">{% csrf_token %}<input type="hidden" name="aksi" value="sandi"><label>Kata sandi baru<input name="sandi" type="password" minlength="6" required></label><button class="btn biru-b">Ganti</button></form></section>
   </div>

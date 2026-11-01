@@ -108,6 +108,13 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
+# Gambar soal Game 1 yang diunggah guru (dan gambar soal bawaan) disimpan di sini.
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+# Batas ukuran gambar soal yang diunggah guru.
+LENTERA_GAMBAR_MAKS_MB = 5
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_URL = "/login/"
@@ -131,6 +138,28 @@ LENTERA_GAME_TOKEN_TTL = 1800
 
 # Masa toleransi token untuk menerima event setelah kedaluwarsa.
 LENTERA_GAME_EVENT_GRACE = 7 * 86400
+
+
+# ==========================================================
+# JALAN LENTERA, BATAS WAKTU, DAN PETA KOMPETENSI
+# ==========================================================
+
+# Jumlah soal (= jumlah lampu) pada setiap level, dan jumlah level per bagian.
+LENTERA_SOAL_PER_LEVEL = 5
+LENTERA_LEVEL_PER_BAGIAN = 5
+
+# Aturan batas waktu game. Waktu dasar = menit pada Bank Aktivitas.
+# Setelah waktu dasar habis, poin dikurangi setiap `tick` detik.
+# Bila keterlambatan melewati `maks_lewat` detik, level dinyatakan GAGAL.
+#   contoh (waktu 8 menit): 8:10 -5 poin, 8:20 -5 poin, 8:30 -5 poin, lewat 8:30 = gagal.
+LENTERA_WAKTU = {
+    "tick": 10,
+    "maks_lewat": 30,
+    "penalti": 5,
+}
+
+# Peta Kompetensi baru mencapai 100% bila murid menyelesaikan sejumlah bagian.
+# Jumlahnya diatur guru per kelas di menu Pengaturan (Kelas.target_bagian, bawaan 3).
 
 
 # ==========================================================

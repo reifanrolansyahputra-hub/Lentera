@@ -10,6 +10,7 @@ Mengelola:
 - Penugasan aktivitas.
 - Ringkasan dashboard guru.
 - Pemetaan semua kompetensi ke Game 1 dan Game 2.
+- Jalan Lentera (bagian, level, lampu) ada di jalur.py; bank soal guru ada di bank_soal.py.
 """
 
 import secrets
@@ -25,7 +26,7 @@ from django.utils.text import slugify
 
 from accounts.models import Profile
 
-from . import engine
+from . import engine, jalur
 from .models import (
     Aktivitas,
     HasilDiagnostik,
@@ -36,6 +37,7 @@ from .models import (
     Penguasaan,
     Penugasan,
     Siswa,
+    SoalGame,
 )
 
 
@@ -71,24 +73,25 @@ JUMLAH_SOAL_PER_LEVEL = 5
 
 def jumlah_soal_game(kode, level):
     """
-    Semua kompetensi literasi memakai Game 1.
-    Semua kompetensi numerasi memakai Game 2.
-
-    Angka lima adalah konfigurasi untuk penugasan,
-    bukan jumlah soal aktual yang dibaca dari file game.
+    Jumlah soal aktif di bank guru untuk kompetensi dan level tertentu
+    (Game 1: seluruh soal literasi pada level itu; Game 2: soal kompetensi tersebut).
     """
     try:
         level = int(level)
     except (TypeError, ValueError):
         return 0
 
-    if not 1 <= level <= 5:
+    if not 1 <= level <= 5 or kode not in KODE_GAME:
         return 0
 
-    if kode in KODE_GAME:
-        return JUMLAH_SOAL_PER_LEVEL
+    qs = SoalGame.objects.filter(level=level, aktif=True)
 
-    return 0
+    if kode in KODE_LITERASI:
+        qs = qs.filter(game="literasi")
+    else:
+        qs = qs.filter(game="numerasi", kompetensi__kode=kode)
+
+    return qs.count()
 
 
 def level_game_tersedia(
@@ -97,7 +100,7 @@ def level_game_tersedia(
     level_min=1,
     level_maks=5,
 ):
-    """Memilih level terdekat yang tersedia."""
+    """Memilih level terdekat yang punya soal di bank guru."""
     try:
         level = int(level)
         level_min = max(1, int(level_min))
@@ -474,92 +477,11 @@ def penguasaan_lengkap(siswa):
 
 def misi_aktif(siswa):
     """
-    Memilih misi aktif per ranah.
-
-    Semua kompetensi literasi dipetakan ke Game 1.
-    Semua kompetensi numerasi dipetakan ke Game 2.
+    Misi yang ditampilkan di beranda murid: satu per kategori
+    (Literasi = Game 1, Numerasi = Game 2), mengikuti Jalan Lentera.
+    Lihat jalur.misi_aktif.
     """
-    penguasaan_lengkap(siswa)
-
-    hasil = []
-
-    game_codes = {
-        kode
-        for kode in getattr(settings, "LENTERA_GAMES", {})
-        if kode in KODE_GAME
-    }
-
-    for ranah in ("literasi", "numerasi"):
-        misi_terpilih = None
-
-        calon_misi = (
-            siswa.misi.filter(
-                status="baru",
-                kompetensi__ranah=ranah,
-                kompetensi__kode__in=game_codes,
-            )
-            .select_related("kompetensi", "aktivitas")
-            .order_by("-dari_guru", "-id")
-        )
-
-        for calon in calon_misi:
-            level_min = (
-                calon.aktivitas.level_min
-                if calon.aktivitas else 1
-            )
-            level_maks = (
-                calon.aktivitas.level_maks
-                if calon.aktivitas else 5
-            )
-
-            level_valid = level_game_tersedia(
-                calon.kompetensi.kode,
-                calon.level,
-                level_min,
-                level_maks,
-            )
-
-            if level_valid is None:
-                continue
-
-            if calon.level != level_valid:
-                calon.level = level_valid
-                calon.save(update_fields=["level"])
-
-            misi_terpilih = calon
-            break
-
-        if misi_terpilih is None:
-            calon_penguasaan = (
-                siswa.penguasaan.filter(
-                    kompetensi__ranah=ranah,
-                    kompetensi__kode__in=game_codes,
-                )
-                .select_related("kompetensi")
-                .order_by("p_l", "kompetensi__urutan")
-            )
-
-            for penguasaan in calon_penguasaan:
-                level_valid = level_game_tersedia(
-                    penguasaan.kompetensi.kode,
-                    penguasaan.level,
-                )
-
-                if level_valid is None:
-                    continue
-
-                misi_terpilih = Misi.objects.create(
-                    siswa=siswa,
-                    kompetensi=penguasaan.kompetensi,
-                    level=level_valid,
-                    jenis="misi",
-                )
-                break
-
-        if misi_terpilih is not None:
-            hasil.append(misi_terpilih)
-
-    return hasil
+    return jalur.misi_aktif(siswa)
 
 
 # ==========================================================
@@ -624,7 +546,7 @@ def terapkan_diagnostik(
 
 @transaction.atomic
 def aktifkan_diagnostik(kelas):
-    """Buat misi diagnostik untuk kompetensi yang punya game."""
+    """Buat misi diagnostik (level 1) untuk kompetensi yang soalnya sudah ada di bank."""
     jumlah = 0
 
     game_codes = {
@@ -633,20 +555,24 @@ def aktifkan_diagnostik(kelas):
         if kode in KODE_GAME
     }
 
-    kompetensi_tersedia = Kompetensi.objects.filter(
-        kode__in=game_codes
-    )
+    kompetensi_tersedia = []
+
+    for kompetensi in Kompetensi.objects.filter(kode__in=game_codes):
+        game = jalur.game_dari_kompetensi(kompetensi)
+        bagian = 1 if game == "literasi" else jalur.bagian_kompetensi(kompetensi.kode)
+        ada_soal = SoalGame.objects.filter(
+            game=game,
+            bagian=bagian,
+            level=1,
+            aktif=True,
+            **({"kompetensi": kompetensi} if game == "numerasi" else {}),
+        ).exists()
+
+        if ada_soal:
+            kompetensi_tersedia.append((kompetensi, bagian))
 
     for siswa in kelas.siswa.all():
-        for kompetensi in kompetensi_tersedia:
-            level_awal = level_game_tersedia(
-                kompetensi.kode,
-                1,
-            )
-
-            if level_awal is None:
-                continue
-
+        for kompetensi, bagian in kompetensi_tersedia:
             sudah_selesai = HasilDiagnostik.objects.filter(
                 siswa=siswa,
                 kompetensi=kompetensi,
@@ -665,7 +591,8 @@ def aktifkan_diagnostik(kelas):
             Misi.objects.create(
                 siswa=siswa,
                 kompetensi=kompetensi,
-                level=level_awal,
+                bagian=bagian,
+                level=1,
                 jenis="diagnostik",
                 dari_guru=True,
             )
@@ -801,6 +728,17 @@ def status_diagnostik(kelas):
 # 7. BANK AKTIVITAS DAN PENUGASAN
 # ==========================================================
 
+def _utamakan_misi(misi):
+    """Jadikan `misi` satu-satunya tugas guru yang berlaku untuk kategorinya."""
+    Misi.objects.filter(
+        siswa=misi.siswa,
+        jenis="misi",
+        status="baru",
+        dari_guru=True,
+        kompetensi__ranah=misi.kompetensi.ranah,
+    ).exclude(pk=misi.pk).update(dari_guru=False)
+
+
 @transaction.atomic
 def tugaskan_aktivitas(
     guru,
@@ -809,37 +747,42 @@ def tugaskan_aktivitas(
     target,
     ids=(),
 ):
-    """Tugaskan aktivitas ke kelas, kelompok, atau siswa tertentu."""
+    """Tugaskan aktivitas ke kelas, kelompok, atau siswa tertentu.
+
+    Murid mendapat level berikutnya (di rentang level aktivitas) yang belum
+    diselesaikan; bila semuanya sudah selesai, level pertama dalam rentang
+    diulang sebagai latihan. Batas waktu mengikuti menit aktivitas ini.
+    """
     siswa_kelas = list(kelas.siswa.all())
 
     kode = aktivitas.kompetensi.kode
+    game = jalur.game_dari_kompetensi(aktivitas.kompetensi)
     level_min = max(1, int(aktivitas.level_min))
     level_maks = min(5, int(aktivitas.level_maks))
 
     dapat_dimainkan = (
         kode_game_tersedia(kode)
-        and level_game_tersedia(
-            kode,
-            level_min,
-            level_min,
-            level_maks,
-        ) is not None
+        and jalur.target_ulang(game, aktivitas.kompetensi, level_min, level_maks) is not None
     )
 
     penguasaan = {
-        p.siswa_id: p
+        (p.siswa_id, p.kompetensi_id): p
         for p in Penguasaan.objects.filter(
             kompetensi=aktivitas.kompetensi,
             siswa__in=siswa_kelas,
         )
     }
 
-    def status_siswa(siswa):
-        p = penguasaan.get(siswa.id)
+    # Kelompok memakai persen Peta Kompetensi yang sama dengan yang dilihat guru.
+    peta = jalur.hitung_peta(
+        [s.id for s in siswa_kelas],
+        [aktivitas.kompetensi],
+        penguasaan,
+        kelas.target_bagian,
+    )
 
-        return engine.status(
-            p.p_l if p else engine.P_AWAL
-        )
+    def status_siswa(siswa):
+        return peta[(siswa.id, aktivitas.kompetensi_id)]["st"]
 
     if target in ("Mulai", "Berkembang", "Cakap"):
         dipilih = [
@@ -868,53 +811,35 @@ def tugaskan_aktivitas(
     jumlah_dibuat = 0
 
     if dapat_dimainkan:
-        for siswa in dipilih:
-            p = penguasaan.get(siswa.id)
-            level_siswa = p.level if p else level_min
+        selesai = jalur.level_selesai([siswa.id for siswa in dipilih])
 
-            level = level_game_tersedia(
-                kode,
-                level_siswa,
-                level_min,
-                level_maks,
+        for siswa in dipilih:
+            tujuan = (
+                jalur.target_siswa(
+                    siswa,
+                    game,
+                    selesai.get((siswa.id, game), set()),
+                    kompetensi=aktivitas.kompetensi,
+                    level_min=level_min,
+                    level_maks=level_maks,
+                )
+                or jalur.target_ulang(game, aktivitas.kompetensi, level_min, level_maks)
             )
 
-            if level is None:
+            if tujuan is None:
                 continue
 
-            misi = (
-                Misi.objects.filter(
-                    siswa=siswa,
-                    kompetensi=aktivitas.kompetensi,
-                    status="baru",
-                    jenis="misi",
-                )
-                .order_by("id")
-                .first()
+            bagian, level, _ = tujuan
+
+            misi = jalur._misi_baru(
+                siswa,
+                bagian,
+                level,
+                aktivitas.kompetensi,
+                dari_guru=True,
+                aktivitas=aktivitas,
             )
-
-            if misi:
-                misi.level = level
-                misi.dari_guru = True
-                misi.aktivitas = aktivitas
-
-                misi.save(
-                    update_fields=[
-                        "level",
-                        "dari_guru",
-                        "aktivitas",
-                    ]
-                )
-
-            else:
-                Misi.objects.create(
-                    siswa=siswa,
-                    kompetensi=aktivitas.kompetensi,
-                    level=level,
-                    jenis="misi",
-                    dari_guru=True,
-                    aktivitas=aktivitas,
-                )
+            _utamakan_misi(misi)
 
             jumlah_dibuat += 1
 
@@ -931,64 +856,40 @@ def tugaskan_aktivitas(
 
 @transaction.atomic
 def terapkan_ke_kelompok(guru, kelas, kompetensi):
-    """Terapkan rekomendasi ke siswa sesuai tingkat penguasaan."""
+    """Kirim level berikutnya di Jalan Lentera untuk kompetensi ini ke seluruh murid kelas."""
     kode = kompetensi.kode
 
     if not kode_game_tersedia(kode):
         return 0
 
+    game = jalur.game_dari_kompetensi(kompetensi)
+    siswa_kelas = list(kelas.siswa.all())
+    selesai = jalur.level_selesai([siswa.id for siswa in siswa_kelas])
+
     jumlah_misi = 0
 
-    for siswa in kelas.siswa.all():
-        penguasaan, _ = Penguasaan.objects.get_or_create(
-            siswa=siswa,
-            kompetensi=kompetensi,
-            defaults={"p_l": engine.P_AWAL},
+    for siswa in siswa_kelas:
+        tujuan = (
+            jalur.target_siswa(
+                siswa,
+                game,
+                selesai.get((siswa.id, game), set()),
+                kompetensi=kompetensi,
+            )
+            or jalur.target_ulang(game, kompetensi)
         )
 
-        level = penguasaan.level
-
-        if penguasaan.status == "Cakap":
-            level = min(5, level + 1)
-
-        level_valid = level_game_tersedia(
-            kode,
-            level,
-        )
-
-        if level_valid is None:
+        if tujuan is None:
             continue
 
-        misi = (
-            Misi.objects.filter(
-                siswa=siswa,
-                kompetensi=kompetensi,
-                status="baru",
-                jenis="misi",
-            )
-            .order_by("id")
-            .first()
+        misi = jalur._misi_baru(
+            siswa,
+            tujuan[0],
+            tujuan[1],
+            kompetensi,
+            dari_guru=True,
         )
-
-        if misi:
-            misi.level = level_valid
-            misi.dari_guru = True
-
-            misi.save(
-                update_fields=[
-                    "level",
-                    "dari_guru",
-                ]
-            )
-
-        else:
-            Misi.objects.create(
-                siswa=siswa,
-                kompetensi=kompetensi,
-                level=level_valid,
-                jenis="misi",
-                dari_guru=True,
-            )
+        _utamakan_misi(misi)
 
         jumlah_misi += 1
 
@@ -1168,11 +1069,6 @@ def ringkasan_kelas(kelas):
         for p in Penguasaan.objects.filter(siswa__in=siswa)
     }
 
-    skor_sekarang = {
-        kunci: p.p_l
-        for kunci, p in penguasaan.items()
-    }
-
     skor_sebelum = {}
 
     riwayat_sebelum = (
@@ -1192,6 +1088,26 @@ def ringkasan_kelas(kelas):
 
     for siswa_id, kompetensi_id, nilai in riwayat_sebelum:
         skor_sebelum[(siswa_id, kompetensi_id)] = nilai
+
+    # Persen Peta Kompetensi dicicil mengikuti kemajuan Jalan Lentera
+    # (lihat jalur.persen_peta); 100% baru tercapai pada target bagian kelas.
+    id_siswa = [murid.id for murid in siswa]
+
+    peta = jalur.hitung_peta(
+        id_siswa,
+        kompetensi,
+        penguasaan,
+        kelas.target_bagian,
+    )
+
+    peta_lalu = jalur.hitung_peta(
+        id_siswa,
+        kompetensi,
+        penguasaan,
+        kelas.target_bagian,
+        sebelum=awal,
+        p_l_sebelum=skor_sebelum,
+    )
 
     jawaban_7hari = Jawaban.objects.filter(
         siswa__in=siswa,
@@ -1243,13 +1159,16 @@ def ringkasan_kelas(kelas):
         sel = []
 
         for k in kompetensi:
-            p = penguasaan.get((murid.id, k.id))
-            nilai = p.p_l if p else engine.P_AWAL
+            info = peta[(murid.id, k.id)]
 
             sel.append({
-                "pct": round(nilai * 100),
-                "st": engine.status(nilai),
-                "level": p.level if p else 1,
+                "pct": info["pct"],
+                "st": info["st"],
+                "level": info["level"],
+                "level_angka": info["level"] or 5,
+                "bagian": info["bagian"],
+                "penuh": info["penuh"],
+                "selesai": info["selesai"],
             })
 
         statistik = statistik_siswa.get(
@@ -1290,15 +1209,12 @@ def ringkasan_kelas(kelas):
             ),
         })
 
-    def rata_ranah(data, ranah):
+    def rata_ranah(data, nama_ranah):
         nilai = [
-            (
-                data.get((murid.id, k.id), engine.P_AWAL)
-                * 100
-            )
+            data[(murid.id, k.id)]["pct"]
             for murid in siswa
             for k in kompetensi
-            if k.ranah == ranah
+            if k.ranah == nama_ranah
         ]
 
         return sum(nilai) / len(nilai) if nilai else 0
@@ -1306,14 +1222,8 @@ def ringkasan_kelas(kelas):
     ranah = []
 
     for nama_ranah in ("literasi", "numerasi"):
-        sekarang = rata_ranah(
-            skor_sekarang,
-            nama_ranah,
-        )
-        sebelumnya = rata_ranah(
-            skor_sebelum,
-            nama_ranah,
-        )
+        sekarang = rata_ranah(peta, nama_ranah)
+        sebelumnya = rata_ranah(peta_lalu, nama_ranah)
 
         ranah.append({
             "kode": nama_ranah,
@@ -1383,7 +1293,7 @@ def ringkasan_kelas(kelas):
             level = (
                 round(
                     sum(
-                        data["sel"][indeks_terendah]["level"]
+                        data["sel"][indeks_terendah]["level_angka"]
                         for data in anggota
                     ) / len(anggota)
                 )
@@ -1416,6 +1326,7 @@ def ringkasan_kelas(kelas):
         "kompetensi": kompetensi,
         "baris": baris,
         "n": len(siswa),
+        "target_bagian": kelas.target_bagian,
         "ranah": ranah,
         "waktu": waktu,
         "rek": rekomendasi,

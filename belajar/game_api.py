@@ -1,18 +1,16 @@
-
 """
-API integrasi Game LENTERA.
+API integrasi Game LENTERA (Game 1: Literasi, Game 2: Numerasi).
 
-Game yang didukung:
-- Game 1: Literasi
-- Game 2: Numerasi
+Alur sebuah level:
+  1. Murid menekan "Mulai misi" di dashboard      -> GET /game/mulai/<misi>/  (membuat token JWT, lalu mengalihkan ke game)
+  2. Game mengambil soal dari bank guru            -> GET  /api/game/soal/     (Authorization: Bearer <token>)
+  3. Soal pertama tampil, jam batas waktu jalan    -> POST /api/game/mulai/
+  4. Tiap jawaban dikirim sebagai event            -> POST /api/game/event/    {"events": [...]}
+  5. Level selesai atau gagal (waktu habis)        -> POST /api/game/event/    {"events": [...], "selesai": true, "skor": 85, "durasi_detik": 240}
+                                                                              {"events": [], "gagal": "waktu", "skor": 55, "durasi_detik": 540}
 
-Fitur:
-- Token sesi siswa
-- Validasi kompetensi dan level
-- Pencatatan jawaban ke dashboard
-- Pembaruan penguasaan BKT
-- Pencegahan event duplikat
-- Penyelesaian misi berdasarkan jumlah soal yang tersedia
+Aturan waktu (lihat jalur.denda_waktu): setelah batas waktu habis, poin berkurang tiap 10 detik;
+lewat 30 detik = level gagal dan murid mengulang dengan soal baru.
 """
 
 import json
@@ -29,12 +27,16 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
 
 from accounts.utils import role_required
-from . import engine
-from .models import Kompetensi, Jawaban, Misi, Penguasaan, Siswa
-from .services import catat_jawaban, selesaikan_diagnostik
+from . import engine, jalur
+from .bank_soal import serialkan
+from .models import Jawaban, Kompetensi, Misi, Penguasaan, Siswa
+from .services import KODE_LITERASI, catat_jawaban, selesaikan_diagnostik
+
+# Toleransi jam server vs jam game saat memeriksa klaim "gagal" (detik).
+LONGGAR_DETIK = 5
 
 
 # ==========================================================
@@ -54,122 +56,7 @@ def normalisasi_kompetensi(kode):
 
 
 # ==========================================================
-# 2. JUMLAH SOAL TERSEDIA PER KOMPETENSI DAN LEVEL
-# ==========================================================
-
-JUMLAH_SOAL_LITERASI = {
-    "LT-KALIMAT": {
-        1: 5,
-        2: 2,
-        3: 3,
-        4: 3,
-        5: 4,
-    },
-    "LT-KOSAKATA": {
-        1: 0,
-        2: 1,
-        3: 2,
-        4: 2,
-        5: 1,
-    },
-    "LT-PAHAM": {
-        1: 0,
-        2: 2,
-        3: 0,
-        4: 0,
-        5: 0,
-    },
-    # Bank soal lama belum mengukur kelancaran membaca
-    # lisan secara langsung.
-    "LT-LANCAR": {},
-}
-
-KOMPETENSI_NUMERASI = {
-    "NM-CERITA",
-    "NM-NILAI-TEMPAT",
-    "NM-REGROUPING",
-    "NM-POLA",
-}
-
-
-
-def _jumlah_soal_wajib(misi):
-    """
-    Semua kompetensi literasi menggunakan Game 1.
-    Semua kompetensi numerasi menggunakan Game 2.
-
-    Setiap level menggunakan 5 soal asli dari game
-    yang sesuai. Tidak ada penambahan bank soal baru.
-
-    Jumlah soal dapat diatur melalui
-    LENTERA_GAME_REQUIRED_ITEMS di settings.py.
-    """
-    kode = misi.kompetensi.kode
-    level = int(misi.level)
-
-    # Level permainan yang didukung adalah 1 sampai 5.
-    if level < 1 or level > 5:
-        return 0
-
-    # Kompetensi harus dipetakan ke salah satu dari dua game.
-    game_map = getattr(
-        settings,
-        "LENTERA_GAMES",
-        {},
-    )
-
-    if kode not in game_map:
-        return 0
-
-    # Hanya menerima ranah yang digunakan dashboard.
-    if misi.kompetensi.ranah not in ("literasi", "numerasi"):
-        return 0
-
-    # Konfigurasi opsional untuk jumlah soal berbeda.
-    konfigurasi = getattr(
-        settings,
-        "LENTERA_GAME_REQUIRED_ITEMS",
-        {},
-    )
-
-    override = (
-        konfigurasi.get(kode)
-        if isinstance(konfigurasi, dict)
-        else None
-    )
-
-    if isinstance(override, dict):
-        try:
-            jumlah = int(
-                override.get(
-                    level,
-                    override.get(str(level), 5),
-                )
-            )
-        except (ValueError, TypeError):
-            raise ValueError(
-                f"Jumlah soal {kode} level {level} tidak valid."
-            )
-
-        return max(0, jumlah)
-
-    if override is not None:
-        try:
-            jumlah = int(override)
-        except (ValueError, TypeError):
-            raise ValueError(
-                f"Jumlah soal {kode} tidak valid."
-            )
-
-        return max(0, jumlah)
-
-    # Default: 5 soal untuk setiap level kompetensi.
-    return 5
-
-
-
-# ==========================================================
-# 3. TOKEN DAN PEMBUKAAN GAME
+# 2. TOKEN DAN PEMBUKAAN GAME
 # ==========================================================
 
 @role_required("murid")
@@ -181,84 +68,64 @@ def mulai_game(request, misi_id):
         status="baru",
     )
 
-    # Jangan membuka kompetensi-level yang belum punya soal.
-    jumlah_wajib = _jumlah_soal_wajib(misi)
+    url_game = settings.LENTERA_GAMES.get(misi.kompetensi.kode)
+    if not url_game:
+        return JsonResponse(
+            {"error": f"Kompetensi {misi.kompetensi.kode} belum dipetakan ke Game 1 atau Game 2."},
+            status=400,
+        )
 
-    if jumlah_wajib <= 0:
+    # Soal level ini dibekukan (dipilih dari bank guru) saat game dibuka.
+    soal = jalur.bekukan_soal(misi)
+    if not soal:
         return JsonResponse(
             {
                 "error": (
-                    f"Belum ada soal untuk {misi.kompetensi.kode} "
-                    f"pada Level {misi.level}. "
-                    "Pilih aktivitas lain yang tersedia."
+                    f"Belum ada soal untuk Bagian {misi.bagian} Level {misi.level}. "
+                    "Minta gurumu menambahkan soal di Bank Soal."
                 )
             },
             status=409,
         )
 
-    # Hanya Game 1 atau Game 2 yang boleh dibuka.
-    url_game = settings.LENTERA_GAMES.get(
-        misi.kompetensi.kode
-    )
-
-    if not url_game:
-        return JsonResponse(
-            {
-                "error": (
-                    f"Kompetensi {misi.kompetensi.kode} belum "
-                    "dipetakan ke Game 1 atau Game 2."
-                )
-            },
-            status=400,
-        )
-
+    sekarang = int(time.time())
     payload = {
         "sub": misi.siswa.kode_samaran,
         "nama": misi.siswa.nama,
         "misi": misi.id,
         "kompetensi": misi.kompetensi.kode,
         "ranah": misi.kompetensi.ranah,
+        "game": jalur.game_dari_kompetensi(misi.kompetensi),
+        "bagian": misi.bagian,
         "level": misi.level,
         "mode": misi.jenis,
+        "total_soal": len(soal),
+        # Batas waktu dari menit pada Bank Aktivitas (0 = tanpa batas).
+        "batas_detik": jalur.batas_detik(misi),
+        **jalur.aturan_waktu(),
         "home": request.build_absolute_uri("/murid/"),
         "logout": request.build_absolute_uri("/logout/"),
         "api": request.build_absolute_uri("/api/game/event/"),
-        "exp": int(time.time()) + settings.LENTERA_GAME_TOKEN_TTL,
+        "soal_api": request.build_absolute_uri("/api/game/soal/"),
+        "mulai_api": request.build_absolute_uri("/api/game/mulai/"),
+        "iat": sekarang,
+        "exp": sekarang + settings.LENTERA_GAME_TOKEN_TTL,
     }
 
-    token = jwt.encode(
-        payload,
-        settings.LENTERA_GAME_SECRET,
-        algorithm="HS256",
-    )
+    token = jwt.encode(payload, settings.LENTERA_GAME_SECRET, algorithm="HS256")
 
     # Pertahankan query parameter URL yang sudah ada.
     parsed = urlsplit(url_game)
-
-    query = dict(
-        parse_qsl(
-            parsed.query,
-            keep_blank_values=True,
-        )
-    )
-
+    query = dict(parse_qsl(parsed.query, keep_blank_values=True))
     query["ssoToken"] = token
 
-    tujuan = urlunsplit(
-        (
-            parsed.scheme,
-            parsed.netloc,
-            parsed.path,
-            urlencode(query),
-            parsed.fragment,
-        )
+    return redirect(
+        urlunsplit((parsed.scheme, parsed.netloc, parsed.path, urlencode(query), parsed.fragment))
     )
-
-    return redirect(tujuan)
 
 
 # ==========================================================
-# 4. NORMALISASI WAKTU, BOOLEAN, DAN PENGUASAAN
+# 3. NORMALISASI WAKTU, BOOLEAN, DAN PENGUASAAN
 # ==========================================================
 
 def _waktu(value):
@@ -302,12 +169,24 @@ def _boolean(value, default=None):
     raise ValueError("Nilai boolean tidak valid.")
 
 
+def _bilangan(value, nama, minimum, maksimum):
+    """Bilangan bulat opsional dalam rentang; None bila tidak diisi."""
+    if value is None or value == "":
+        return None
+    if isinstance(value, bool):
+        raise ValueError(f"Field {nama} tidak valid.")
+    try:
+        angka = round(float(value))
+    except (TypeError, ValueError, OverflowError):
+        raise ValueError(f"Field {nama} tidak valid.")
+    if not minimum <= angka <= maksimum:
+        raise ValueError(f"Field {nama} harus antara {minimum} dan {maksimum}.")
+    return angka
+
+
 def _state_siswa(siswa, kompetensi):
     """Mengambil kondisi penguasaan terbaru."""
-    penguasaan = Penguasaan.objects.filter(
-        siswa=siswa,
-        kompetensi=kompetensi,
-    ).first()
+    penguasaan = Penguasaan.objects.filter(siswa=siswa, kompetensi=kompetensi).first()
 
     if penguasaan is None:
         return {
@@ -323,39 +202,105 @@ def _state_siswa(siswa, kompetensi):
     }
 
 
+def _respons(misi, **tambahan):
+    """Respons standar: state BKT, status misi, dan lampu level (jumlah jawaban benar / jumlah soal)."""
+    benar, total = jalur.lampu_misi(misi)
+    return JsonResponse({
+        "state": _state_siswa(misi.siswa, misi.kompetensi),
+        "selesai": misi.status == "selesai",
+        "gagal": misi.status == "gagal",
+        "lampu": {"nyala": len(benar), "total": total, "benar_ids": benar},
+        **tambahan,
+    })
+
+
+# ==========================================================
+# 4. TOKEN PADA PERMINTAAN API
+# ==========================================================
+
+def _galat(pesan, status):
+    return JsonResponse({"error": pesan}, status=status)
+
+
+def _klaim(request, data=None):
+    """Baca dan verifikasi token. Mengembalikan (klaim, None) atau (None, respons galat)."""
+    # Token utama menggunakan Authorization Bearer.
+    # Dukungan ssoToken di body dipertahankan untuk kompatibilitas.
+    authorization = request.headers.get("Authorization", "").strip()
+
+    if authorization:
+        if not authorization.startswith("Bearer "):
+            return None, _galat("Format Authorization tidak valid.", 401)
+        token = authorization[7:].strip()
+    else:
+        token = str((data or {}).get("ssoToken") or "").strip()
+
+    if not token:
+        return None, _galat("Token misi tidak tersedia.", 401)
+
+    try:
+        c = jwt.decode(
+            token,
+            settings.LENTERA_GAME_SECRET,
+            algorithms=["HS256"],
+            leeway=getattr(settings, "LENTERA_GAME_EVENT_GRACE", 0),
+        )
+        return {
+            "misi": int(c["misi"]),
+            "kode": normalisasi_kompetensi(c["kompetensi"]),
+            "level": int(c["level"]),
+            "sub": str(c["sub"]),
+            "batas": max(0, int(c.get("batas_detik") or 0)),
+            "toleransi": int(c.get("toleransi_detik") or jalur.aturan_waktu()["toleransi_detik"]),
+            "tick": int(c.get("tick_detik") or jalur.aturan_waktu()["tick_detik"]),
+        }, None
+    except (jwt.PyJWTError, KeyError, ValueError, TypeError):
+        return None, _galat("Token misi tidak valid atau kedaluwarsa.", 401)
+
+
+def _misi_token(klaim, kunci=False):
+    """Muat misi milik token; (misi, None) atau (None, respons galat)."""
+    qs = Misi.objects.select_related("siswa", "kompetensi")
+    if kunci:
+        qs = qs.select_for_update()
+    try:
+        misi = qs.get(id=klaim["misi"], siswa__kode_samaran=klaim["sub"])
+    except Misi.DoesNotExist:
+        return None, _galat("Misi tidak ditemukan.", 404)
+    if misi.kompetensi.kode != klaim["kode"] or misi.level != klaim["level"]:
+        return None, _galat("Token tidak cocok dengan kompetensi atau level misi.", 403)
+    return misi, None
+
+
 # ==========================================================
 # 5. NORMALISASI EVENT DARI GAME
 # ==========================================================
 
-def _norm(event, misi):
+def _norm(event, misi, id_soal=()):
     """
     Menerima event Game 1 dan Game 2.
 
     Field yang didukung:
     - kompetensi / competency
     - benar / is_correct
-    - item_id / question_id
+    - item_id / question_id (harus salah satu soal pada misi)
     - pola / error_code / error_pattern
     - waktu_ms / response_time_ms / response_time_seconds
     - petunjuk / used_hint
     """
     if not isinstance(event, dict):
-        raise ValueError(
-            "Setiap event harus berbentuk objek JSON."
-        )
+        raise ValueError("Setiap event harus berbentuk objek JSON.")
 
-    kode = (
-        event.get("kompetensi")
-        or event.get("competency")
-        or misi.kompetensi.kode
+    kode = normalisasi_kompetensi(
+        event.get("kompetensi") or event.get("competency") or misi.kompetensi.kode
     )
 
-    kode = normalisasi_kompetensi(kode)
-
-    if kode != misi.kompetensi.kode:
-        raise ValueError(
-            "Kompetensi event tidak cocok dengan kompetensi misi."
-        )
+    # Satu level Game 1 memuat campuran kompetensi literasi; Game 2 satu level = satu kompetensi.
+    if misi.kompetensi.ranah == "literasi":
+        if kode not in KODE_LITERASI:
+            raise ValueError("Kompetensi event bukan kompetensi literasi.")
+    elif kode != misi.kompetensi.kode:
+        raise ValueError("Kompetensi event tidak cocok dengan kompetensi misi.")
 
     try:
         level = int(event.get("level", misi.level))
@@ -363,26 +308,20 @@ def _norm(event, misi):
         raise ValueError("Level soal tidak valid.")
 
     if level != misi.level or not 1 <= level <= 5:
-        raise ValueError(
-            "Level event tidak cocok dengan level misi."
-        )
+        raise ValueError("Level event tidak cocok dengan level misi.")
 
-    benar = _boolean(
-        event.get("benar", event.get("is_correct")),
-        default=None,
-    )
+    benar = _boolean(event.get("benar", event.get("is_correct")), default=None)
 
     if benar is None:
         raise ValueError("Field benar tidak tersedia.")
 
-    item_id = str(
-        event.get("item_id")
-        or event.get("question_id")
-        or ""
-    ).strip()
+    item_id = str(event.get("item_id") or event.get("question_id") or "").strip()
 
     if len(item_id) > 40:
         raise ValueError("ID soal terlalu panjang.")
+
+    if id_soal and item_id not in id_soal:
+        raise ValueError("Soal tidak termasuk dalam misi ini.")
 
     raw_ms = event.get("waktu_ms")
 
@@ -391,9 +330,7 @@ def _norm(event, misi):
 
     if raw_ms is None:
         try:
-            raw_ms = round(
-                float(event.get("response_time_seconds", 0)) * 1000
-            )
+            raw_ms = round(float(event.get("response_time_seconds", 0)) * 1000)
         except (TypeError, ValueError, OverflowError):
             raw_ms = 0
 
@@ -403,14 +340,9 @@ def _norm(event, misi):
         raise ValueError("Waktu pengerjaan tidak valid.")
 
     if waktu_ms < 0:
-        raise ValueError(
-            "Waktu pengerjaan tidak boleh negatif."
-        )
+        raise ValueError("Waktu pengerjaan tidak boleh negatif.")
 
-    waktu_ms = min(
-        waktu_ms,
-        24 * 60 * 60 * 1000,
-    )
+    waktu_ms = min(waktu_ms, 24 * 60 * 60 * 1000)
 
     event_id = str(event.get("event_id") or "").strip()
 
@@ -418,10 +350,7 @@ def _norm(event, misi):
         raise ValueError("ID event terlalu panjang.")
 
     pola = str(
-        event.get("pola")
-        or event.get("error_code")
-        or event.get("error_pattern")
-        or ""
+        event.get("pola") or event.get("error_code") or event.get("error_pattern") or ""
     ).strip()
 
     if len(pola) > 30:
@@ -434,10 +363,7 @@ def _norm(event, misi):
     elif definisi_pola[pola][1] != kode:
         pola = ""
 
-    petunjuk = _boolean(
-        event.get("petunjuk", event.get("used_hint")),
-        default=False,
-    )
+    petunjuk = _boolean(event.get("petunjuk", event.get("used_hint")), default=False)
 
     return {
         "kode": kode,
@@ -456,217 +382,200 @@ def _norm(event, misi):
 # 6. VALIDASI PENYELESAIAN MISI
 # ==========================================================
 
-def _boleh_selesai(misi, events=None):
-    """
-    Misi selesai ketika jumlah ID soal unik dengan jawaban
-    benar yang sudah tersimpan mencapai jumlah wajib.
-    """
-    jumlah_wajib = _jumlah_soal_wajib(misi)
+def _boleh_selesai(misi):
+    """Misi selesai ketika SEMUA soal pada misi sudah pernah dijawab benar."""
+    id_soal = {s.item_id for s in jalur.bekukan_soal(misi)}
 
-    if jumlah_wajib <= 0:
+    if not id_soal:
         return False
 
-    jumlah_benar = (
-        Jawaban.objects.filter(
-            misi=misi,
-            kompetensi=misi.kompetensi,
-            benar=True,
-        )
-        .exclude(item_id="")
-        .values("item_id")
-        .distinct()
-        .count()
+    benar = set(
+        Jawaban.objects.filter(misi=misi, benar=True).values_list("item_id", flat=True)
     )
 
-    return jumlah_benar >= jumlah_wajib
+    return id_soal <= benar
 
 
 # ==========================================================
-# 7. API PENERIMA EVENT GAME
+# 7. API SOAL
+# ==========================================================
+
+@csrf_exempt
+@require_GET
+def api_soal(request):
+    """Soal level ini (format asli game) beserta aturan waktu dan lampu yang sudah menyala."""
+    klaim, galat = _klaim(request)
+    if galat:
+        return galat
+
+    misi, galat = _misi_token(klaim)
+    if galat:
+        return galat
+
+    if misi.status == "selesai":
+        return JsonResponse({"error": "Misi ini sudah selesai.", "selesai": True}, status=409)
+    if misi.status == "gagal":
+        return JsonResponse({"error": "Waktu misi ini sudah habis. Mulai lagi dari dashboard.", "gagal": True}, status=409)
+
+    soal = jalur.bekukan_soal(misi)
+    if not soal:
+        return _galat(
+            f"Belum ada soal untuk Bagian {misi.bagian} Level {misi.level}. Minta gurumu menambahkan soal di Bank Soal.",
+            409,
+        )
+
+    benar, total = jalur.lampu_misi(misi)
+    sekarang = timezone.now()
+
+    return JsonResponse({
+        "misi": misi.id,
+        "game": jalur.game_dari_kompetensi(misi.kompetensi),
+        "mode": misi.jenis,
+        "kompetensi": misi.kompetensi.kode,
+        "bagian": misi.bagian,
+        "level": misi.level,
+        "total": total,
+        "benar_ids": benar,
+        "batas_detik": klaim["batas"],
+        **jalur.aturan_waktu(),
+        "dimulai": misi.mulai_pada is not None,
+        "berjalan_detik": int((sekarang - misi.mulai_pada).total_seconds()) if misi.mulai_pada else 0,
+        "soal": [serialkan(s, request) for s in soal],
+    })
+
+
+@csrf_exempt
+@require_POST
+def api_mulai(request):
+    """Dipanggil game saat soal pertama tampil: jam batas waktu berjalan sejak saat ini.
+
+    Aman dipanggil berulang (mis. halaman dimuat ulang): jam tidak diulang dari nol.
+    Bila waktu sudah lewat dari batas + toleransi, misi dinyatakan gagal.
+    """
+    try:
+        data = json.loads(request.body or "{}")
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        data = {}
+    klaim, galat = _klaim(request, data if isinstance(data, dict) else {})
+    if galat:
+        return galat
+
+    with transaction.atomic():
+        misi, galat = _misi_token(klaim, kunci=True)
+        if galat:
+            return galat
+
+        if misi.status == "selesai":
+            return JsonResponse({"error": "Misi ini sudah selesai.", "selesai": True}, status=409)
+        if misi.status == "gagal":
+            return JsonResponse({"gagal": True, "berjalan_detik": misi.durasi_detik or 0, "batas_detik": klaim["batas"]})
+
+        sekarang = timezone.now()
+        if misi.mulai_pada is None:
+            misi.mulai_pada = sekarang
+            misi.save(update_fields=["mulai_pada"])
+
+        berjalan = int((sekarang - misi.mulai_pada).total_seconds())
+        _, lewat_batas = jalur.denda_waktu(berjalan, klaim["batas"], klaim["tick"], klaim["toleransi"])
+
+        if lewat_batas:
+            misi.status = "gagal"
+            misi.durasi_detik = berjalan
+            misi.selesai_pada = sekarang
+            misi.save(update_fields=["status", "durasi_detik", "selesai_pada"])
+            return JsonResponse({"gagal": True, "berjalan_detik": berjalan, "batas_detik": klaim["batas"]})
+
+        return JsonResponse({"gagal": False, "berjalan_detik": berjalan, "batas_detik": klaim["batas"]})
+
+
+# ==========================================================
+# 8. API PENERIMA EVENT GAME
 # ==========================================================
 
 @csrf_exempt
 @require_POST
 def api_event(request):
     if len(request.body) > 256 * 1024:
-        return JsonResponse(
-            {"error": "Ukuran permintaan terlalu besar."},
-            status=413,
-        )
+        return _galat("Ukuran permintaan terlalu besar.", 413)
 
     try:
         data = json.loads(request.body or "{}")
     except (json.JSONDecodeError, UnicodeDecodeError):
-        return JsonResponse(
-            {"error": "JSON permintaan tidak valid."},
-            status=400,
-        )
+        return _galat("JSON permintaan tidak valid.", 400)
 
     if not isinstance(data, dict):
-        return JsonResponse(
-            {"error": "Body harus berupa objek JSON."},
-            status=400,
-        )
+        return _galat("Body harus berupa objek JSON.", 400)
 
     try:
-        selesai_diminta = _boolean(
-            data.get("selesai"),
-            default=False,
-        )
+        selesai_diminta = _boolean(data.get("selesai"), default=False)
     except ValueError:
-        return JsonResponse(
-            {"error": "Field selesai harus berupa boolean."},
-            status=400,
-        )
+        return _galat("Field selesai harus berupa boolean.", 400)
 
-    # Token utama menggunakan Authorization Bearer.
-    # Dukungan ssoToken di body dipertahankan untuk kompatibilitas.
-    authorization = request.headers.get(
-        "Authorization",
-        "",
-    ).strip()
+    gagal_diminta = data.get("gagal")
+    if gagal_diminta not in (None, False, "", "waktu"):
+        return _galat('Field gagal hanya boleh bernilai "waktu".', 400)
+    gagal_diminta = gagal_diminta == "waktu"
 
-    if authorization:
-        if not authorization.startswith("Bearer "):
-            return JsonResponse(
-                {"error": "Format Authorization tidak valid."},
-                status=401,
-            )
-
-        token = authorization[7:].strip()
-    else:
-        token = str(data.get("ssoToken") or "").strip()
-
-    if not token:
-        return JsonResponse(
-            {"error": "Token misi tidak tersedia."},
-            status=401,
-        )
+    if gagal_diminta and selesai_diminta:
+        return _galat("Misi tidak bisa selesai dan gagal sekaligus.", 400)
 
     try:
-        claims = jwt.decode(
-            token,
-            settings.LENTERA_GAME_SECRET,
-            algorithms=["HS256"],
-            leeway=getattr(
-                settings,
-                "LENTERA_GAME_EVENT_GRACE",
-                0,
-            ),
-        )
+        skor = _bilangan(data.get("skor"), "skor", 0, 100)
+        durasi = _bilangan(data.get("durasi_detik"), "durasi_detik", 0, 24 * 3600)
+    except ValueError as error:
+        return _galat(str(error), 400)
 
-        misi_id = int(claims["misi"])
-        kode_token = normalisasi_kompetensi(
-            claims["kompetensi"]
-        )
-        level_token = int(claims["level"])
-        sub = str(claims["sub"])
-
-    except (
-        jwt.PyJWTError,
-        KeyError,
-        ValueError,
-        TypeError,
-    ):
-        return JsonResponse(
-            {"error": "Token misi tidak valid atau kedaluwarsa."},
-            status=401,
-        )
+    klaim, galat = _klaim(request, data)
+    if galat:
+        return galat
 
     events_raw = data.get("events")
 
     # Mendukung event tunggal dari Game 1 versi lama.
     if events_raw is None:
-        if "item_id" in data or "question_id" in data:
-            events_raw = [data]
-        else:
-            events_raw = []
+        events_raw = [data] if ("item_id" in data or "question_id" in data) else []
 
     if not isinstance(events_raw, list):
-        return JsonResponse(
-            {"error": "Field events harus berupa array."},
-            status=400,
-        )
+        return _galat("Field events harus berupa array.", 400)
 
     if len(events_raw) > 20:
-        return JsonResponse(
-            {"error": "Maksimal 20 event per permintaan."},
-            status=400,
-        )
+        return _galat("Maksimal 20 event per permintaan.", 400)
 
     try:
         with transaction.atomic():
-            misi = (
-                Misi.objects.select_for_update()
-                .select_related("siswa", "kompetensi")
-                .get(
-                    id=misi_id,
-                    siswa__kode_samaran=sub,
-                )
-            )
+            misi, galat = _misi_token(klaim, kunci=True)
+            if galat:
+                return galat
 
-            if (
-                misi.kompetensi.kode != kode_token
-                or misi.level != level_token
-            ):
-                return JsonResponse(
-                    {
-                        "error": (
-                            "Token tidak cocok dengan "
-                            "kompetensi atau level misi."
-                        )
-                    },
-                    status=403,
-                )
+            soal = jalur.bekukan_soal(misi)
+            if not soal:
+                return _galat("Level ini belum memiliki soal yang tersedia.", 409)
+            id_soal = {s.item_id for s in soal}
 
-            if _jumlah_soal_wajib(misi) <= 0:
+            # Semua event divalidasi terlebih dahulu.
+            events = [_norm(event, misi, id_soal) for event in events_raw]
+
+            if misi.status == "gagal":
+                if gagal_diminta and not events:
+                    return _respons(misi)
                 return JsonResponse(
-                    {
-                        "error": (
-                            "Kompetensi dan level ini belum "
-                            "memiliki soal yang tersedia."
-                        )
-                    },
+                    {"error": "Waktu misi ini sudah habis. Mulai lagi dari dashboard.", "gagal": True},
                     status=409,
                 )
 
-            # Semua event divalidasi terlebih dahulu.
-            events = [
-                _norm(event, misi)
-                for event in events_raw
-            ]
-
             if misi.status == "selesai":
                 if selesai_diminta and not events:
-                    return JsonResponse({
-                        "state": _state_siswa(
-                            misi.siswa,
-                            misi.kompetensi,
-                        ),
-                        "selesai": True,
-                    })
+                    return _respons(misi)
 
                 semua_event_sudah_ada = bool(events) and all(
-                    event["event_id"]
-                    and Jawaban.objects.filter(
-                        event_id=event["event_id"],
-                    ).exists()
+                    event["event_id"] and Jawaban.objects.filter(event_id=event["event_id"]).exists()
                     for event in events
                 )
 
                 if semua_event_sudah_ada:
-                    return JsonResponse({
-                        "state": _state_siswa(
-                            misi.siswa,
-                            misi.kompetensi,
-                        ),
-                        "selesai": True,
-                    })
+                    return _respons(misi)
 
-                return JsonResponse(
-                    {"error": "Misi ini sudah selesai."},
-                    status=409,
-                )
+                return _galat("Misi ini sudah selesai.", 409)
 
             # Simpan jawaban.
             for event in events:
@@ -689,56 +598,59 @@ def api_event(request):
                     # Event yang sama sudah tersimpan.
                     continue
 
-            state = _state_siswa(
-                misi.siswa,
-                misi.kompetensi,
-            )
+            sekarang = timezone.now()
 
+            # ---- Gagal: waktu habis melewati toleransi ----
+            if gagal_diminta:
+                if klaim["batas"] <= 0:
+                    return _galat("Level ini tidak memiliki batas waktu.", 400)
+                if misi.mulai_pada is None:
+                    return _galat("Misi belum dimulai.", 409)
+
+                berjalan = (sekarang - misi.mulai_pada).total_seconds()
+                if berjalan < klaim["batas"] + klaim["toleransi"] - LONGGAR_DETIK:
+                    return JsonResponse(
+                        {"error": "Batas waktu belum terlampaui.", "state": _state_siswa(misi.siswa, misi.kompetensi)},
+                        status=409,
+                    )
+
+                misi.status = "gagal"
+                misi.skor = skor
+                misi.durasi_detik = durasi if durasi is not None else int(berjalan)
+                misi.selesai_pada = sekarang
+                misi.save(update_fields=["status", "skor", "durasi_detik", "selesai_pada"])
+                return _respons(misi)
+
+            # ---- Selesai: seluruh soal sudah benar ----
             if selesai_diminta:
-                if not _boleh_selesai(misi, events):
+                if not _boleh_selesai(misi):
+                    benar, total = jalur.lampu_misi(misi)
                     return JsonResponse({
-                        "state": state,
+                        "state": _state_siswa(misi.siswa, misi.kompetensi),
                         "selesai": False,
-                        "error": (
-                            "Belum seluruh soal wajib dijawab "
-                            "benar. Misi belum ditandai selesai."
-                        ),
+                        "gagal": False,
+                        "lampu": {"nyala": len(benar), "total": total, "benar_ids": benar},
+                        "error": "Belum seluruh soal wajib dijawab benar. Misi belum ditandai selesai.",
                     })
 
                 misi.status = "selesai"
-                misi.save(update_fields=["status"])
+                misi.skor = skor
+                if durasi is not None:
+                    misi.durasi_detik = durasi
+                elif misi.mulai_pada:
+                    misi.durasi_detik = int((sekarang - misi.mulai_pada).total_seconds())
+                misi.selesai_pada = sekarang
+                misi.save(update_fields=["status", "skor", "durasi_detik", "selesai_pada"])
 
                 if misi.jenis == "diagnostik":
                     selesaikan_diagnostik(misi)
                 else:
-                    Siswa.objects.filter(
-                        id=misi.siswa_id,
-                    ).update(
-                        poin=F("poin") + 10
-                    )
+                    Siswa.objects.filter(id=misi.siswa_id).update(poin=F("poin") + 10)
 
-            return JsonResponse({
-                "state": _state_siswa(
-                    misi.siswa,
-                    misi.kompetensi,
-                ),
-                "selesai": misi.status == "selesai",
-            })
-
-    except Misi.DoesNotExist:
-        return JsonResponse(
-            {"error": "Misi tidak ditemukan."},
-            status=404,
-        )
+            return _respons(misi)
 
     except Kompetensi.DoesNotExist:
-        return JsonResponse(
-            {"error": "Kode kompetensi tidak dikenal."},
-            status=400,
-        )
+        return _galat("Kode kompetensi tidak dikenal.", 400)
 
     except (ValueError, TypeError, OverflowError) as error:
-        return JsonResponse(
-            {"error": str(error)},
-            status=400,
-        )
+        return _galat(str(error), 400)

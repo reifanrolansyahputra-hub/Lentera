@@ -3,13 +3,14 @@
 {% block isi %}
 <header class="top"><h1>Peta Kompetensi · Kelas {{ d.kelas.nama }}</h1>
   <div class="bar"><span class="chip biru">{{ d.n }} siswa</span><span class="chip hijau">Data 7 hari terakhir</span><span class="chip merah">{{ d.perhatian }} perlu perhatian</span></div></header>
-<section class="card">
-  <p class="hint" style="margin-bottom:10px">Tiap sel: level (1–5) dan peluang penguasaan P(L). Arahkan kursor pada nama kolom untuk melihat cakupan kompetensi, dan pada “Pola terbanyak” untuk saran remedialnya.</p>
+{% for nama, ada in catatan_bagian %}<section class="card note-waktu"><p>⚠ <b>{{ nama }}</b> baru punya {{ ada }} bagian, sedangkan target Peta {{ target }} bagian, jadi Peta {{ nama }} belum bisa mencapai 100%. Tambah bagian di <a href="{% url 'soal' %}?game={{ nama|lower }}"><u>Bank Soal</u></a> atau turunkan target di <a href="{% url 'pengaturan' %}"><u>Pengaturan</u></a>.</p></section>
+{% endfor %}<section class="card">
+  <p class="hint" style="margin-bottom:10px">Tiap sel: persen penguasaan yang <b>dicicil</b> mengikuti kemajuan murid di Jalan Lentera, dan posisi berikutnya (B = bagian, L = level, ✓ = semua level yang tersedia tuntas). Peta baru 100% setelah murid menyelesaikan <b>{{ d.kelas.target_bagian }} bagian</b> (atur di Pengaturan). Arahkan kursor pada nama kolom untuk melihat cakupan kompetensi, dan pada “Pola terbanyak” untuk saran remedialnya.</p>
   <div class="scroll"><table class="peta lebar">
     <thead><tr><th></th>{% for k in d.kompetensi %}<th title="{{ k.cakupan }}">{{ k.nama }}</th>{% endfor %}<th>Jawaban</th><th>Akurasi</th><th>Terakhir aktif</th><th>Pola terbanyak</th></tr></thead>
     <tbody>{% for b in d.baris %}<tr>
       <th class="nama" scope="row">{{ b.siswa.avatar }} {{ b.siswa.nama }}{% if b.perhatian %} <span class="chip merah">perhatian</span>{% endif %}</th>
-      {% for c in b.sel %}<td><div class="cell angka {{ c.st }}" title="{{ c.st }}">L{{ c.level }} · {{ c.pct }}%</div></td>{% endfor %}
+      {% for c in b.sel %}<td><div class="cell angka {{ c.st }}" title="{{ c.st }} · {% if c.penuh %}semua level yang tersedia tuntas{% elif c.bagian %}berikutnya Bagian {{ c.bagian }} Level {{ c.level }}{% else %}belum ada level{% endif %}">{{ c.pct }}%<small>{% if c.penuh %}✓ tuntas{% elif c.bagian %}B{{ c.bagian }}·L{{ c.level }}{% else %}-{% endif %}</small></div></td>{% endfor %}
       <td>{{ b.n_jawab }}</td><td>{% if b.akurasi != "" %}{{ b.akurasi }}%{% else %}-{% endif %}</td><td class="kecil">{{ b.terakhir|default:"-" }}</td><td class="kecil"{% if b.pola_saran %} title="💡 Saran: {{ b.pola_saran }}"{% endif %}>{{ b.pola|default:"-" }}</td></tr>{% endfor %}</tbody></table></div>
   <p class="legend"><span style="color:#c4402f">■ Mulai (di bawah 40%)</span><span style="color:#b98300">■ Berkembang (40–79%)</span><span style="color:#1c8a55">■ Cakap (80% ke atas)</span></p>
 </section>

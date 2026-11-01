@@ -1,0 +1,67 @@
+{% extends 'belajar/guru_base.html' %}
+{% block title %}Bank Soal · LENTERA{% endblock %}
+{% block isi %}
+<header class="top"><h1>Bank Soal</h1>
+  <div class="bar"><span class="chip biru">{{ jumlah.literasi }} soal Literasi</span><span class="chip hijau">{{ jumlah.numerasi }} soal Numerasi</span>
+    <a class="btn navy" href="{% url 'soal_baru' %}?game={{ game }}{% if f.bagian %}&amp;bagian={{ f.bagian }}{% endif %}{% if f.level %}&amp;level={{ f.level }}{% endif %}">＋ Tambah soal {% if game == 'literasi' %}Literasi{% else %}Numerasi{% endif %}</a></div></header>
+
+<nav class="tabs-game" aria-label="Pilih game">
+  <a href="{% url 'soal' %}?game=literasi" class="{% if game == 'literasi' %}on lit{% endif %}">Game 1 · Literasi <span class="n">{{ jumlah.literasi }}</span></a>
+  <a href="{% url 'soal' %}?game=numerasi" class="{% if game == 'numerasi' %}on num{% endif %}">Game 2 · Numerasi <span class="n">{{ jumlah.numerasi }}</span></a>
+</nav>
+
+<section class="card">
+  <h2>Cara kerja Bank Soal {% if game == 'literasi' %}Literasi (Game 1){% else %}Numerasi (Game 2){% endif %}</h2>
+  <ul class="aturan">
+    <li><b>1 bagian = 5 level</b>, dan <b>1 level dimainkan dengan {{ per_level }} soal</b> (tiap jawaban benar menyalakan 1 lampu ✓).</li>
+    <li>Bagian baru muncul di Jalan Lentera murid setelah <b>kelima levelnya</b> punya soal aktif. Ideal: minimal {{ per_level }} soal aktif per level. Bila lebih, murid mendapat {{ per_level }} soal yang dipilih acak.</li>
+    {% if game == 'literasi' %}<li>Setiap soal berisi <b>gambar</b>, <b>pertanyaan</b>, <b>kolom kata</b> (kata yang tampil di game), dan <b>jawaban benar</b> (urutan kata yang benar).</li>
+    {% else %}<li>Numerasi: <b>1 bagian = 1 kompetensi</b> (mis. Bagian 1 Nilai Tempat). Jawaban benar berupa angka; untuk Nilai Tempat dan Simpan-Pinjam jawabannya dihitung otomatis.</li>{% endif %}
+    <li>Soal yang baru dibuat dipakai pada misi <b>berikutnya</b>. Misi yang sedang berjalan memakai soal yang sudah dikunci, jadi murid tidak terganggu.</li>
+  </ul>
+</section>
+
+<section class="card" style="margin-top:16px">
+  <h2>Peta bank soal · soal aktif per level</h2>
+  {% if matriks %}
+  <div class="scroll"><table class="matriks">
+    <thead><tr><th class="kiri">Bagian</th>{% if game == 'numerasi' %}<th class="kiri">Kompetensi</th>{% endif %}{% for i in "12345" %}<th>Level {{ i }}</th>{% endfor %}<th class="kiri">Status</th><th></th></tr></thead>
+    <tbody>{% for m in matriks %}<tr>
+      <td class="kiri"><b>Bagian {{ m.no }}</b><br><span class="kecil">{{ m.judul }}</span></td>
+      {% if game == 'numerasi' %}<td class="kiri kecil">{{ m.kompetensi|default:"-" }}</td>{% endif %}
+      {% for c in m.level %}<td><a class="mcell {% if c.cukup %}cukup{% elif c.ada %}kurang{% else %}kosong{% endif %}" href="{% url 'soal' %}?game={{ game }}&amp;bagian={{ m.no }}&amp;level={{ c.level }}" title="{{ c.aktif }} soal aktif{% if c.nonaktif %}, {{ c.nonaktif }} nonaktif{% endif %}. Klik untuk melihat daftarnya.">{{ c.aktif }}<small>{% if c.nonaktif %}+{{ c.nonaktif }} off{% elif c.cukup %}cukup{% elif c.ada %}kurang{% else %}kosong{% endif %}</small></a></td>{% endfor %}
+      <td class="kiri">{% if m.lengkap %}<span class="chip hijau">Tampil di murid</span>{% else %}<span class="chip kuning" title="Murid baru melihat bagian ini setelah semua levelnya punya soal">Level {{ m.kurang|join:", " }} kosong</span>{% endif %}</td>
+      <td><a class="btn abu" href="{% url 'soal_baru' %}?game={{ game }}&amp;bagian={{ m.no }}{% if m.kurang %}&amp;level={{ m.kurang.0 }}{% endif %}">＋ Soal</a></td></tr>{% endfor %}</tbody></table></div>
+  <p class="legend"><span style="color:#1c8a55">■ Cukup (≥ {{ per_level }} soal aktif)</span><span style="color:#b98300">■ Kurang (murid dapat lampu lebih sedikit)</span><span style="color:#8a96b4">■ Kosong</span></p>
+  {% else %}
+  <p class="hint">Belum ada soal {% if game == 'literasi' %}Literasi{% else %}Numerasi{% endif %}. Klik “＋ Tambah soal” untuk membuat soal pertama.</p>
+  {% endif %}
+</section>
+
+<form method="get" class="card f baris" style="margin-top:16px">
+  <input type="hidden" name="game" value="{{ game }}">
+  <label>Bagian<select name="bagian"><option value="">Semua bagian</option>{% for n in bagian_ada %}<option value="{{ n }}" {% if n|stringformat:"s" == f.bagian %}selected{% endif %}>Bagian {{ n }}</option>{% endfor %}</select></label>
+  <label>Level<select name="level"><option value="">Semua level</option>{% for i in "12345" %}<option value="{{ i }}" {% if i == f.level %}selected{% endif %}>Level {{ i }}</option>{% endfor %}</select></label>
+  <div class="aksi" style="align-self:end"><button class="btn navy">Terapkan filter</button><a class="btn abu" href="{% url 'soal' %}?game={{ game }}">Reset</a></div>
+</form>
+
+<div class="soal-list" style="margin-top:16px">
+{% for s in daftar %}
+  <article class="soal{% if not s.aktif %} mati{% endif %}">
+    {% if s.gambar %}<img class="thumb" src="{{ s.gambar.url }}" alt="Gambar soal {{ s.item_id }}" loading="lazy">{% else %}<span class="thumb" aria-hidden="true">🔢</span>{% endif %}
+    <div class="isi">
+      <div class="meta"><span class="chip biru">Bagian {{ s.bagian }} · Level {{ s.level }}</span><span class="chip {% if game == 'literasi' %}merah{% else %}hijau{% endif %}">{{ s.kompetensi.nama }}</span>
+        {% if s.aktif %}<span class="chip hijau">Aktif</span>{% else %}<span class="chip kuning">Nonaktif</span>{% endif %}<span class="kecil">{{ s.item_id }}</span></div>
+      <h3>{{ s.judul }}</h3>
+      <p>{{ s.detail }}</p>
+      <p class="jaw">✔ Jawaban benar: {{ s.jawaban_teks }}</p>
+    </div>
+    <div class="aksi">
+      <a class="btn biru-b" href="{% url 'soal_ubah' s.id %}">Ubah</a>
+      <form method="post">{% csrf_token %}<input type="hidden" name="aksi" value="aktif"><input type="hidden" name="id" value="{{ s.id }}"><input type="hidden" name="game" value="{{ game }}"><input type="hidden" name="kembali" value="{{ kembali }}"><button class="btn abu">{% if s.aktif %}Nonaktifkan{% else %}Aktifkan{% endif %}</button></form>
+      <form method="post" onsubmit="return confirm('Hapus soal {{ s.item_id }} dari bank soal? Tindakan ini tidak bisa dibatalkan.')">{% csrf_token %}<input type="hidden" name="aksi" value="hapus"><input type="hidden" name="id" value="{{ s.id }}"><input type="hidden" name="game" value="{{ game }}"><input type="hidden" name="kembali" value="{{ kembali }}"><button class="btn abu">Hapus</button></form>
+    </div>
+  </article>
+{% empty %}<p class="card">Tidak ada soal yang cocok. Ubah filter atau klik “＋ Tambah soal”.</p>{% endfor %}
+</div>
+{% endblock %}

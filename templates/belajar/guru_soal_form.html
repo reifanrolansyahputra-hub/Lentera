@@ -1,0 +1,299 @@
+{% extends 'belajar/guru_base.html' %}
+{% block title %}{% if soal %}Ubah soal{% else %}Soal baru{% endif %} · Bank Soal · LENTERA{% endblock %}
+{% block isi %}
+<header class="top"><h1>{% if soal %}Ubah soal {{ soal.item_id }}{% else %}Soal {% if game == 'literasi' %}Literasi (Game 1){% else %}Numerasi (Game 2){% endif %} baru{% endif %}</h1>
+  <div class="bar"><a class="btn abu" href="{% url 'soal' %}?game={{ game }}">← Kembali ke daftar</a></div></header>
+
+<form method="post" enctype="multipart/form-data" class="form-soal" id="form-soal" data-game="{{ game }}" data-per-level="{{ per_level }}" data-maks-mb="{{ gambar_maks_mb }}"{% if soal %} data-awal="[{{ soal.bagian }}, {{ soal.level }}, {% if soal.aktif %}true{% else %}false{% endif %}]"{% endif %}>
+  {% csrf_token %}<input type="hidden" name="game" value="{{ game }}">
+
+  <div class="kolom">
+    <section class="card f">
+      <h2>1 · Posisi di Jalan Lentera</h2>
+      <div class="f baris">
+        <label>{% if game == 'literasi' %}Jenis kemampuan{% else %}Kompetensi (jenis soal){% endif %}<select name="kompetensi" id="f-komp">{% for k in kompetensi %}<option value="{{ k.kode }}" {% if k.kode == v.kompetensi %}selected{% endif %}>{{ k.nama }}</option>{% endfor %}</select></label>
+        <label>Bagian<input type="number" name="bagian" min="1" max="20" value="{{ v.bagian }}" required></label>
+        <label>Level (1–5)<input type="number" name="level" min="1" max="5" value="{{ v.level }}" required></label>
+      </div>
+      <p class="hint" id="info-posisi" role="status"></p>
+      <label class="cek"><input type="hidden" name="aktif" value="0"><input type="checkbox" name="aktif" value="1" {% if v.aktif != "0" %}checked{% endif %}> Aktif (dipakai di game)</label>
+    </section>
+
+{% if game == 'literasi' %}
+    <section class="card f">
+      <h2>2 · Gambar dan pertanyaan</h2>
+      <label>Gambar soal {% if soal %}(kosongkan bila tidak diganti){% else %}(wajib){% endif %}<input type="file" name="gambar" id="f-gambar" accept="image/png,image/jpeg,image/gif,image/webp" {% if not soal %}required{% endif %}></label>
+      <p class="hint">JPG, PNG, GIF, atau WEBP, maksimal {{ gambar_maks_mb }} MB. Bila form gagal tersimpan, pilih lagi gambarnya.</p>
+      <img id="pv-gambar" class="unggah-preview" alt="Pratinjau gambar soal"{% if gambar_url %} src="{{ gambar_url }}"{% else %} hidden{% endif %}>
+      <label>Pertanyaan / perintah untuk murid<input name="instruksi" id="f-instruksi" maxlength="300" required value="{{ v.instruksi }}" placeholder="mis. Susunlah kata-kata menjadi kalimat yang benar!"></label>
+    </section>
+
+    <section class="card f">
+      <h2>3 · Kolom kata dan jawaban benar</h2>
+      <label>Kolom kata (kata yang tampil di game)<textarea name="kolom_kata" id="f-kolom" rows="5" required placeholder="Satu kata per baris, atau pisahkan dengan koma&#10;Ibu&#10;memasak&#10;nasi">{{ v.kolom_kata }}</textarea></label>
+      <p class="hint">Boleh menambahkan kata pengecoh yang tidak dipakai di jawaban. Klik sebuah kata di bawah untuk memasukkannya ke jawaban.</p>
+      <div class="chips-kata" id="chips-kata" aria-live="polite"></div>
+      <label>Jawaban benar (urutan kata, satu kata per baris)<textarea name="jawaban" id="f-jawaban" rows="4" required placeholder="Ibu&#10;memasak&#10;nasi">{{ v.jawaban }}</textarea></label>
+      <div class="aksi"><button type="button" class="btn abu" id="btn-kosong">Kosongkan jawaban</button></div>
+      <p class="cek-info" id="cek-jawaban" role="status"></p>
+      <details {% if v.jawaban_lain %}open{% endif %}><summary class="btn abu">Jawaban benar lainnya (opsional)</summary>
+        <label style="margin-top:10px">Satu susunan per baris, kata dipisah koma<textarea name="jawaban_lain" rows="3" placeholder="nasi, Ibu, memasak">{{ v.jawaban_lain }}</textarea></label>
+        <p class="hint">Dipakai bila ada lebih dari satu susunan kalimat yang benar.</p></details>
+      <label class="cek"><input type="checkbox" name="urutan_bebas" value="1" {% if v.urutan_bebas %}checked{% endif %}> Urutan bebas: kata benar boleh dipilih dalam urutan apa pun (mis. soal mengelompokkan benda)</label>
+    </section>
+{% else %}
+    <section class="card f">
+      <h2>2 · Isi soal</h2>
+      <div data-komp="NM-NILAI-TEMPAT">
+        <div class="f baris"><label>Ikat puluhan (1–20)<input type="number" name="puluhan" min="1" max="20" value="{{ v.puluhan }}" required></label>
+          <label>Satuan (0–9)<input type="number" name="satuan" min="0" max="9" value="{{ v.satuan }}" required></label></div>
+        <p class="hint" style="margin-top:8px">Murid menghitung jumlah semuanya (1 ikat = 10). Jawaban dihitung otomatis.</p>
+      </div>
+      <div data-komp="NM-REGROUPING">
+        <div class="f baris"><label>Bilangan pertama (0–999)<input type="number" name="a" min="0" max="999" value="{{ v.a }}" required></label>
+          <label>Operasi<select name="op"><option value="+" {% if v.op != '-' %}selected{% endif %}>＋ penjumlahan</option><option value="-" {% if v.op == '-' %}selected{% endif %}>− pengurangan</option></select></label>
+          <label>Bilangan kedua (0–999)<input type="number" name="b" min="0" max="999" value="{{ v.b }}" required></label></div>
+        <p class="hint" style="margin-top:8px">Jawaban dihitung otomatis.</p>
+      </div>
+      <div data-komp="NM-POLA">
+        <label>Deret bilangan (3–8 angka, pisahkan dengan koma)<input name="deret" value="{{ v.deret }}" placeholder="2, 4, 6, 8" required></label>
+        <p class="hint" style="margin-top:8px">Murid menebak angka berikutnya. Isi jawabannya di bagian 3.</p>
+      </div>
+      <div data-komp="NM-CERITA">
+        <label>Teks soal cerita<textarea name="instruksi" id="f-cerita" rows="4" maxlength="400" required placeholder="mis. Ayah membeli 12 apel dan 15 jeruk. **Berapa** jumlah buah semuanya?">{{ v.instruksi }}</textarea></label>
+        <p class="hint" style="margin:6px 0 12px">Gunakan **kata** untuk menebalkan kata penting. Kelompok di bawah ini opsional (tampil sebagai kartu bantu di game).</p>
+        <div class="f baris">
+          <label>Nama kelompok 1<input name="label1" maxlength="30" value="{{ v.label1 }}" placeholder="Apel"></label>
+          <label>Jumlah kelompok 1<input type="number" name="val1" min="0" max="500" value="{{ v.val1 }}"></label>
+          <label>Nama kelompok 2<input name="label2" maxlength="30" value="{{ v.label2 }}" placeholder="Jeruk"></label>
+          <label>Jumlah kelompok 2<input type="number" name="val2" min="0" max="500" value="{{ v.val2 }}"></label>
+          <label>Gambar ilustrasi<select name="ikon">{% for k, nama in ikon %}<option value="{{ k }}" {% if k == v.ikon %}selected{% endif %}>{{ nama }}</option>{% endfor %}</select></label>
+          <label>Jumlah langkah hitung<select name="langkah">{% for n in "123" %}<option value="{{ n }}" {% if n == v.langkah|stringformat:"s" %}selected{% endif %}>{{ n }} langkah</option>{% endfor %}</select></label>
+        </div>
+      </div>
+    </section>
+
+    <section class="card f">
+      <h2>3 · Jawaban benar dan petunjuk</h2>
+      <label>Jawaban benar (angka)<input type="number" name="kunci" id="f-kunci" min="0" max="99999" value="{{ v.kunci }}"></label>
+      <p class="cek-info" id="info-kunci" role="status"></p>
+      <div class="aksi"><button type="button" class="btn abu" id="btn-saran" hidden>Pakai saran jawaban</button></div>
+      <label>Petunjuk untuk murid (opsional)<input name="petunjuk" maxlength="240" value="{{ v.petunjuk }}" placeholder="Tampil saat murid meminta petunjuk. Kosongkan untuk petunjuk otomatis."></label>
+    </section>
+{% endif %}
+
+    <div class="aksi form-aksi">
+      <button class="btn navy">Simpan soal</button>
+      <button class="btn biru-b" name="lagi" value="1">Simpan &amp; tambah soal lagi</button>
+      <a class="btn abu" href="{% url 'soal' %}?game={{ game }}">Batal</a>
+    </div>
+  </div>
+
+  <aside class="kolom">
+    <section class="card">
+      <h2>Isi bank di bagian ini</h2>
+      <div class="bank-chips" id="bank-chips" aria-live="polite"></div>
+      <p class="hint" style="margin-top:8px">Angka = soal aktif per level. Murid memainkan {{ per_level }} soal tiap level; bila lebih, dipilih acak.</p>
+    </section>
+    <section class="card pv">
+      <h2>Pratinjau untuk murid</h2>
+      {% if game == 'literasi' %}
+      <img id="pv-gambar2" class="unggah-preview" alt="Gambar soal"{% if gambar_url %} src="{{ gambar_url }}"{% else %} hidden{% endif %}>
+      <p class="pv-q" id="pv-q"></p>
+      <div class="chips-kata pv-chips" id="pv-chips"></div>
+      <p class="pv-jawab" id="pv-jawab"></p>
+      {% else %}
+      <p class="pv-q" id="pv-q"></p>
+      <p class="pv-jawab" id="pv-jawab"></p>
+      {% endif %}
+    </section>
+  </aside>
+</form>
+{{ ringkasan|json_script:"data-ringkasan" }}
+{{ peta_bagian|json_script:"data-peta" }}
+{% endblock %}
+{% block js %}<script>
+(function () {
+  var form = document.getElementById('form-soal');
+  var GAME = form.dataset.game;
+  var RINGKASAN = JSON.parse(document.getElementById('data-ringkasan').textContent);
+  var PETA = JSON.parse(document.getElementById('data-peta').textContent);
+  var PER_LEVEL = parseInt(form.dataset.perLevel, 10) || 5;
+  var MAKS_MB = parseFloat(form.dataset.maksMb) || 5;
+  var AWAL = form.dataset.awal ? JSON.parse(form.dataset.awal) : null;   // [bagian, level, aktif] soal yang sedang diubah
+  var komp = document.getElementById('f-komp');
+
+  function $(id) { return document.getElementById(id); }
+  function el(nama) { return form.elements[nama]; }
+  function val(nama) { var e = el(nama); return e ? String(e.value) : ''; }
+  function bil(nama) { var s = val(nama).trim(); return (s === '' || isNaN(Number(s))) ? null : parseInt(s, 10); }
+  function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function markup(t) { return esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>'); }
+  function aktifDicentang() { var c = form.querySelector('input[type=checkbox][name=aktif]'); return !!(c && c.checked); }
+  function namaKomp(kode) {
+    var o = [].filter.call(komp.options, function (x) { return x.value === kode; })[0];
+    return o ? o.textContent : kode;
+  }
+
+  // ---------- posisi dan isi bank ----------
+  function infoPosisi() {
+    var b = bil('bagian'), l = bil('level'), info = $('info-posisi'), chips = $('bank-chips');
+    chips.textContent = '';
+    if (!b || !l || b < 1 || l < 1 || l > 5) { info.textContent = ''; return; }
+    var baris = RINGKASAN[b] || {};
+    for (var n = 1; n <= 5; n++) {
+      var sel = baris[n] || [0, 0], c = document.createElement('span');
+      c.className = 'chip ' + (sel[0] >= PER_LEVEL ? 'hijau' : sel[0] > 0 ? 'kuning' : 'abu') + (n === l ? ' pilih' : '');
+      c.textContent = 'L' + n + ' · ' + sel[0];
+      chips.appendChild(c);
+    }
+    var sel2 = baris[l] || [0, 0], sudah = sel2[0];
+    if (AWAL && AWAL[0] === b && AWAL[1] === l && AWAL[2]) sudah -= 1;
+    var jadi = sudah + (aktifDicentang() ? 1 : 0);
+    var t = 'Bagian ' + b + ' · Level ' + l + ': sudah ada ' + sudah + ' soal aktif lain. Dengan soal ini menjadi ' + jadi + ' soal' +
+      (jadi >= PER_LEVEL ? ' (cukup ✓).' : ' (murid hanya mendapat ' + jadi + ' lampu di level ini; ideal ' + PER_LEVEL + ').');
+    if (GAME === 'numerasi' && !AWAL) {
+      var dipakai = PETA[b];
+      if (dipakai && dipakai !== komp.value) {
+        t += ' ⚠ Bagian ' + b + ' Numerasi sudah dipakai kompetensi “' + namaKomp(dipakai) + '”. Pilih nomor bagian lain atau samakan kompetensinya.';
+      }
+    }
+    info.textContent = t;
+  }
+
+  // ---------- Game 1 ----------
+  function daftarKata(teks, denganKoma) {
+    return String(teks).replace(/\r/g, '').split(denganKoma ? /[\n,]+/ : /\n/)
+      .map(function (x) { return x.trim().replace(/\s+/g, ' '); }).filter(Boolean);
+  }
+  function hitung(daftar) { var h = {}; daftar.forEach(function (k) { h[k] = (h[k] || 0) + 1; }); return h; }
+
+  function segarGame1() {
+    var kolom = daftarKata(val('kolom_kata'), true), jawaban = daftarKata(val('jawaban'), false);
+    var pakai = hitung(jawaban), box = $('chips-kata'), pv = $('pv-chips');
+    box.textContent = ''; pv.textContent = '';
+    if (!kolom.length) { var k = document.createElement('span'); k.className = 'kecil'; k.textContent = 'Kata dari kolom kata akan tampil di sini.'; box.appendChild(k); }
+    var sisa = hitung(jawaban);
+    kolom.forEach(function (kata) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'chip-kata'; b.textContent = kata;
+      if (sisa[kata] > 0) { b.classList.add('dipakai'); sisa[kata]--; }
+      b.addEventListener('click', function () {
+        var j = el('jawaban'), isi = j.value.replace(/\s+$/, '');
+        j.value = (isi ? isi + '\n' : '') + kata;
+        segarkan();
+      });
+      box.appendChild(b);
+      var p = document.createElement('span'); p.className = 'kata'; p.textContent = kata; pv.appendChild(p);
+    });
+
+    var tersedia = hitung(kolom), hilang = [];
+    Object.keys(pakai).forEach(function (kata) { if ((tersedia[kata] || 0) < pakai[kata]) hilang.push(kata); });
+    var cek = $('cek-jawaban');
+    cek.className = 'cek-info';
+    if (!jawaban.length) { cek.textContent = 'Jawaban belum diisi.'; }
+    else if (hilang.length) { cek.textContent = '⚠ Kata ini belum ada di kolom kata: ' + hilang.join(', ') + '.'; cek.classList.add('salah'); }
+    else if (kolom.length < 2) { cek.textContent = '⚠ Kolom kata minimal berisi 2 kata.'; cek.classList.add('salah'); }
+    else { cek.textContent = '✓ Jawaban benar: ' + jawaban.join(' '); cek.classList.add('benar'); }
+
+    $('pv-q').textContent = val('instruksi') || 'Pertanyaan soal tampil di sini.';
+    $('pv-jawab').textContent = jawaban.length ? '✔ Jawaban benar: ' + jawaban.join(' ') + (form.querySelector('[name=urutan_bebas]').checked ? ' (urutan bebas)' : '') : '';
+  }
+
+  // ---------- Game 2 ----------
+  var kunci = $('f-kunci');
+  var saran = null;
+
+  function terapkanKomp() {
+    var kode = komp.value;
+    [].forEach.call(form.querySelectorAll('[data-komp]'), function (s) {
+      var tampil = s.dataset.komp.split(' ').indexOf(kode) >= 0;
+      s.hidden = !tampil;
+      [].forEach.call(s.querySelectorAll('input,select,textarea'), function (e) { e.disabled = !tampil; });
+    });
+    var manual = (kode === 'NM-POLA' || kode === 'NM-CERITA');
+    kunci.readOnly = !manual; kunci.required = manual;
+  }
+
+  function sarankanPola(d) {
+    if (d.length < 3) return null;
+    var s = d[1] - d[0], tetap = d.every(function (x, i) { return i === 0 || x - d[i - 1] === s; });
+    if (tetap) return { nilai: d[d.length - 1] + s, ket: 'selisih tetap ' + (s >= 0 ? '+' : '') + s };
+    if (d[0] !== 0 && d[1] % d[0] === 0) {
+      var r = d[1] / d[0], geo = d.every(function (x, i) { return i === 0 || (d[i - 1] !== 0 && x === d[i - 1] * r); });
+      if (geo) return { nilai: d[d.length - 1] * r, ket: 'dikali ' + r + ' tiap langkah' };
+    }
+    return null;
+  }
+
+  function segarGame2() {
+    var kode = komp.value, q = $('pv-q'), info = $('info-kunci'), hasil = null, teks = '';
+    saran = null; $('btn-saran').hidden = true;
+    info.className = 'cek-info'; info.textContent = '';
+    if (kode === 'NM-NILAI-TEMPAT') {
+      var p = bil('puluhan'), s = bil('satuan');
+      teks = 'Ada <b>' + (p === null ? '…' : p) + ' ikat puluhan</b> dan <b>' + (s === null ? '…' : s) + ' satuan</b>. Jika satu ikat berisi 10 benda, berapa jumlah semuanya?';
+      if (p !== null && s !== null) hasil = p * 10 + s;
+    } else if (kode === 'NM-REGROUPING') {
+      var a = bil('a'), b = bil('b'), op = val('op') === '-' ? '-' : '+';
+      teks = 'Hitung <b>' + (a === null ? '…' : a) + ' ' + op + ' ' + (b === null ? '…' : b) + '</b>. Berapa hasilnya?';
+      if (a !== null && b !== null) {
+        hasil = op === '+' ? a + b : a - b;
+        if (hasil < 0) { info.textContent = '⚠ Pada pengurangan, bilangan pertama tidak boleh lebih kecil dari bilangan kedua.'; info.classList.add('salah'); hasil = null; }
+      }
+    } else if (kode === 'NM-POLA') {
+      var d = val('deret').trim().split(/[,\s]+/).filter(function (x) { return x !== ''; }).map(Number);
+      var sah = d.length >= 3 && d.length <= 8 && d.every(function (x) { return Number.isInteger(x); });
+      teks = 'Perhatikan pola bilangan berikut: <b>' + esc(d.join(', ')) + ', ...</b><br>Angka berikutnya adalah?';
+      if (sah) { saran = sarankanPola(d); }
+      if (!sah && val('deret').trim() !== '') { info.textContent = '⚠ Deret harus berisi 3 sampai 8 angka bulat.'; info.classList.add('salah'); }
+    } else {
+      teks = markup(val('instruksi')) || 'Teks soal cerita tampil di sini.';
+    }
+    q.innerHTML = teks;
+
+    var otomatis = (kode === 'NM-NILAI-TEMPAT' || kode === 'NM-REGROUPING');
+    if (otomatis) {
+      kunci.value = hasil === null ? '' : hasil;
+      if (hasil !== null) { info.textContent = 'Jawaban dihitung otomatis dari isi soal.'; }
+    } else if (kode === 'NM-POLA' && saran) {
+      info.textContent = 'Saran jawaban: ' + saran.nilai + ' (' + saran.ket + '). Periksa lagi sebelum menyimpan.';
+      $('btn-saran').hidden = false;
+    } else if (!info.textContent) {
+      info.textContent = 'Isi jawaban benar (bilangan bulat, 0 atau lebih).';
+    }
+    var k = kunci.value;
+    $('pv-jawab').textContent = k !== '' ? '✔ Jawaban benar: ' + k : '';
+  }
+
+  // ---------- pemasangan ----------
+  function segarkan() {
+    infoPosisi();
+    if (GAME === 'literasi') segarGame1(); else segarGame2();
+  }
+  form.addEventListener('input', function (e) {
+    if (e.target === komp && GAME === 'numerasi') terapkanKomp();
+    segarkan();
+  });
+  // Hanya "input": event "change" muncul saat kolom kehilangan fokus dan akan membangun ulang chip kata
+  // di tengah klik, sehingga klik pertama pada sebuah kata hilang.
+
+  if (GAME === 'literasi') {
+    $('btn-kosong').addEventListener('click', function () { el('jawaban').value = ''; segarkan(); });
+    $('f-gambar').addEventListener('change', function () {
+      var f = this.files && this.files[0], gambar = [$('pv-gambar'), $('pv-gambar2')];
+      if (!f) return;
+      if (f.size > MAKS_MB * 1024 * 1024) {
+        alert('Ukuran gambar maksimal ' + MAKS_MB + ' MB. Pilih gambar yang lebih kecil.');
+        this.value = ''; return;
+      }
+      var url = URL.createObjectURL(f);
+      gambar.forEach(function (g) { g.src = url; g.hidden = false; });
+    });
+  } else {
+    $('btn-saran').addEventListener('click', function () { if (saran) { kunci.value = saran.nilai; segarGame2(); $('pv-jawab').textContent = '✔ Jawaban benar: ' + saran.nilai; } });
+    terapkanKomp();
+  }
+  segarkan();
+})();
+</script>{% endblock %}

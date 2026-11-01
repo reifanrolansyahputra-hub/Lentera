@@ -21,5 +21,5 @@ class GameCorsMiddleware:
                 resp["Access-Control-Allow-Origin"] = asal
                 resp["Vary"] = "Origin"
             resp["Access-Control-Allow-Headers"] = "Authorization, Content-Type"
-            resp["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+            resp["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
         return resp

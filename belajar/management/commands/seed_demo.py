@@ -8,7 +8,8 @@ from django.utils import timezone
 
 from accounts.models import Profile
 from belajar.apps import sinkron_taksonomi
-from belajar.models import Kelas, Kompetensi, Siswa
+from belajar import jalur
+from belajar.models import Kelas, Kompetensi, Misi, Siswa
 from belajar.services import catat_jawaban
 
 MURID = [("Raka", "🦊"), ("Alya", "🐼"), ("Bima", "🐯"), ("Citra", "🦄"), ("Dimas", "🐸"), ("Fitri", "🐰"),
@@ -25,8 +26,30 @@ def buat_user(username, nama, role, sandi=None):
     return u
 
 
+def progres_jalur(siswa, bakat, sekarang):
+    """Level Jalan Lentera yang sudah selesai, sebanding dengan kemampuan murid demo.
+
+    Peta Kompetensi dicicil mengikuti level yang selesai, jadi murid demo perlu riwayat level
+    supaya peta kelas tidak datar. Satu baris Misi "selesai" = satu level selesai.
+    """
+    for game in jalur.GAMES:
+        level = [(b["no"], x["level"], b["kompetensi"]) for b in jalur.bagian_bisa_dimainkan(game) for x in b["level"]]
+        if not level:
+            continue
+        fraksi = max(0.0, min(1.0, (bakat - 0.1) / 0.7)) * random.uniform(0.7, 1.0)
+        n = round(fraksi * len(level))
+        for i, (bagian, nomor, kompetensi) in enumerate(level[:n]):
+            durasi = random.randint(90, 420)
+            selesai = sekarang - timedelta(days=(n - i) * 50 / max(n, 1), hours=random.randint(0, 5))
+            Misi.objects.create(
+                siswa=siswa, kompetensi=kompetensi, bagian=bagian, level=nomor, jenis="misi", status="selesai",
+                skor=random.randint(70, 98), durasi_detik=durasi, mulai_pada=selesai - timedelta(seconds=durasi),
+                selesai_pada=selesai, dibuat=selesai - timedelta(seconds=durasi),
+            )
+
+
 class Command(BaseCommand):
-    help = "Data demo: kelas 3B, guru, 12 murid, dan ±8 minggu riwayat jawaban simulasi lewat services.catat_jawaban (jalur sama dengan API game)."
+    help = "Data demo: kelas 3B, guru, 12 murid, ±8 minggu riwayat jawaban simulasi lewat services.catat_jawaban (jalur sama dengan API game), dan level Jalan Lentera yang sudah selesai."
 
     def handle(self, *args, **opts):
         random.seed(7)
@@ -52,4 +75,5 @@ class Command(BaseCommand):
                         benar = random.random() < min(0.97, max(0.1, bakat + off[k.kode] + (56 - hari) * 0.002))
                         pola = POLA_DEMO.get(k.kode, "") if (not benar and random.random() < 0.7) else ""
                         catat_jawaban(s, k.kode, benar, 0, "demo", pola, random.randint(30000, 90000), False, t)
+                progres_jalur(s, bakat, now)
         self.stdout.write("Seed selesai. Murid: kode kelas 3B-LENTERA | Guru: guru_sari / guru12345")
