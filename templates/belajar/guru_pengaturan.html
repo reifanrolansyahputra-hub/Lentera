@@ -10,10 +10,14 @@
   <section class="card"><h2>Siswa kelas {{ kelas.nama }} ({{ siswa|length }})</h2>
     <div class="scroll"><table class="tabel"><thead><tr><th></th><th>Nama</th><th>ID samaran</th><th></th></tr></thead><tbody>
       {% for s in siswa %}<tr><td>{{ s.avatar }}</td><td>{{ s.nama }}</td><td><code>{{ s.kode_samaran }}</code></td>
-        <td><form method="post" onsubmit="return confirm('Hapus siswa ini beserta seluruh datanya?')">{% csrf_token %}<input type="hidden" name="aksi" value="hapus_siswa"><input type="hidden" name="id" value="{{ s.id }}"><button class="btn abu">Hapus</button></form></td></tr>
+        <td>
+          <form method="post" style="display:inline" onsubmit="return confirm('Reset progres {{ s.nama|escapejs }}? Jalan Lentera, Peta Kompetensi, dan statistiknya kembali seperti murid baru. Login & akunnya tidak hilang, dan datanya masih bisa dipulihkan dari Log Reset di bawah.')">{% csrf_token %}<input type="hidden" name="aksi" value="reset_siswa"><input type="hidden" name="id" value="{{ s.id }}"><button class="btn abu" title="Kosongkan progres belajar; akun & login tetap ada">Reset</button></form>
+          <form method="post" style="display:inline" onsubmit="return confirm('Hapus siswa ini beserta seluruh datanya?')">{% csrf_token %}<input type="hidden" name="aksi" value="hapus_siswa"><input type="hidden" name="id" value="{{ s.id }}"><button class="btn abu">Hapus</button></form>
+        </td></tr>
       {% empty %}<tr><td colspan="4">Belum ada siswa.</td></tr>{% endfor %}</tbody></table></div>
     <form method="post" class="f" style="margin-top:14px">{% csrf_token %}<input type="hidden" name="aksi" value="tambah_siswa">
       <label>Tambah siswa (satu nama per baris)<textarea name="nama" rows="4" placeholder="Raka&#10;Alya"></textarea></label><button class="btn biru-b">Tambah siswa</button></form>
+    {% if siswa %}<form method="post" style="margin-top:10px" onsubmit="return confirm('Reset progres SEMUA siswa di kelas {{ kelas.nama|escapejs }}? Jalan Lentera dan Peta Kompetensi tiap murid kembali seperti baru. Masing-masing tetap bisa dipulihkan sendiri-sendiri dari Log Reset.')">{% csrf_token %}<input type="hidden" name="aksi" value="reset_kelas"><button class="btn abu">↺ Reset semua murid</button></form>{% endif %}
   </section>
   <div>
     <section class="card"><h2>Kode kelas</h2><p class="kode-besar">{{ kelas.kode }}</p><p class="hint">Murid masuk dengan kode ini, lalu memilih avatar.</p>
@@ -27,5 +31,22 @@
       <form method="post" class="f baris">{% csrf_token %}<input type="hidden" name="aksi" value="sandi"><label>Kata sandi baru<input name="sandi" type="password" minlength="6" required></label><button class="btn biru-b">Ganti</button></form></section>
   </div>
 </div>
+<section class="card" style="margin-top:18px"><h2>Log Reset{% if arsip %} ({{ arsip|length }}){% endif %}</h2>
+  <p class="hint">Tiap progres murid direset, datanya dicadangkan di sini selama {{ retensi_hari }} hari sebelum dihapus permanen — jadi kalau kepencet atau keliru, masih bisa dipulihkan.</p>
+  <div class="scroll"><table class="tabel"><thead><tr><th>Murid</th><th>Dicadangkan</th><th>Isi</th><th>Status</th><th></th></tr></thead><tbody>
+    {% for a in arsip %}<tr>
+      <td>{{ a.siswa.avatar }} {{ a.siswa.nama }}</td>
+      <td>{{ a.dibuat|date:"d M Y, H:i" }}{% if a.oleh %}<br><small class="hint">oleh {{ a.oleh.first_name|default:a.oleh.username }}</small>{% endif %}</td>
+      <td>{{ a.ringkasan|default:"–" }}</td>
+      <td>{% if a.status == "dipulihkan" %}<span class="chip biru">Dipulihkan {{ a.dipulihkan_pada|date:"d M, H:i" }}</span>
+        {% elif a.status == "kedaluwarsa" %}<span class="chip abu">Kedaluwarsa</span>
+        {% else %}<span class="chip hijau">Aktif · s.d. {{ a.kedaluwarsa_pada|date:"d M Y" }}</span>{% endif %}</td>
+      <td>
+        {% if a.status == "aktif" %}{% if a.bisa_pulih %}<form method="post" style="display:inline" onsubmit="return confirm('Pulihkan progres {{ a.siswa.nama|escapejs }} seperti sebelum direset ({{ a.ringkasan|escapejs }})?')">{% csrf_token %}<input type="hidden" name="aksi" value="pulihkan_reset"><input type="hidden" name="id" value="{{ a.id }}"><button class="btn biru-b">Pulihkan</button></form>
+          {% else %}<span class="hint" title="Murid ini sudah mulai main lagi sejak direset, jadi tidak bisa dipulihkan otomatis supaya progres barunya tidak tertimpa">Sudah main lagi</span>{% endif %}{% endif %}
+        <form method="post" style="display:inline" onsubmit="return confirm('Hapus arsip ini permanen? Setelah ini datanya tidak bisa dipulihkan lagi.')">{% csrf_token %}<input type="hidden" name="aksi" value="hapus_reset"><input type="hidden" name="id" value="{{ a.id }}"><button class="btn abu">Hapus permanen</button></form>
+      </td></tr>
+    {% empty %}<tr><td colspan="5">Belum ada riwayat reset.</td></tr>{% endfor %}</tbody></table></div>
+</section>
 {% endif %}
 {% endblock %}

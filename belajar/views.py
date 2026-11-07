@@ -12,11 +12,12 @@ from django.views.decorators.http import require_POST
 
 from accounts.utils import HOME, get_role, role_required
 from . import engine, jalur
-from .models import Aktivitas, HasilDiagnostik, Jawaban, Kelas, Kompetensi, Penugasan
+from .models import Aktivitas, ArsipReset, HasilDiagnostik, Jawaban, Kelas, Kompetensi, Penugasan
 from django.utils import timezone
 from .bank_soal import KOMPETENSI_UTAMA_LITERASI
-from .services import (aktifkan_diagnostik, buat_kelas, kode_kelas_baru, misi_aktif, penguasaan_lengkap, ringkasan_kelas, status_diagnostik,
-                       tambah_siswa, terapkan_diagnostik, terapkan_ke_kelompok, tugaskan_aktivitas)
+from .services import (RESET_RETENSI_HARI, aktifkan_diagnostik, arsip_bisa_dipulihkan, bersihkan_arsip_kedaluwarsa, buat_kelas,
+                       kode_kelas_baru, misi_aktif, penguasaan_lengkap, pulihkan_arsip, reset_progres_kelas, reset_progres_siswa,
+                       ringkasan_kelas, status_diagnostik, tambah_siswa, terapkan_diagnostik, terapkan_ke_kelompok, tugaskan_aktivitas)
 
 
 def root(request):
@@ -52,6 +53,7 @@ def murid_beranda(request):
     return render(request, "belajar/murid_beranda.html", {
         "siswa": siswa, "kartu": [_kartu(m, jalan) for m in aktif], "peta": [{"p": p, "i": i} for p, i in peta],
         "jalan": [jalan["literasi"], jalan["numerasi"]], "lencana": jalur.lencana_siswa(jalan, target),
+        "zig_lebar": jalur.ZIGZAG_LEBAR, "zig_tinggi": jalur.ZIGZAG_TINGGI,
         "lencana_menyala": sum(1 for x in jalur.lencana_siswa(jalan, target) if x[3]),
         "diagnostik": diagnostik, "target_bagian": target, "aturan": jalur.aturan_waktu(), "sekolah": settings.LENTERA_SEKOLAH})
 
@@ -411,6 +413,37 @@ def guru_pengaturan(request):
             elif aksi == "hapus_siswa" and kelas:
                 get_object_or_404(kelas.siswa.all(), id=p["id"]).user.delete()
                 messages.success(request, "Siswa dihapus beserta datanya.")
+            elif aksi == "reset_siswa" and kelas:
+                s = get_object_or_404(kelas.siswa.all(), id=p["id"])
+                nama = s.nama
+                arsip = reset_progres_siswa(s, oleh=request.user)
+                if arsip:
+                    messages.success(
+                        request,
+                        f"Progres {nama} direset ({arsip.ringkasan}). Jalan Lentera dan Peta Kompetensinya "
+                        f"kembali seperti murid baru. Bisa dipulihkan dari Log Reset di bawah sampai "
+                        f"{timezone.localtime(arsip.kedaluwarsa_pada).strftime('%d %b %Y')}.",
+                    )
+                else:
+                    messages.success(request, f"{nama} memang belum punya progres untuk direset.")
+            elif aksi == "reset_kelas" and kelas:
+                n = reset_progres_kelas(kelas, oleh=request.user)
+                messages.success(
+                    request,
+                    f"Progres {n} dari {kelas.siswa.count()} siswa direset." if n else
+                    "Belum ada siswa yang punya progres untuk direset.",
+                )
+            elif aksi == "pulihkan_reset" and kelas:
+                arsip = get_object_or_404(ArsipReset, id=p["id"], siswa__kelas=kelas)
+                try:
+                    pulihkan_arsip(arsip)
+                    messages.success(request, f"Progres {arsip.siswa.nama} berhasil dipulihkan seperti sebelum direset.")
+                except ValueError as e:
+                    messages.error(request, str(e))
+            elif aksi == "hapus_reset" and kelas:
+                arsip = get_object_or_404(ArsipReset, id=p["id"], siswa__kelas=kelas)
+                arsip.delete()
+                messages.success(request, "Arsip reset dihapus permanen.")
             elif aksi == "ganti_kode" and kelas:
                 kelas.kode = kode_kelas_baru(kelas.nama)
                 kelas.save()
@@ -435,4 +468,15 @@ def guru_pengaturan(request):
         except (ValueError, KeyError):
             messages.error(request, "Isian tidak valid (kata sandi minimal 6 karakter).")
         return redirect("/guru/pengaturan/")
-    return render(request, "belajar/guru_pengaturan.html", _ctx(request, kelas, "pengaturan", siswa=kelas.siswa.select_related("user") if kelas else []))
+    arsip = []
+    if kelas:
+        bersihkan_arsip_kedaluwarsa(kelas)
+        arsip = list(ArsipReset.objects.filter(siswa__kelas=kelas).select_related("siswa__user", "oleh")[:30])
+        for a in arsip:
+            a.bisa_pulih = arsip_bisa_dipulihkan(a)
+    return render(request, "belajar/guru_pengaturan.html", _ctx(
+        request, kelas, "pengaturan",
+        siswa=kelas.siswa.select_related("user") if kelas else [],
+        arsip=arsip,
+        retensi_hari=RESET_RETENSI_HARI,
+    ))

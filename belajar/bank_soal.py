@@ -2,8 +2,9 @@
 Bank soal Game 1 (Literasi) dan Game 2 (Numerasi) yang dikelola guru.
 
 Isi modul:
-- validasi isian form guru (Game 1: gambar + kolom kata + jawaban; Game 2: angka + jawaban),
-- perhitungan jawaban otomatis untuk jenis soal yang bisa dihitung,
+- validasi isian form guru (Game 1: soal susun kalimat dengan gambar + kolom kata + jawaban,
+  atau soal baca kalimat dengan mikrofon; Game 2: dua bilangan untuk empat operasi hitung),
+- perhitungan jawaban otomatis keempat operasi hitung,
 - serialisasi soal ke format asli tiap game (dipakai API /api/game/soal/),
 - ringkasan jumlah soal per bagian dan level.
 
@@ -25,21 +26,38 @@ from .models import SoalGame
 # 1. KONSTANTA
 # ==========================================================
 
-KODE_LITERASI = ("LT-KALIMAT", "LT-KOSAKATA", "LT-PAHAM", "LT-LANCAR")
-KODE_NUMERASI = ("NM-NILAI-TEMPAT", "NM-REGROUPING", "NM-POLA", "NM-CERITA")
+KODE_LITERASI = ("LT-KALIMAT", "LT-KOSAKATA", "LT-KETEPATAN", "LT-LANCAR")
+KODE_NUMERASI = ("NM-TAMBAH", "NM-KURANG", "NM-KALI", "NM-BAGI")
 
 # Kompetensi utama misi Game 1 (satu level Game 1 memuat campuran kompetensi literasi).
 KOMPETENSI_UTAMA_LITERASI = "LT-KALIMAT"
 
-# Urutan bagian bawaan Numerasi (1 kompetensi = 1 bagian).
-BAGIAN_NUMERASI_BAWAAN = {"NM-NILAI-TEMPAT": 1, "NM-REGROUPING": 2, "NM-POLA": 3, "NM-CERITA": 4}
+# Soal baca kalimat (dibaca lantang, diperiksa mikrofon). Susun kalimat dan baca kalimat
+# satu kesatuan dalam satu level Game 1: jenis soal dibedakan lewat kompetensinya.
+KOMPETENSI_BACA = "LT-KETEPATAN"
+KODE_LITERASI_SUSUN = tuple(k for k in KODE_LITERASI if k != KOMPETENSI_BACA)
+
+# Urutan bagian bawaan Numerasi (1 operasi hitung = 1 bagian).
+BAGIAN_NUMERASI_BAWAAN = {"NM-TAMBAH": 1, "NM-KURANG": 2, "NM-KALI": 3, "NM-BAGI": 4}
 
 JENIS_KOMPETENSI_GAME1 = {
     "LT-KALIMAT": "susun_kalimat",
     "LT-KOSAKATA": "kosakata_deskriptif_bergambar",
-    "LT-PAHAM": "pemahaman_konteks_visual_bukan_bacaan_teks",
+    "LT-KETEPATAN": "baca_lantang",
     "LT-LANCAR": "membaca_kata_kalimat",
 }
+
+# Data tiap operasi hitung Game 2: (tipe game, kata operasi, simbol, label 1, label 2).
+OPERASI = {
+    "NM-TAMBAH": ("penjumlahan", "Penjumlahan", "+", "Kelompok pertama", "Kelompok kedua"),
+    "NM-KURANG": ("pengurangan", "Pengurangan", "-", "Mula-mula", "Diambil"),
+    "NM-KALI": ("perkalian", "Perkalian", "\u00d7", "Banyak kelompok", "Isi tiap kelompok"),
+    "NM-BAGI": ("pembagian", "Pembagian", "\u00f7", "Semua benda", "Banyak kelompok"),
+}
+
+# Kata maksimal pada kalimat baca, dan emoji bawaan bila guru tidak mengisi gambar.
+KATA_BACA_MAKS = 20
+EMOJI_BACA_BAWAAN = "\U0001F4D6"
 
 BAGIAN_MAKS = 20
 KATA_MAKS = 30
@@ -180,6 +198,8 @@ def _umum(post, kompetensi_valid):
 def bersihkan_game1(post, files=None, soal=None):
     """Isian Game 1: gambar soal, pertanyaan, kolom kata, dan jawaban benar. Mengembalikan dict field SoalGame."""
     umum = _umum(post, KODE_LITERASI)
+    if umum["kode"] == KOMPETENSI_BACA:
+        return _bersihkan_baca(post, files, soal, umum)
     instruksi = _teks(post, "instruksi", wajib=True, maks=300, label="Pertanyaan soal")
     kolom = _daftar_kata(post.get("kolom_kata", ""), "Kolom kata")
     jawaban = _daftar_baris(post.get("jawaban", ""), "Jawaban benar")
@@ -219,68 +239,86 @@ def bersihkan_game1(post, files=None, soal=None):
     }
 
 
+def _bersihkan_baca(post, files, soal, umum):
+    """Soal baca kalimat: kalimat yang dibaca lantang + gambar/emoji pendamping (opsional)."""
+    kalimat = _teks(post, "kalimat", wajib=True, maks=160, label="Kalimat yang dibaca")
+    jumlah_kata = len(kalimat.split())
+    if jumlah_kata < 2:
+        raise SoalTidakValid("Kalimat yang dibaca minimal terdiri dari 2 kata.")
+    if jumlah_kata > KATA_BACA_MAKS:
+        raise SoalTidakValid(f"Kalimat yang dibaca maksimal {KATA_BACA_MAKS} kata.")
+    emoji = _teks(post, "emoji", maks=8, label="Emoji") or EMOJI_BACA_BAWAAN
+
+    gambar = (files or {}).get("gambar")
+    if gambar:
+        periksa_gambar(gambar)
+
+    return {
+        "game": "literasi",
+        "kompetensi_kode": KOMPETENSI_BACA, "bagian": umum["bagian"], "level": umum["level"], "aktif": umum["aktif"],
+        "instruksi": kalimat, "petunjuk": "", "kolom_kata": [], "jawaban": [], "jawaban_lain": [],
+        "urutan_bebas": False, "kunci": None, "data": {"emoji": emoji}, "gambar_baru": gambar,
+    }
+
+
 def hitung_kunci(kode, data):
-    """Jawaban otomatis untuk jenis soal yang bisa dihitung; None untuk soal cerita/pola."""
-    if kode == "NM-NILAI-TEMPAT":
-        return data["puluhan"] * 10 + data["satuan"]
-    if kode == "NM-REGROUPING":
-        return data["a"] + data["b"] if data["op"] == "+" else data["a"] - data["b"]
+    """Jawaban otomatis keempat operasi hitung Game 2."""
+    a, b = data["a"], data["b"]
+    if kode == "NM-TAMBAH":
+        return a + b
+    if kode == "NM-KURANG":
+        return a - b
+    if kode == "NM-KALI":
+        return a * b
+    if kode == "NM-BAGI":
+        return a // b
     return None
 
 
 def bersihkan_game2(post):
-    """Isian Game 2 sesuai jenis soal (kompetensi). Mengembalikan dict field SoalGame."""
+    """Isian Game 2: dua bilangan untuk salah satu dari empat operasi hitung."""
     umum = _umum(post, KODE_NUMERASI)
     kode = umum["kode"]
+    nama_operasi = OPERASI[kode][1].lower()
     petunjuk = _teks(post, "petunjuk", maks=240, label="Petunjuk")
-    instruksi, data = "", {}
+    # Cerita dan nama kelompok diatur guru (seperti template soal cerita). Kosong = kalimat dan nama bawaan game.
+    instruksi = _teks(post, "instruksi", maks=400, label="Teks soal cerita")
+    label1 = _teks(post, "label1", maks=30, label="Nama kelompok 1")
+    label2 = _teks(post, "label2", maks=30, label="Nama kelompok 2")
 
-    if kode == "NM-NILAI-TEMPAT":
-        data = {"puluhan": _angka(post, "puluhan", "Ikat puluhan", 1, 20), "satuan": _angka(post, "satuan", "Satuan", 0, 9)}
-    elif kode == "NM-REGROUPING":
-        op = str(post.get("op", "+")).strip()
-        if op not in ("+", "-"):
-            raise SoalTidakValid("Operasi harus + atau -.")
-        a, b = _angka(post, "a", "Bilangan pertama", 0, 999), _angka(post, "b", "Bilangan kedua", 0, 999)
-        if op == "-" and a < b:
+    if kode == "NM-BAGI":
+        a = _angka(post, "a", "Bilangan yang dibagi", 0, 999)
+        b = _angka(post, "b", "Pembagi (banyak kelompok)", 1, 99)
+        if a % b != 0:
+            raise SoalTidakValid(
+                f"{a} tidak habis dibagi {b}. Pilih bilangan agar hasil bagi bulat tanpa sisa."
+            )
+    elif kode == "NM-KALI":
+        a = _angka(post, "a", "Banyak kelompok", 0, 99)
+        b = _angka(post, "b", "Isi tiap kelompok", 0, 99)
+    else:
+        a = _angka(post, "a", "Bilangan pertama", 0, 999)
+        b = _angka(post, "b", "Bilangan kedua", 0, 999)
+        if kode == "NM-KURANG" and a < b:
             raise SoalTidakValid("Pada pengurangan, bilangan pertama tidak boleh lebih kecil dari bilangan kedua.")
-        data = {"a": a, "op": op, "b": b}
-    elif kode == "NM-POLA":
-        mentah = re.split(r"[,\s]+", str(post.get("deret", "")).strip())
-        try:
-            deret = [int(x) for x in mentah if x != ""]
-        except ValueError:
-            raise SoalTidakValid("Deret bilangan hanya boleh berisi angka, dipisah koma atau spasi.")
-        if not 3 <= len(deret) <= 8:
-            raise SoalTidakValid("Deret bilangan harus berisi 3 sampai 8 angka.")
-        if any(abs(x) > 9999 for x in deret):
-            raise SoalTidakValid("Angka pada deret maksimal 9999.")
-        data = {"deret": deret}
-    else:  # NM-CERITA
-        instruksi = _teks(post, "instruksi", wajib=True, maks=400, label="Teks soal cerita")
-        preset = IKON_CERITA.get(str(post.get("ikon", "bintang")), IKON_CERITA["bintang"])
-        data = {
-            "label1": _teks(post, "label1", maks=30, label="Label kelompok 1") or "Kelompok A",
-            "val1": _angka(post, "val1", "Jumlah kelompok 1", 0, 500, wajib=False),
-            "label2": _teks(post, "label2", maks=30, label="Label kelompok 2") or "Kelompok B",
-            "val2": _angka(post, "val2", "Jumlah kelompok 2", 0, 500, wajib=False),
-            "icon": preset[1], "color": preset[2], "emoji": preset[3],
-            "langkah": _angka(post, "langkah", "Jumlah langkah", 1, 3, wajib=False) or 1,
-        }
+        if kode == "NM-TAMBAH" and a + b > 999:
+            raise SoalTidakValid("Hasil penjumlahan maksimal 999.")
+
+    preset = IKON_CERITA.get(str(post.get("ikon", "bintang")), IKON_CERITA["bintang"])
+    data = {"a": a, "b": b, "label1": label1, "label2": label2, "icon": preset[1], "color": preset[2], "emoji": preset[3]}
 
     kunci_hitung = hitung_kunci(kode, data)
-    kunci_isian = _angka(post, "kunci", "Jawaban benar", -9999, 99999, wajib=kunci_hitung is None)
-    if kunci_hitung is not None and kunci_isian is not None and kunci_isian != kunci_hitung:
-        raise SoalTidakValid(f"Jawaban benar tidak cocok dengan hitungan soal: seharusnya {kunci_hitung}.")
-    kunci = kunci_hitung if kunci_hitung is not None else kunci_isian
-    if kunci < 0:
-        raise SoalTidakValid("Jawaban benar tidak boleh negatif (papan angka game hanya mendukung bilangan bulat tak-negatif).")
+    kunci_isian = _angka(post, "kunci", "Jawaban benar", 0, 99999, wajib=False)
+    if kunci_isian is not None and kunci_isian != kunci_hitung:
+        raise SoalTidakValid(
+            f"Jawaban benar tidak cocok dengan hitungan {nama_operasi}: seharusnya {kunci_hitung}."
+        )
 
     return {
         "game": "numerasi",
         "kompetensi_kode": kode, "bagian": umum["bagian"], "level": umum["level"], "aktif": umum["aktif"],
         "instruksi": instruksi, "petunjuk": petunjuk, "kolom_kata": [], "jawaban": [], "jawaban_lain": [],
-        "urutan_bebas": False, "kunci": kunci, "data": data, "gambar_baru": None,
+        "urutan_bebas": False, "kunci": kunci_hitung, "data": data, "gambar_baru": None,
     }
 
 
@@ -299,6 +337,20 @@ def untuk_game1(soal, request=None):
     if request is not None and url:
         url = request.build_absolute_uri(url)
 
+    if kode == KOMPETENSI_BACA:
+        d = soal.data or {}
+        return {
+            "id": soal.item_id,
+            "tipe": "baca",
+            "kompetensi": "baca_lantang",
+            "kompetensiDashboard": kode,
+            "jenisKompetensi": JENIS_KOMPETENSI_GAME1[kode],
+            "level": soal.level,
+            "gambar": url,
+            "emoji": d.get("emoji") or EMOJI_BACA_BAWAAN,
+            "kalimat": soal.instruksi,
+        }
+
     pola = {}
     if not soal.urutan_bebas:
         for urutan in [soal.jawaban] + list(soal.jawaban_lain or []):
@@ -307,6 +359,7 @@ def untuk_game1(soal, request=None):
 
     q = {
         "id": soal.item_id,
+        "tipe": "susun",
         "kompetensi": "menyusun_kalimat",
         "kompetensiDashboard": kode,
         "jenisKompetensi": (
@@ -330,54 +383,37 @@ def _html_deret(deret):
     return ", ".join(str(x) for x in deret)
 
 
+def _hint_operasi(kode, a, b):
+    """Petunjuk bawaan (tanpa membocorkan jawaban) bila guru tidak mengisi petunjuk."""
+    if kode == "NM-TAMBAH":
+        if a % 10 + b % 10 >= 10 and a >= 10:
+            return f"Jumlahkan satuannya dulu. Jika lebih dari 9, simpan 1 puluhan lalu tambahkan {a // 10 * 10} dan {b // 10 * 10}."
+        return f"Gabungkan {a} dan {b}. Mulai dari bilangan yang lebih besar, lalu tambahkan sisanya."
+    if kode == "NM-KURANG":
+        if a % 10 < b % 10:
+            return f"Satuan {a % 10} kurang dari {b % 10}. Pinjam 1 puluhan menjadi 10 satuan, lalu kurangkan."
+        return f"Kurangi {a} dengan {b}. Hitung mundur dari {a} sebanyak {b} langkah."
+    if kode == "NM-KALI":
+        return f"{a} \u00d7 {b} artinya {a} kelompok yang masing-masing berisi {b}. Jumlahkan {b} sebanyak {a} kali."
+    return f"Bagi {a} rata ke {b} kelompok. Cari bilangan yang dikalikan {b} hasilnya {a}."
+
+
 def untuk_game2(soal):
     """Soal Game 2 dalam format objek soal milik game (soalBank*)."""
     kode, d = soal.kompetensi.kode, soal.data or {}
-    q = {"id": soal.item_id, "kunciJawaban": soal.kunci, "gambar": None}
-
-    if kode == "NM-NILAI-TEMPAT":
-        p, s = d["puluhan"], d["satuan"]
-        q.update(
-            tipe="nilai_tempat",
-            teksSoal=f"Ada <b>{p} ikat puluhan</b> dan <b>{s} satuan</b>. Jika satu ikat berisi 10 benda, berapa jumlah semuanya?",
-            label1="Ikat puluhan", label2="Satuan", val1=p, val2=s,
-            icon="fa-cubes", color="text-amber-500",
-            hint=soal.petunjuk or f"{p} puluhan bernilai {p * 10}. Tambahkan {s} satuan.",
-        )
-    elif kode == "NM-REGROUPING":
-        a, op, b = d["a"], d["op"], d["b"]
-        q.update(
-            tipe="regrouping", operasi="penjumlahan" if op == "+" else "pengurangan", operator=op,
-            teksSoal=f"Hitung <b>{a} {op} {b}</b>. Berapa hasilnya?",
-            label1="Bilangan pertama", label2="Bilangan kedua", val1=a, val2=b,
-            icon="fa-calculator", color="text-teal-500",
-            hint=soal.petunjuk or (
-                f"Jumlahkan {a} dengan {b}. Periksa apakah satuan mencapai 10 sehingga perlu menyimpan 1 puluhan."
-                if op == "+" else f"Kurangi {a} dengan {b}. Jika satuan tidak cukup, pinjam 1 puluhan."
-            ),
-        )
-    elif kode == "NM-POLA":
-        deret = d["deret"]
-        q.update(
-            tipe="pola", deret=list(deret),
-            teksSoal=f"Perhatikan pola bilangan berikut: <b>{_html_deret(deret)}, ...</b><br>Angka berikutnya adalah?",
-            label1="Deret bilangan", label2="Angka berikutnya", val1=len(deret), val2=2,
-            icon="fa-arrow-trend-up", color="text-violet-500",
-            hint=soal.petunjuk or "Perhatikan selisih atau perkalian antar angka yang berurutan.",
-        )
-    else:  # NM-CERITA
-        q.update(
-            teksSoal=markup_ke_html(soal.instruksi),
-            label1=d.get("label1") or "Kelompok A", label2=d.get("label2") or "Kelompok B",
-            val1=d.get("val1"), val2=d.get("val2"),
-            icon=d.get("icon") or "fa-star", color=d.get("color") or "text-teal-500",
-            gambar=TWEMOJI.format(d["emoji"]) if d.get("emoji") else None,
-            hint=soal.petunjuk or "Baca soal pelan-pelan, lalu pilih operasi hitung yang tepat.",
-        )
-        langkah = int(d.get("langkah") or 1)
-        if langkah >= 2:
-            q["tipe"] = "cerita_dua_langkah"
-            q["jumlahLangkah"] = langkah
+    tipe, _kata, simbol, label1, label2 = OPERASI[kode]
+    a, b = int(d["a"]), int(d["b"])
+    tampil = "\u2212" if simbol == "-" else simbol  # tanda kurang yang rapi di teks
+    q = {
+        "id": soal.item_id, "kunciJawaban": soal.kunci,
+        "tipe": tipe, "operasi": tipe, "operator": simbol,
+        "teksSoal": markup_ke_html(soal.instruksi) if soal.instruksi
+        else f"Hitung <b>{a} {tampil} {b}</b>. Berapa hasilnya?",
+        "label1": d.get("label1") or label1, "label2": d.get("label2") or label2, "val1": a, "val2": b,
+        "icon": d.get("icon") or "fa-star", "color": d.get("color") or "text-teal-500",
+        "gambar": TWEMOJI.format(d["emoji"]) if d.get("emoji") else None,
+        "hint": soal.petunjuk or _hint_operasi(kode, a, b),
+    }
     return q
 
 
@@ -398,14 +434,31 @@ def soal_level(game, bagian, level, kompetensi=None):
 
 
 def pilih_soal(game, bagian, level, kompetensi=None, benih=0):
-    """Maksimal LENTERA_SOAL_PER_LEVEL soal; bila bank lebih banyak, dipilih acak yang tetap untuk `benih` yang sama."""
+    """Maksimal LENTERA_SOAL_PER_LEVEL soal; bila bank lebih banyak, dipilih acak yang tetap untuk `benih` yang sama.
+
+    Level Literasi memadukan soal susun kalimat dan soal baca kalimat: bila bank level memuat
+    keduanya, LENTERA_SOAL_BACA_PER_LEVEL soal berupa baca kalimat dan sisanya susun kalimat.
+    """
     daftar = soal_level(game, bagian, level, kompetensi)
     maks = getattr(settings, "LENTERA_SOAL_PER_LEVEL", 5)
-    if len(daftar) > maks:
-        dipilih = random.Random(benih).sample(daftar, maks)
-        dipilih.sort(key=lambda s: (s.urutan, s.id))
-        return dipilih
-    return daftar
+    if len(daftar) <= maks:
+        return daftar
+
+    acak = random.Random(benih)
+    if game == "literasi":
+        baca = [x for x in daftar if x.kompetensi.kode == KOMPETENSI_BACA]
+        susun = [x for x in daftar if x.kompetensi.kode != KOMPETENSI_BACA]
+        if baca and susun:
+            n_baca = min(len(baca), getattr(settings, "LENTERA_SOAL_BACA_PER_LEVEL", 2), maks - 1)
+            n_susun = min(len(susun), maks - n_baca)
+            n_baca = min(len(baca), maks - n_susun)  # bank susun sedikit -> baca mengisi sisanya
+            dipilih = acak.sample(baca, n_baca) + acak.sample(susun, n_susun)
+            dipilih.sort(key=lambda x: (x.urutan, x.id))
+            return dipilih
+
+    dipilih = acak.sample(daftar, maks)
+    dipilih.sort(key=lambda x: (x.urutan, x.id))
+    return dipilih
 
 
 # ==========================================================
@@ -437,18 +490,29 @@ def ringkas(soal):
     """Ringkasan satu soal untuk daftar Bank Soal: (judul, detail, jawaban)."""
     kode, d = soal.kompetensi.kode, soal.data or {}
     if soal.game == "literasi":
+        if kode == KOMPETENSI_BACA:
+            return (soal.instruksi, f"Baca kalimat (mikrofon) {d.get('emoji') or EMOJI_BACA_BAWAAN}", "dibaca lantang")
         return (
             soal.instruksi,
             "Kolom kata: " + ", ".join(soal.kolom_kata),
             " ".join(soal.jawaban) + (" (urutan bebas)" if soal.urutan_bebas else ""),
         )
-    if kode == "NM-NILAI-TEMPAT":
-        return (f"{d.get('puluhan')} ikat puluhan dan {d.get('satuan')} satuan", "Nilai tempat", str(soal.kunci))
-    if kode == "NM-REGROUPING":
-        return (f"{d.get('a')} {d.get('op')} {d.get('b')}", "Simpan dan pinjam", str(soal.kunci))
-    if kode == "NM-POLA":
-        return (", ".join(str(x) for x in d.get("deret", [])) + ", ...", "Pola bilangan", str(soal.kunci))
-    return (soal.instruksi.replace("**", ""), "Soal cerita", str(soal.kunci))
+    tipe, kata, simbol, _l1, _l2 = OPERASI[kode]
+    ujaran = f"{d.get('a')} {simbol} {d.get('b')}"
+    if soal.instruksi:
+        ujaran += f"  ({soal.instruksi.replace('**', '')[:60]})"
+    return (ujaran, kata, str(soal.kunci))
+
+
+def jenis_dan_thumb(soal):
+    """(jenis soal, teks pengganti gambar kecil) untuk daftar Bank Soal."""
+    kode, d = soal.kompetensi.kode, soal.data or {}
+    if soal.game == "literasi":
+        if kode == KOMPETENSI_BACA:
+            return "Baca kalimat", d.get("emoji") or EMOJI_BACA_BAWAAN
+        return "Susun kalimat", "\U0001F9E9"
+    simbol = OPERASI[kode][2]
+    return OPERASI[kode][1], ("\u2212" if simbol == "-" else simbol)
 
 
 def nilai_form(soal):
@@ -457,15 +521,13 @@ def nilai_form(soal):
     nilai = {
         "kompetensi": soal.kompetensi.kode, "bagian": soal.bagian, "level": soal.level, "aktif": "1" if soal.aktif else "0",
         "instruksi": soal.instruksi, "petunjuk": soal.petunjuk, "kunci": "" if soal.kunci is None else soal.kunci,
+        "kalimat": soal.instruksi if soal.kompetensi.kode == KOMPETENSI_BACA else "",
         "kolom_kata": "\n".join(soal.kolom_kata), "jawaban": "\n".join(soal.jawaban),
         "jawaban_lain": "\n".join(", ".join(x) for x in soal.jawaban_lain or []),
         "urutan_bebas": "1" if soal.urutan_bebas else "",
-        "puluhan": d.get("puluhan", ""), "satuan": d.get("satuan", ""),
-        "a": d.get("a", ""), "op": d.get("op", "+"), "b": d.get("b", ""),
-        "deret": ", ".join(str(x) for x in d.get("deret", [])),
-        "label1": d.get("label1", ""), "val1": "" if d.get("val1") is None else d.get("val1"),
-        "label2": d.get("label2", ""), "val2": "" if d.get("val2") is None else d.get("val2"),
-        "langkah": d.get("langkah", 1),
+        "a": d.get("a", ""), "b": d.get("b", ""),
+        "label1": d.get("label1", ""), "label2": d.get("label2", ""),
+        "emoji": d.get("emoji", "") if soal.game == "literasi" else "",
         "ikon": next((k for k, v in IKON_CERITA.items() if v[3] == d.get("emoji")), "bintang"),
     }
     return nilai

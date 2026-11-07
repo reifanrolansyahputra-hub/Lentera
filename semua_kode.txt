@@ -429,92 +429,87 @@ BANK_AWAL = [
     ),
 
     (
-        "Pemahaman Konteks Bergambar",
-        "LT-PAHAM",
+        "Baca Kalimat dengan Mikrofon",
+        "LT-KETEPATAN",
         1,
         5,
         8,
         (
-            "Aktivitas yang direncanakan menggunakan soal lama "
-            "berbasis gambar untuk memahami informasi dan "
-            "konteks. Soal berbasis gambar tidak otomatis "
-            "merupakan tes pemahaman bacaan teks. Aktivitas "
-            "belum divalidasi sampai pemetaan soal diperbaiki."
+            "Membaca kalimat dengan suara lantang; mikrofon memeriksa "
+            "ketepatan bacaan. Menjadi satu kesatuan dengan Menyusun "
+            "Kalimat: dua dari lima soal pada tiap level Game 1 "
+            "berupa kalimat yang harus dibaca."
         ),
-        False,
+        True,
     ),
 
     (
-        "Menyusun Kalimat",
+        "Susun & Baca Kalimat",
         "LT-KALIMAT",
         1,
         5,
         8,
         (
-            "Menyusun kata menjadi kalimat sesuai gambar, "
-            "menggunakan materi asli Game 1. Pemetaan butir "
-            "soal ke kompetensi akan disesuaikan di kode game."
+            "Menyusun kata menjadi kalimat sesuai gambar, lalu membaca "
+            "kalimat dengan suara dalam level Game 1 yang sama. "
+            "Pemetaan butir soal ke kompetensi mengikuti kode game."
         ),
         True,
     ),
 
     # ==================================================
     # NUMERASI — GAME 2
-    # Aktivitas lama tetap dipertahankan.
+    # Empat operasi hitung: satu bagian = satu operasi.
     # ==================================================
 
     (
-        "Nilai Tempat: Puluhan & Satuan",
-        "NM-NILAI-TEMPAT",
+        "Penjumlahan Seru",
+        "NM-TAMBAH",
         1,
         5,
         10,
         (
-            "Menghitung total benda dari sejumlah ikat puluhan "
-            "dan satuan untuk memahami konsep nilai tempat. "
-            "Bilangan yang dipakai makin besar di level lanjut."
+            "Latihan menjumlahkan bilangan: dari jumlah sampai 10, "
+            "melewati 10, sampai penjumlahan dengan menyimpan."
         ),
         True,
     ),
 
     (
-        "Berhitung Simpan & Pinjam",
-        "NM-REGROUPING",
+        "Pengurangan Seru",
+        "NM-KURANG",
         1,
         5,
         10,
         (
-            "Latihan penjumlahan dengan teknik menyimpan dan "
-            "pengurangan dengan teknik meminjam. Tingkat "
-            "kesulitan bertambah pada level selanjutnya."
+            "Latihan mengurangkan bilangan: dari pengurangan sederhana "
+            "sampai pengurangan dengan meminjam puluhan."
         ),
         True,
     ),
 
     (
-        "Pola Bilangan",
-        "NM-POLA",
+        "Perkalian Seru",
+        "NM-KALI",
         1,
         5,
-        8,
+        10,
         (
-            "Menentukan angka berikutnya dari deret bilangan "
-            "dengan pola naik, turun, kelipatan, atau aturan "
-            "gabungan."
+            "Perkalian sebagai kelompok sama banyak: dari tabel kecil "
+            "sampai perkalian bilangan dua angka."
         ),
         True,
     ),
 
     (
-        "Soal Cerita Berhitung",
-        "NM-CERITA",
+        "Pembagian Seru",
+        "NM-BAGI",
         1,
         5,
         10,
         (
-            "Soal cerita berhitung sehari-hari. Tingkat "
-            "kesulitan dan jumlah langkah bertambah pada "
-            "level yang lebih tinggi."
+            "Membagi rata benda ke beberapa kelompok: dari pembagian "
+            "kecil sampai pembagian bilangan dua angka."
         ),
         True,
     ),
@@ -654,8 +649,9 @@ FILE: belajar/bank_soal.py
 Bank soal Game 1 (Literasi) dan Game 2 (Numerasi) yang dikelola guru.
 
 Isi modul:
-- validasi isian form guru (Game 1: gambar + kolom kata + jawaban; Game 2: angka + jawaban),
-- perhitungan jawaban otomatis untuk jenis soal yang bisa dihitung,
+- validasi isian form guru (Game 1: soal susun kalimat dengan gambar + kolom kata + jawaban,
+  atau soal baca kalimat dengan mikrofon; Game 2: dua bilangan untuk empat operasi hitung),
+- perhitungan jawaban otomatis keempat operasi hitung,
 - serialisasi soal ke format asli tiap game (dipakai API /api/game/soal/),
 - ringkasan jumlah soal per bagian dan level.
 
@@ -677,21 +673,38 @@ from .models import SoalGame
 # 1. KONSTANTA
 # ==========================================================
 
-KODE_LITERASI = ("LT-KALIMAT", "LT-KOSAKATA", "LT-PAHAM", "LT-LANCAR")
-KODE_NUMERASI = ("NM-NILAI-TEMPAT", "NM-REGROUPING", "NM-POLA", "NM-CERITA")
+KODE_LITERASI = ("LT-KALIMAT", "LT-KOSAKATA", "LT-KETEPATAN", "LT-LANCAR")
+KODE_NUMERASI = ("NM-TAMBAH", "NM-KURANG", "NM-KALI", "NM-BAGI")
 
 # Kompetensi utama misi Game 1 (satu level Game 1 memuat campuran kompetensi literasi).
 KOMPETENSI_UTAMA_LITERASI = "LT-KALIMAT"
 
-# Urutan bagian bawaan Numerasi (1 kompetensi = 1 bagian).
-BAGIAN_NUMERASI_BAWAAN = {"NM-NILAI-TEMPAT": 1, "NM-REGROUPING": 2, "NM-POLA": 3, "NM-CERITA": 4}
+# Soal baca kalimat (dibaca lantang, diperiksa mikrofon). Susun kalimat dan baca kalimat
+# satu kesatuan dalam satu level Game 1: jenis soal dibedakan lewat kompetensinya.
+KOMPETENSI_BACA = "LT-KETEPATAN"
+KODE_LITERASI_SUSUN = tuple(k for k in KODE_LITERASI if k != KOMPETENSI_BACA)
+
+# Urutan bagian bawaan Numerasi (1 operasi hitung = 1 bagian).
+BAGIAN_NUMERASI_BAWAAN = {"NM-TAMBAH": 1, "NM-KURANG": 2, "NM-KALI": 3, "NM-BAGI": 4}
 
 JENIS_KOMPETENSI_GAME1 = {
     "LT-KALIMAT": "susun_kalimat",
     "LT-KOSAKATA": "kosakata_deskriptif_bergambar",
-    "LT-PAHAM": "pemahaman_konteks_visual_bukan_bacaan_teks",
+    "LT-KETEPATAN": "baca_lantang",
     "LT-LANCAR": "membaca_kata_kalimat",
 }
+
+# Data tiap operasi hitung Game 2: (tipe game, kata operasi, simbol, label 1, label 2).
+OPERASI = {
+    "NM-TAMBAH": ("penjumlahan", "Penjumlahan", "+", "Kelompok pertama", "Kelompok kedua"),
+    "NM-KURANG": ("pengurangan", "Pengurangan", "-", "Mula-mula", "Diambil"),
+    "NM-KALI": ("perkalian", "Perkalian", "\u00d7", "Banyak kelompok", "Isi tiap kelompok"),
+    "NM-BAGI": ("pembagian", "Pembagian", "\u00f7", "Semua benda", "Banyak kelompok"),
+}
+
+# Kata maksimal pada kalimat baca, dan emoji bawaan bila guru tidak mengisi gambar.
+KATA_BACA_MAKS = 20
+EMOJI_BACA_BAWAAN = "\U0001F4D6"
 
 BAGIAN_MAKS = 20
 KATA_MAKS = 30
@@ -832,6 +845,8 @@ def _umum(post, kompetensi_valid):
 def bersihkan_game1(post, files=None, soal=None):
     """Isian Game 1: gambar soal, pertanyaan, kolom kata, dan jawaban benar. Mengembalikan dict field SoalGame."""
     umum = _umum(post, KODE_LITERASI)
+    if umum["kode"] == KOMPETENSI_BACA:
+        return _bersihkan_baca(post, files, soal, umum)
     instruksi = _teks(post, "instruksi", wajib=True, maks=300, label="Pertanyaan soal")
     kolom = _daftar_kata(post.get("kolom_kata", ""), "Kolom kata")
     jawaban = _daftar_baris(post.get("jawaban", ""), "Jawaban benar")
@@ -871,68 +886,86 @@ def bersihkan_game1(post, files=None, soal=None):
     }
 
 
+def _bersihkan_baca(post, files, soal, umum):
+    """Soal baca kalimat: kalimat yang dibaca lantang + gambar/emoji pendamping (opsional)."""
+    kalimat = _teks(post, "kalimat", wajib=True, maks=160, label="Kalimat yang dibaca")
+    jumlah_kata = len(kalimat.split())
+    if jumlah_kata < 2:
+        raise SoalTidakValid("Kalimat yang dibaca minimal terdiri dari 2 kata.")
+    if jumlah_kata > KATA_BACA_MAKS:
+        raise SoalTidakValid(f"Kalimat yang dibaca maksimal {KATA_BACA_MAKS} kata.")
+    emoji = _teks(post, "emoji", maks=8, label="Emoji") or EMOJI_BACA_BAWAAN
+
+    gambar = (files or {}).get("gambar")
+    if gambar:
+        periksa_gambar(gambar)
+
+    return {
+        "game": "literasi",
+        "kompetensi_kode": KOMPETENSI_BACA, "bagian": umum["bagian"], "level": umum["level"], "aktif": umum["aktif"],
+        "instruksi": kalimat, "petunjuk": "", "kolom_kata": [], "jawaban": [], "jawaban_lain": [],
+        "urutan_bebas": False, "kunci": None, "data": {"emoji": emoji}, "gambar_baru": gambar,
+    }
+
+
 def hitung_kunci(kode, data):
-    """Jawaban otomatis untuk jenis soal yang bisa dihitung; None untuk soal cerita/pola."""
-    if kode == "NM-NILAI-TEMPAT":
-        return data["puluhan"] * 10 + data["satuan"]
-    if kode == "NM-REGROUPING":
-        return data["a"] + data["b"] if data["op"] == "+" else data["a"] - data["b"]
+    """Jawaban otomatis keempat operasi hitung Game 2."""
+    a, b = data["a"], data["b"]
+    if kode == "NM-TAMBAH":
+        return a + b
+    if kode == "NM-KURANG":
+        return a - b
+    if kode == "NM-KALI":
+        return a * b
+    if kode == "NM-BAGI":
+        return a // b
     return None
 
 
 def bersihkan_game2(post):
-    """Isian Game 2 sesuai jenis soal (kompetensi). Mengembalikan dict field SoalGame."""
+    """Isian Game 2: dua bilangan untuk salah satu dari empat operasi hitung."""
     umum = _umum(post, KODE_NUMERASI)
     kode = umum["kode"]
+    nama_operasi = OPERASI[kode][1].lower()
     petunjuk = _teks(post, "petunjuk", maks=240, label="Petunjuk")
-    instruksi, data = "", {}
+    # Cerita dan nama kelompok diatur guru (seperti template soal cerita). Kosong = kalimat dan nama bawaan game.
+    instruksi = _teks(post, "instruksi", maks=400, label="Teks soal cerita")
+    label1 = _teks(post, "label1", maks=30, label="Nama kelompok 1")
+    label2 = _teks(post, "label2", maks=30, label="Nama kelompok 2")
 
-    if kode == "NM-NILAI-TEMPAT":
-        data = {"puluhan": _angka(post, "puluhan", "Ikat puluhan", 1, 20), "satuan": _angka(post, "satuan", "Satuan", 0, 9)}
-    elif kode == "NM-REGROUPING":
-        op = str(post.get("op", "+")).strip()
-        if op not in ("+", "-"):
-            raise SoalTidakValid("Operasi harus + atau -.")
-        a, b = _angka(post, "a", "Bilangan pertama", 0, 999), _angka(post, "b", "Bilangan kedua", 0, 999)
-        if op == "-" and a < b:
+    if kode == "NM-BAGI":
+        a = _angka(post, "a", "Bilangan yang dibagi", 0, 999)
+        b = _angka(post, "b", "Pembagi (banyak kelompok)", 1, 99)
+        if a % b != 0:
+            raise SoalTidakValid(
+                f"{a} tidak habis dibagi {b}. Pilih bilangan agar hasil bagi bulat tanpa sisa."
+            )
+    elif kode == "NM-KALI":
+        a = _angka(post, "a", "Banyak kelompok", 0, 99)
+        b = _angka(post, "b", "Isi tiap kelompok", 0, 99)
+    else:
+        a = _angka(post, "a", "Bilangan pertama", 0, 999)
+        b = _angka(post, "b", "Bilangan kedua", 0, 999)
+        if kode == "NM-KURANG" and a < b:
             raise SoalTidakValid("Pada pengurangan, bilangan pertama tidak boleh lebih kecil dari bilangan kedua.")
-        data = {"a": a, "op": op, "b": b}
-    elif kode == "NM-POLA":
-        mentah = re.split(r"[,\s]+", str(post.get("deret", "")).strip())
-        try:
-            deret = [int(x) for x in mentah if x != ""]
-        except ValueError:
-            raise SoalTidakValid("Deret bilangan hanya boleh berisi angka, dipisah koma atau spasi.")
-        if not 3 <= len(deret) <= 8:
-            raise SoalTidakValid("Deret bilangan harus berisi 3 sampai 8 angka.")
-        if any(abs(x) > 9999 for x in deret):
-            raise SoalTidakValid("Angka pada deret maksimal 9999.")
-        data = {"deret": deret}
-    else:  # NM-CERITA
-        instruksi = _teks(post, "instruksi", wajib=True, maks=400, label="Teks soal cerita")
-        preset = IKON_CERITA.get(str(post.get("ikon", "bintang")), IKON_CERITA["bintang"])
-        data = {
-            "label1": _teks(post, "label1", maks=30, label="Label kelompok 1") or "Kelompok A",
-            "val1": _angka(post, "val1", "Jumlah kelompok 1", 0, 500, wajib=False),
-            "label2": _teks(post, "label2", maks=30, label="Label kelompok 2") or "Kelompok B",
-            "val2": _angka(post, "val2", "Jumlah kelompok 2", 0, 500, wajib=False),
-            "icon": preset[1], "color": preset[2], "emoji": preset[3],
-            "langkah": _angka(post, "langkah", "Jumlah langkah", 1, 3, wajib=False) or 1,
-        }
+        if kode == "NM-TAMBAH" and a + b > 999:
+            raise SoalTidakValid("Hasil penjumlahan maksimal 999.")
+
+    preset = IKON_CERITA.get(str(post.get("ikon", "bintang")), IKON_CERITA["bintang"])
+    data = {"a": a, "b": b, "label1": label1, "label2": label2, "icon": preset[1], "color": preset[2], "emoji": preset[3]}
 
     kunci_hitung = hitung_kunci(kode, data)
-    kunci_isian = _angka(post, "kunci", "Jawaban benar", -9999, 99999, wajib=kunci_hitung is None)
-    if kunci_hitung is not None and kunci_isian is not None and kunci_isian != kunci_hitung:
-        raise SoalTidakValid(f"Jawaban benar tidak cocok dengan hitungan soal: seharusnya {kunci_hitung}.")
-    kunci = kunci_hitung if kunci_hitung is not None else kunci_isian
-    if kunci < 0:
-        raise SoalTidakValid("Jawaban benar tidak boleh negatif (papan angka game hanya mendukung bilangan bulat tak-negatif).")
+    kunci_isian = _angka(post, "kunci", "Jawaban benar", 0, 99999, wajib=False)
+    if kunci_isian is not None and kunci_isian != kunci_hitung:
+        raise SoalTidakValid(
+            f"Jawaban benar tidak cocok dengan hitungan {nama_operasi}: seharusnya {kunci_hitung}."
+        )
 
     return {
         "game": "numerasi",
         "kompetensi_kode": kode, "bagian": umum["bagian"], "level": umum["level"], "aktif": umum["aktif"],
         "instruksi": instruksi, "petunjuk": petunjuk, "kolom_kata": [], "jawaban": [], "jawaban_lain": [],
-        "urutan_bebas": False, "kunci": kunci, "data": data, "gambar_baru": None,
+        "urutan_bebas": False, "kunci": kunci_hitung, "data": data, "gambar_baru": None,
     }
 
 
@@ -951,6 +984,20 @@ def untuk_game1(soal, request=None):
     if request is not None and url:
         url = request.build_absolute_uri(url)
 
+    if kode == KOMPETENSI_BACA:
+        d = soal.data or {}
+        return {
+            "id": soal.item_id,
+            "tipe": "baca",
+            "kompetensi": "baca_lantang",
+            "kompetensiDashboard": kode,
+            "jenisKompetensi": JENIS_KOMPETENSI_GAME1[kode],
+            "level": soal.level,
+            "gambar": url,
+            "emoji": d.get("emoji") or EMOJI_BACA_BAWAAN,
+            "kalimat": soal.instruksi,
+        }
+
     pola = {}
     if not soal.urutan_bebas:
         for urutan in [soal.jawaban] + list(soal.jawaban_lain or []):
@@ -959,6 +1006,7 @@ def untuk_game1(soal, request=None):
 
     q = {
         "id": soal.item_id,
+        "tipe": "susun",
         "kompetensi": "menyusun_kalimat",
         "kompetensiDashboard": kode,
         "jenisKompetensi": (
@@ -982,54 +1030,37 @@ def _html_deret(deret):
     return ", ".join(str(x) for x in deret)
 
 
+def _hint_operasi(kode, a, b):
+    """Petunjuk bawaan (tanpa membocorkan jawaban) bila guru tidak mengisi petunjuk."""
+    if kode == "NM-TAMBAH":
+        if a % 10 + b % 10 >= 10 and a >= 10:
+            return f"Jumlahkan satuannya dulu. Jika lebih dari 9, simpan 1 puluhan lalu tambahkan {a // 10 * 10} dan {b // 10 * 10}."
+        return f"Gabungkan {a} dan {b}. Mulai dari bilangan yang lebih besar, lalu tambahkan sisanya."
+    if kode == "NM-KURANG":
+        if a % 10 < b % 10:
+            return f"Satuan {a % 10} kurang dari {b % 10}. Pinjam 1 puluhan menjadi 10 satuan, lalu kurangkan."
+        return f"Kurangi {a} dengan {b}. Hitung mundur dari {a} sebanyak {b} langkah."
+    if kode == "NM-KALI":
+        return f"{a} \u00d7 {b} artinya {a} kelompok yang masing-masing berisi {b}. Jumlahkan {b} sebanyak {a} kali."
+    return f"Bagi {a} rata ke {b} kelompok. Cari bilangan yang dikalikan {b} hasilnya {a}."
+
+
 def untuk_game2(soal):
     """Soal Game 2 dalam format objek soal milik game (soalBank*)."""
     kode, d = soal.kompetensi.kode, soal.data or {}
-    q = {"id": soal.item_id, "kunciJawaban": soal.kunci, "gambar": None}
-
-    if kode == "NM-NILAI-TEMPAT":
-        p, s = d["puluhan"], d["satuan"]
-        q.update(
-            tipe="nilai_tempat",
-            teksSoal=f"Ada <b>{p} ikat puluhan</b> dan <b>{s} satuan</b>. Jika satu ikat berisi 10 benda, berapa jumlah semuanya?",
-            label1="Ikat puluhan", label2="Satuan", val1=p, val2=s,
-            icon="fa-cubes", color="text-amber-500",
-            hint=soal.petunjuk or f"{p} puluhan bernilai {p * 10}. Tambahkan {s} satuan.",
-        )
-    elif kode == "NM-REGROUPING":
-        a, op, b = d["a"], d["op"], d["b"]
-        q.update(
-            tipe="regrouping", operasi="penjumlahan" if op == "+" else "pengurangan", operator=op,
-            teksSoal=f"Hitung <b>{a} {op} {b}</b>. Berapa hasilnya?",
-            label1="Bilangan pertama", label2="Bilangan kedua", val1=a, val2=b,
-            icon="fa-calculator", color="text-teal-500",
-            hint=soal.petunjuk or (
-                f"Jumlahkan {a} dengan {b}. Periksa apakah satuan mencapai 10 sehingga perlu menyimpan 1 puluhan."
-                if op == "+" else f"Kurangi {a} dengan {b}. Jika satuan tidak cukup, pinjam 1 puluhan."
-            ),
-        )
-    elif kode == "NM-POLA":
-        deret = d["deret"]
-        q.update(
-            tipe="pola", deret=list(deret),
-            teksSoal=f"Perhatikan pola bilangan berikut: <b>{_html_deret(deret)}, ...</b><br>Angka berikutnya adalah?",
-            label1="Deret bilangan", label2="Angka berikutnya", val1=len(deret), val2=2,
-            icon="fa-arrow-trend-up", color="text-violet-500",
-            hint=soal.petunjuk or "Perhatikan selisih atau perkalian antar angka yang berurutan.",
-        )
-    else:  # NM-CERITA
-        q.update(
-            teksSoal=markup_ke_html(soal.instruksi),
-            label1=d.get("label1") or "Kelompok A", label2=d.get("label2") or "Kelompok B",
-            val1=d.get("val1"), val2=d.get("val2"),
-            icon=d.get("icon") or "fa-star", color=d.get("color") or "text-teal-500",
-            gambar=TWEMOJI.format(d["emoji"]) if d.get("emoji") else None,
-            hint=soal.petunjuk or "Baca soal pelan-pelan, lalu pilih operasi hitung yang tepat.",
-        )
-        langkah = int(d.get("langkah") or 1)
-        if langkah >= 2:
-            q["tipe"] = "cerita_dua_langkah"
-            q["jumlahLangkah"] = langkah
+    tipe, _kata, simbol, label1, label2 = OPERASI[kode]
+    a, b = int(d["a"]), int(d["b"])
+    tampil = "\u2212" if simbol == "-" else simbol  # tanda kurang yang rapi di teks
+    q = {
+        "id": soal.item_id, "kunciJawaban": soal.kunci,
+        "tipe": tipe, "operasi": tipe, "operator": simbol,
+        "teksSoal": markup_ke_html(soal.instruksi) if soal.instruksi
+        else f"Hitung <b>{a} {tampil} {b}</b>. Berapa hasilnya?",
+        "label1": d.get("label1") or label1, "label2": d.get("label2") or label2, "val1": a, "val2": b,
+        "icon": d.get("icon") or "fa-star", "color": d.get("color") or "text-teal-500",
+        "gambar": TWEMOJI.format(d["emoji"]) if d.get("emoji") else None,
+        "hint": soal.petunjuk or _hint_operasi(kode, a, b),
+    }
     return q
 
 
@@ -1050,14 +1081,31 @@ def soal_level(game, bagian, level, kompetensi=None):
 
 
 def pilih_soal(game, bagian, level, kompetensi=None, benih=0):
-    """Maksimal LENTERA_SOAL_PER_LEVEL soal; bila bank lebih banyak, dipilih acak yang tetap untuk `benih` yang sama."""
+    """Maksimal LENTERA_SOAL_PER_LEVEL soal; bila bank lebih banyak, dipilih acak yang tetap untuk `benih` yang sama.
+
+    Level Literasi memadukan soal susun kalimat dan soal baca kalimat: bila bank level memuat
+    keduanya, LENTERA_SOAL_BACA_PER_LEVEL soal berupa baca kalimat dan sisanya susun kalimat.
+    """
     daftar = soal_level(game, bagian, level, kompetensi)
     maks = getattr(settings, "LENTERA_SOAL_PER_LEVEL", 5)
-    if len(daftar) > maks:
-        dipilih = random.Random(benih).sample(daftar, maks)
-        dipilih.sort(key=lambda s: (s.urutan, s.id))
-        return dipilih
-    return daftar
+    if len(daftar) <= maks:
+        return daftar
+
+    acak = random.Random(benih)
+    if game == "literasi":
+        baca = [x for x in daftar if x.kompetensi.kode == KOMPETENSI_BACA]
+        susun = [x for x in daftar if x.kompetensi.kode != KOMPETENSI_BACA]
+        if baca and susun:
+            n_baca = min(len(baca), getattr(settings, "LENTERA_SOAL_BACA_PER_LEVEL", 2), maks - 1)
+            n_susun = min(len(susun), maks - n_baca)
+            n_baca = min(len(baca), maks - n_susun)  # bank susun sedikit -> baca mengisi sisanya
+            dipilih = acak.sample(baca, n_baca) + acak.sample(susun, n_susun)
+            dipilih.sort(key=lambda x: (x.urutan, x.id))
+            return dipilih
+
+    dipilih = acak.sample(daftar, maks)
+    dipilih.sort(key=lambda x: (x.urutan, x.id))
+    return dipilih
 
 
 # ==========================================================
@@ -1089,18 +1137,29 @@ def ringkas(soal):
     """Ringkasan satu soal untuk daftar Bank Soal: (judul, detail, jawaban)."""
     kode, d = soal.kompetensi.kode, soal.data or {}
     if soal.game == "literasi":
+        if kode == KOMPETENSI_BACA:
+            return (soal.instruksi, f"Baca kalimat (mikrofon) {d.get('emoji') or EMOJI_BACA_BAWAAN}", "dibaca lantang")
         return (
             soal.instruksi,
             "Kolom kata: " + ", ".join(soal.kolom_kata),
             " ".join(soal.jawaban) + (" (urutan bebas)" if soal.urutan_bebas else ""),
         )
-    if kode == "NM-NILAI-TEMPAT":
-        return (f"{d.get('puluhan')} ikat puluhan dan {d.get('satuan')} satuan", "Nilai tempat", str(soal.kunci))
-    if kode == "NM-REGROUPING":
-        return (f"{d.get('a')} {d.get('op')} {d.get('b')}", "Simpan dan pinjam", str(soal.kunci))
-    if kode == "NM-POLA":
-        return (", ".join(str(x) for x in d.get("deret", [])) + ", ...", "Pola bilangan", str(soal.kunci))
-    return (soal.instruksi.replace("**", ""), "Soal cerita", str(soal.kunci))
+    tipe, kata, simbol, _l1, _l2 = OPERASI[kode]
+    ujaran = f"{d.get('a')} {simbol} {d.get('b')}"
+    if soal.instruksi:
+        ujaran += f"  ({soal.instruksi.replace('**', '')[:60]})"
+    return (ujaran, kata, str(soal.kunci))
+
+
+def jenis_dan_thumb(soal):
+    """(jenis soal, teks pengganti gambar kecil) untuk daftar Bank Soal."""
+    kode, d = soal.kompetensi.kode, soal.data or {}
+    if soal.game == "literasi":
+        if kode == KOMPETENSI_BACA:
+            return "Baca kalimat", d.get("emoji") or EMOJI_BACA_BAWAAN
+        return "Susun kalimat", "\U0001F9E9"
+    simbol = OPERASI[kode][2]
+    return OPERASI[kode][1], ("\u2212" if simbol == "-" else simbol)
 
 
 def nilai_form(soal):
@@ -1109,15 +1168,13 @@ def nilai_form(soal):
     nilai = {
         "kompetensi": soal.kompetensi.kode, "bagian": soal.bagian, "level": soal.level, "aktif": "1" if soal.aktif else "0",
         "instruksi": soal.instruksi, "petunjuk": soal.petunjuk, "kunci": "" if soal.kunci is None else soal.kunci,
+        "kalimat": soal.instruksi if soal.kompetensi.kode == KOMPETENSI_BACA else "",
         "kolom_kata": "\n".join(soal.kolom_kata), "jawaban": "\n".join(soal.jawaban),
         "jawaban_lain": "\n".join(", ".join(x) for x in soal.jawaban_lain or []),
         "urutan_bebas": "1" if soal.urutan_bebas else "",
-        "puluhan": d.get("puluhan", ""), "satuan": d.get("satuan", ""),
-        "a": d.get("a", ""), "op": d.get("op", "+"), "b": d.get("b", ""),
-        "deret": ", ".join(str(x) for x in d.get("deret", [])),
-        "label1": d.get("label1", ""), "val1": "" if d.get("val1") is None else d.get("val1"),
-        "label2": d.get("label2", ""), "val2": "" if d.get("val2") is None else d.get("val2"),
-        "langkah": d.get("langkah", 1),
+        "a": d.get("a", ""), "b": d.get("b", ""),
+        "label1": d.get("label1", ""), "label2": d.get("label2", ""),
+        "emoji": d.get("emoji", "") if soal.game == "literasi" else "",
         "ikon": next((k for k, v in IKON_CERITA.items() if v[3] == d.get("emoji")), "bintang"),
     }
     return nilai
@@ -1216,52 +1273,52 @@ TAKSONOMI = [
         ["nyala", "nyanyi", "ngantuk"],
     ),
     (
-        "LT-PAHAM",
+        "LT-KETEPATAN",
         "literasi",
-        "Pemahaman bacaan",
-        "Detektif Cerita",
-        "Menemukan informasi dan menyimpulkan isi bacaan pendek",
-        ["Siapa?", "Di mana?", "Mengapa?"],
+        "Ketepatan membaca",
+        "Baca Kalimat",
+        "Membaca kalimat dengan suara lantang secara tepat (diperiksa lewat mikrofon)",
+        ["Ibu", "memasak", "nasi"],
     ),
     (
         "LT-KALIMAT",
         "literasi",
         "Susun kalimat",
-        "Menyusun Kalimat",
-        "Menyusun kata menjadi kalimat berpola S-P-O",
+        "Susun & Baca Kalimat",
+        "Menyusun kata menjadi kalimat berpola S-P-O, lalu membacanya dengan tepat",
         ["Ibu", "membeli", "sayur"],
     ),
     (
-        "NM-NILAI-TEMPAT",
+        "NM-TAMBAH",
         "numerasi",
-        "Nilai tempat",
-        "Petualangan Nilai Tempat",
-        "Memahami nilai satuan dan puluhan",
-        34,
+        "Penjumlahan",
+        "Penjumlahan Seru",
+        "Menjumlahkan bilangan, dengan dan tanpa menyimpan",
+        ["12", "+", "7", "=", "?"],
     ),
     (
-        "NM-REGROUPING",
+        "NM-KURANG",
         "numerasi",
-        "Regrouping",
-        "Hitung Seru",
-        "Penjumlahan dan pengurangan dengan pengelompokan ulang",
-        27,
+        "Pengurangan",
+        "Pengurangan Seru",
+        "Mengurangkan bilangan, dengan dan tanpa meminjam",
+        ["15", "-", "8", "=", "?"],
     ),
     (
-        "NM-POLA",
+        "NM-KALI",
         "numerasi",
-        "Pola bilangan",
-        "Jejak Pola Bilangan",
-        "Melengkapi dan membuat pola bilangan sederhana",
-        12,
+        "Perkalian",
+        "Perkalian Seru",
+        "Perkalian sebagai penjumlahan berulang dan kelompok sama banyak",
+        ["4", "\u00d7", "6", "=", "?"],
     ),
     (
-        "NM-CERITA",
+        "NM-BAGI",
         "numerasi",
-        "Soal cerita",
-        "Cerita Hitung Lumi",
-        "Menerjemahkan cerita sehari-hari menjadi operasi hitung",
-        45,
+        "Pembagian",
+        "Pembagian Seru",
+        "Membagi rata dan mengelompokkan benda secara sama banyak",
+        ["24", "\u00f7", "4", "=", "?"],
     ),
 ]
 
@@ -1281,14 +1338,22 @@ CONTOH = {
 # dengan butir soal yang sedang dikerjakan.
 
 ALIAS_GAME = {
-    # Alias Game 2: numerasi
-    "NILAI_TEMPAT": "NM-NILAI-TEMPAT",
-    "PENGURANGAN": "NM-REGROUPING",
-    "KOMBINASI": "NM-REGROUPING",
-    "POLA_BILANGAN": "NM-POLA",
-    "SOAL_CERITA": "NM-CERITA",
+    # Alias Game 2: numerasi (empat operasi hitung)
+    "PENJUMLAHAN": "NM-TAMBAH",
+    "penjumlahan": "NM-TAMBAH",
+    "PERTAMBAHAN": "NM-TAMBAH",
+    "pertambahan": "NM-TAMBAH",
 
-    # Alias Game 1: literasi
+    "PENGURANGAN": "NM-KURANG",
+    "pengurangan": "NM-KURANG",
+
+    "PERKALIAN": "NM-KALI",
+    "perkalian": "NM-KALI",
+
+    "PEMBAGIAN": "NM-BAGI",
+    "pembagian": "NM-BAGI",
+
+    # Alias Game 1: literasi (susun kalimat dan baca kalimat satu kesatuan)
     "MENYUSUN_KALIMAT": "LT-KALIMAT",
     "menyusun_kalimat": "LT-KALIMAT",
 
@@ -1298,8 +1363,12 @@ ALIAS_GAME = {
     "MEMBACA_LANCAR": "LT-LANCAR",
     "membaca_lancar": "LT-LANCAR",
 
-    "PEMAHAMAN_BACAAN": "LT-PAHAM",
-    "pemahaman_bacaan": "LT-PAHAM",
+    "KETEPATAN": "LT-KETEPATAN",
+    "ketepatan": "LT-KETEPATAN",
+    "BACA_LANTANG": "LT-KETEPATAN",
+    "baca_lantang": "LT-KETEPATAN",
+    "BACA_KALIMAT": "LT-KETEPATAN",
+    "baca_kalimat": "LT-KETEPATAN",
 }
 
 
@@ -1327,6 +1396,20 @@ POLA = {
         "Latihan suku kata ny- dan ng- bergambar",
     ),
 
+    # Dikirim game saat bacaan lewat mikrofon belum tepat.
+
+    "baca_kata_terlewat": (
+        "Ada kata yang tidak terbaca saat membaca lantang",
+        "LT-KETEPATAN",
+        "Baca kalimat bersama per kata, jari menunjuk tiap kata",
+    ),
+
+    "baca_kata_berbeda": (
+        "Kata yang dibaca berbeda dari tulisan",
+        "LT-KETEPATAN",
+        "Eja kata yang salah per suku kata, lalu baca ulang kalimatnya",
+    ),
+
     # ------------------------------------------------------
     # Literasi: menyusun kalimat
     # Pola lama Game 1 dipertahankan.
@@ -1351,67 +1434,73 @@ POLA = {
     ),
 
     # ------------------------------------------------------
-    # Numerasi: nilai tempat
+    # Numerasi: penjumlahan
     # ------------------------------------------------------
 
-    "nilai_tempat": (
-        "Menulis puluhan dan satuan secara tidak tepat",
-        "NM-NILAI-TEMPAT",
-        "Gunakan blok puluhan dan satuan",
+    "tambah_simpan": (
+        "Lupa menyimpan 1 puluhan saat menjumlahkan",
+        "NM-TAMBAH",
+        "Latihan menukar 10 satuan menjadi 1 puluhan dengan blok",
     ),
 
-    "tertukar": (
-        "Menukar posisi puluhan dan satuan",
-        "NM-NILAI-TEMPAT",
-        "Gunakan kartu puluhan dan satuan dengan warna berbeda",
-    ),
-
-    # ------------------------------------------------------
-    # Numerasi: regrouping
-    # ------------------------------------------------------
-
-    "regrouping": (
-        "Kesalahan pengelompokan satuan menjadi puluhan",
-        "NM-REGROUPING",
-        "Latihan menukar 10 satuan menjadi 1 puluhan",
-    ),
-
-    "salah_operasi": (
-        "Memilih operasi hitung yang tidak sesuai",
-        "NM-REGROUPING",
-        'Perhatikan kata kunci "sisa", "diberikan", dan "hilang"',
-    ),
-
-    "langkah_terlewat": (
-        "Melewatkan satu langkah perhitungan",
-        "NM-REGROUPING",
-        "Pecah soal dua langkah menjadi dua tahap",
+    "tambah_salah_operasi": (
+        "Mengurangkan padahal soal meminta menjumlahkan",
+        "NM-TAMBAH",
+        'Garis bawahi kata kunci "bertambah", "semua", dan "seluruhnya"',
     ),
 
     # ------------------------------------------------------
-    # Numerasi: soal cerita
+    # Numerasi: pengurangan
     # ------------------------------------------------------
 
-    "cerita_salah_operasi": (
-        "Memilih operasi hitung yang tidak sesuai cerita",
-        "NM-CERITA",
-        "Identifikasi informasi yang diketahui dan yang ditanyakan",
+    "kurang_pinjam": (
+        "Salah meminjam puluhan saat mengurangkan",
+        "NM-KURANG",
+        "Latihan meminjam 1 puluhan menjadi 10 satuan dengan blok",
     ),
 
-    "cerita_langkah_terlewat": (
-        "Melewatkan langkah dalam soal cerita",
-        "NM-CERITA",
-        "Pisahkan soal cerita menjadi langkah pertama dan kedua",
+    "kurang_terbalik": (
+        "Mengurangkan angka kecil dengan angka besar pada tiap tempat",
+        "NM-KURANG",
+        "Kurangi dari satuan dulu, pinjam puluhan bila satuan tidak cukup",
+    ),
+
+    "kurang_salah_operasi": (
+        "Menjumlahkan padahal soal meminta mengurangkan",
+        "NM-KURANG",
+        'Garis bawahi kata kunci "sisa", "diambil", dan "hilang"',
     ),
 
     # ------------------------------------------------------
-    # Numerasi: pola bilangan
+    # Numerasi: perkalian
     # ------------------------------------------------------
 
-    "pola_bilangan": (
-        "Belum mengenali aturan pola bilangan",
-        "NM-POLA",
-        "Bandingkan selisih atau operasi antarangka",
+    "kali_salah_operasi": (
+        "Menjumlahkan kedua bilangan padahal soal meminta mengalikan",
+        "NM-KALI",
+        "Tunjukkan perkalian sebagai kelompok sama banyak dengan benda",
+    ),
+
+    "kali_fakta": (
+        "Hasil perkalian meleset satu kelompok",
+        "NM-KALI",
+        "Latihan penjumlahan berulang dan hafalan tabel bertahap",
+    ),
+
+    # ------------------------------------------------------
+    # Numerasi: pembagian
+    # ------------------------------------------------------
+
+    "bagi_salah_operasi": (
+        "Memilih operasi lain padahal soal meminta membagi rata",
+        "NM-BAGI",
+        "Peragakan membagi rata benda ke beberapa piring",
+    ),
+
+    "bagi_terbalik": (
+        "Menukar bilangan yang dibagi dengan pembaginya",
+        "NM-BAGI",
+        "Tegaskan: yang dibagi adalah jumlah semua benda",
     ),
 }
 
@@ -1423,25 +1512,28 @@ POLA = {
 TINDAK = {
     "literasi": {
         "Mulai": (
-            "Latihan suku kata dan kartu kata bergambar."
+            "Latihan suku kata dan kartu kata bergambar, "
+            "lalu baca kalimat bersama per kata."
         ),
         "Berkembang": (
-            "Menyusun kalimat dengan kartu kata berpasangan."
+            "Menyusun kalimat dengan kartu kata berpasangan, "
+            "lalu membacakannya bergantian."
         ),
         "Cakap": (
-            "Tantangan membaca pemahaman dua paragraf."
+            "Tantangan membaca lantang kalimat panjang "
+            "dengan jeda dan lafal yang tepat."
         ),
     },
     "numerasi": {
         "Mulai": (
-            "Gunakan benda konkret seperti sapu lidi dan "
-            "latihan menukar 10 satuan."
+            "Gunakan benda konkret seperti sapu lidi untuk menambah, "
+            "mengurangi, mengelompokkan, dan membagi rata."
         ),
         "Berkembang": (
-            "Latihan berpasangan dengan blok puluhan dan satuan."
+            "Latihan berpasangan dengan kartu operasi dan garis bilangan."
         ),
         "Cakap": (
-            "Tantangan soal cerita dua langkah."
+            "Tantangan soal cerita yang memadukan beberapa operasi hitung."
         ),
     },
 }
@@ -1785,7 +1877,7 @@ from django.views.decorators.http import require_GET, require_POST
 
 from accounts.utils import role_required
 from . import engine, jalur
-from .bank_soal import serialkan
+from .bank_soal import KOMPETENSI_BACA, KOMPETENSI_UTAMA_LITERASI, serialkan
 from .models import Jawaban, Kompetensi, Misi, Penguasaan, Siswa
 from .services import KODE_LITERASI, catat_jawaban, selesaikan_diagnostik
 
@@ -2030,7 +2122,7 @@ def _misi_token(klaim, kunci=False):
 # 5. NORMALISASI EVENT DARI GAME
 # ==========================================================
 
-def _norm(event, misi, id_soal=()):
+def _norm(event, misi, id_soal=(), kode_item=None):
     """
     Menerima event Game 1 dan Game 2.
 
@@ -2041,6 +2133,9 @@ def _norm(event, misi, id_soal=()):
     - pola / error_code / error_pattern
     - waktu_ms / response_time_ms / response_time_seconds
     - petunjuk / used_hint
+
+    `kode_item` (item_id -> kode kompetensi soal) membuat server yang menentukan kompetensi pada level Literasi:
+    bacaan mikrofon selalu milik LT-KETEPATAN, dan soal susun kalimat tidak pernah dihitung sebagai LT-KETEPATAN.
     """
     if not isinstance(event, dict):
         raise ValueError("Setiap event harus berbentuk objek JSON.")
@@ -2076,6 +2171,13 @@ def _norm(event, misi, id_soal=()):
 
     if id_soal and item_id not in id_soal:
         raise ValueError("Soal tidak termasuk dalam misi ini.")
+
+    if misi.kompetensi.ranah == "literasi" and kode_item:
+        asal = kode_item.get(item_id)
+        if asal == KOMPETENSI_BACA:
+            kode = KOMPETENSI_BACA
+        elif kode == KOMPETENSI_BACA:
+            kode = asal or KOMPETENSI_UTAMA_LITERASI
 
     raw_ms = event.get("waktu_ms")
 
@@ -2307,7 +2409,8 @@ def api_event(request):
             id_soal = {s.item_id for s in soal}
 
             # Semua event divalidasi terlebih dahulu.
-            events = [_norm(event, misi, id_soal) for event in events_raw]
+            kode_item = {s.item_id: s.kompetensi.kode for s in soal}
+            events = [_norm(event, misi, id_soal, kode_item) for event in events_raw]
 
             if misi.status == "gagal":
                 if gagal_diminta and not events:
@@ -2418,8 +2521,12 @@ Jalan Lentera: jalur belajar murid per kategori (Literasi dan Numerasi).
 Aturan inti
 -----------
 - Satu BAGIAN = 5 LEVEL. Satu LEVEL = 5 soal = 5 lampu (satu lampu menyala + centang tiap jawaban benar).
+- Di beranda murid, satu BAGIAN digambar sebagai satu jalur zig-zag: 5 titik, satu titik per level.
+  Level selesai = titik menyala emas. Bagian berikutnya terkunci sampai kelima titik bagian sebelumnya emas.
 - Jalur dibangun dari bank soal (SoalGame). Bagian baru tampil bila kelima levelnya sudah punya soal.
 - Murid memainkan level secara berurutan: level 1 -> 5 bagian 1, lalu bagian 2, dst.
+- Literasi: susun kalimat dan baca kalimat (mikrofon) satu kesatuan; satu level memuat keduanya.
+- Numerasi: satu bagian = satu operasi hitung (penjumlahan, pengurangan, perkalian, pembagian).
 - Batas waktu level = menit pada Bank Aktivitas (lihat `batas_waktu`).
 - Peta Kompetensi dicicil: persen = dasar + (100 - dasar) x kemajuan jalur x penguasaan,
   100% baru tercapai setelah murid menyelesaikan `Kelas.target_bagian` bagian.
@@ -2485,7 +2592,7 @@ def struktur(game):
                 judul = f"{judul} {muncul[komp.id]}"
         else:
             komp = utama
-            judul = "Petualangan Kata & Kalimat" if no == 1 else f"Petualangan Literasi {no}"
+            judul = "Susun & Baca Kalimat" if no == 1 else f"Susun & Baca Kalimat {no}"
         level = [
             {"level": n, "jumlah": min(maks, b["level"].get(n, 0)), "tersedia": b["level"].get(n, 0)}
             for n in range(1, level_per_bagian() + 1)
@@ -2735,6 +2842,21 @@ def lampu_misi(misi):
 # 6. TAMPILAN JALUR MURID
 # ==========================================================
 
+# Jalur zig-zag satu bagian digambar pada kanvas SVG 320 x 156: tangga naik ke kanan
+# (datar, naik, datar, naik, ...) seperti peta perjalanan. Satu titik = satu level.
+ZIGZAG_LEBAR, ZIGZAG_TINGGI = 320, 156
+
+
+def titik_zigzag(n):
+    """[(x, y)] untuk n titik jalur zig-zag (bilangan bulat supaya aman di template berlokal Indonesia)."""
+    n = max(1, int(n))
+    kiri, kanan, dasar = 34, ZIGZAG_LEBAR - 38, 116
+    langkah = (kanan - kiri) / (n - 1) if n > 1 else 0
+    naik = (n - 1) // 2
+    dy = min(36, 72 / naik) if naik else 0
+    return [(round(kiri + i * langkah), round(dasar - dy * (i // 2))) for i in range(n)]
+
+
 def jalur_siswa(siswa, aktif=None):
     """Data jalur Literasi dan Numerasi untuk beranda murid (tanpa menulis ke database).
 
@@ -2743,7 +2865,8 @@ def jalur_siswa(siswa, aktif=None):
     Per bagian: bisa_main = kelima levelnya sudah punya soal; terbuka = bisa dimainkan sekarang
     (semua bagian sebelumnya sudah penuh); penuh = kelima level selesai; berikut = nomor bagian
     berikutnya yang bisa dimainkan (untuk tombol "Lanjut ke bagian berikutnya").
-    Per level: status selesai / kini / belum / terkunci / kosong, dan daftar lampu (True = menyala).
+    Per level (= satu titik zig-zag): status selesai / kini / belum / terkunci / kosong, daftar lampu
+    (True = menyala), serta nyala/total lampu untuk titik yang sedang dimainkan.
     """
     aktif = aktif if aktif is not None else misi_aktif(siswa)
     selesai = level_selesai([siswa.id])
@@ -2776,7 +2899,15 @@ def jalur_siswa(siswa, aktif=None):
                     kini_bagian = b["no"]
                 else:
                     status, lamp = "belum", [False] * x["jumlah"]
-                level.append({**x, "status": status, "lampu": lamp, "nomor": x["level"]})
+                level.append({
+                    **x, "status": status, "lampu": lamp, "nomor": x["level"],
+                    "nyala": sum(1 for l in lamp if l), "total": len(lamp) or x["jumlah"] or maks,
+                })
+            # titik jalur zig-zag + ruas menuju titik berikutnya (menyala emas bila level ini selesai)
+            titik = titik_zigzag(len(level))
+            for i, x in enumerate(level):
+                x["gx"], x["gy"] = titik[i]
+                x["seg_x"], x["seg_y"] = titik[i + 1] if i + 1 < len(level) else (None, None)
             penuh = main and nyala == len(b["level"])
             daftar.append({
                 "no": b["no"], "judul": b["judul"], "lengkap": b["lengkap"], "bisa_main": main,
@@ -2810,8 +2941,8 @@ def jalur_siswa(siswa, aktif=None):
 # ==========================================================
 
 _IKON_LENCANA = {
-    "literasi": [("📖", "Pembaca Cilik"), ("✏️", "Penulis Cilik"), ("📚", "Kutu Buku"), ("🦉", "Bijak Bahasa")],
-    "numerasi": [("🔢", "Ahli Puluhan"), ("➕", "Jagoan Simpan-Pinjam"), ("🏆", "Juara Pola"), ("🧮", "Pemecah Cerita")],
+    "literasi": [("📖", "Pembaca Tekun"), ("🎤", "Pembaca Lantang"), ("📚", "Kutu Buku"), ("🦉", "Bijak Bahasa")],
+    "numerasi": [("➕", "Raja Tambah"), ("➖", "Jagoan Kurang"), ("✖️", "Bintang Kali"), ("➗", "Ahli Bagi")],
 }
 
 
@@ -2962,7 +3093,7 @@ from belajar.services import catat_jawaban
 
 MURID = [("Raka", "🦊"), ("Alya", "🐼"), ("Bima", "🐯"), ("Citra", "🦄"), ("Dimas", "🐸"), ("Fitri", "🐰"),
          ("Gilang", "🦁"), ("Hana", "🐙"), ("Indra", "🐧"), ("Jihan", "🐨"), ("Kirana", "🦋"), ("Laras", "🐢")]
-POLA_DEMO = {"LT-LANCAR": "ny_ng", "LT-KALIMAT": "urutan_spo", "NM-NILAI-TEMPAT": "nilai_tempat", "NM-REGROUPING": "regrouping"}
+POLA_DEMO = {"LT-LANCAR": "ny_ng", "LT-KALIMAT": "urutan_spo", "LT-KETEPATAN": "baca_kata_terlewat", "NM-TAMBAH": "tambah_simpan", "NM-KURANG": "kurang_pinjam"}
 
 
 def buat_user(username, nama, role, sandi=None):
@@ -3461,64 +3592,25 @@ class Migration(migrations.Migration):
 ============================================================================
 FILE: belajar/migrations/0005_impor_soal_bawaan.py
 ============================================================================
-"""Mengisi bank soal dari soal bawaan Game 1 (25 soal) dan Game 2 (100 soal).
+"""Mengisi bank soal dari soal bawaan (Game 1: susun + baca kalimat, Game 2: empat operasi hitung).
 
 Hanya berjalan sekali per database. Soal yang nanti dihapus guru tidak akan
 dibuat ulang saat `migrate` dijalankan lagi.
-"""
 
-import json
-from pathlib import Path
+Database lama (yang sudah menjalankan versi awal berkas ini dengan kompetensi Numerasi lama) dirapikan
+oleh migrasi 0006.
+"""
 
 from django.db import migrations
 
-from belajar import engine
+from ._bawaan import impor_soal_bawaan
 
-# Urutan bagian Numerasi: satu kompetensi = satu bagian (5 level).
-BAGIAN_NUMERASI = {"NM-NILAI-TEMPAT": 1, "NM-REGROUPING": 2, "NM-POLA": 3, "NM-CERITA": 4}
-
-
-def _kompetensi(Kompetensi, kode):
-    """Ambil kompetensi; bila database baru (belum disinkronkan), buat dari taksonomi engine."""
-    obj = Kompetensi.objects.filter(kode=kode).first()
-    if obj:
-        return obj
-    for urutan, (k, ranah, nama, judul, cakupan, _contoh) in enumerate(engine.TAKSONOMI):
-        if k == kode:
-            return Kompetensi.objects.create(kode=k, ranah=ranah, nama=nama, judul=judul, cakupan=cakupan, urutan=urutan)
-    raise LookupError(kode)
+# Versi awal berkas ini menempatkan misi Numerasi lama di bagian sesuai kompetensinya.
+# Kompetensi lama itu kini dihapus oleh migrasi 0006, jadi pemetaan ini tidak lagi diperlukan.
 
 
 def impor(apps, schema_editor):
-    SoalGame = apps.get_model("belajar", "SoalGame")
-    Kompetensi = apps.get_model("belajar", "Kompetensi")
-    Misi = apps.get_model("belajar", "Misi")
-
-    berkas = Path(__file__).resolve().parent.parent / "data" / "soal_bawaan.json"
-    data = json.loads(berkas.read_text(encoding="utf-8"))
-
-    for q in data["game1"]:
-        SoalGame.objects.get_or_create(
-            kode_bawaan=q["kode"],
-            defaults=dict(
-                game="literasi", kompetensi=_kompetensi(Kompetensi, q["kompetensi"]), bagian=1, level=q["level"],
-                instruksi=q["instruksi"], gambar=q["gambar"], kolom_kata=q["kolom_kata"], jawaban=q["jawaban"],
-                jawaban_lain=q["jawaban_lain"], urutan_bebas=q["urutan_bebas"], urutan=q["urutan"],
-            ),
-        )
-
-    for q in data["game2"]:
-        SoalGame.objects.get_or_create(
-            kode_bawaan=q["kode"],
-            defaults=dict(
-                game="numerasi", kompetensi=_kompetensi(Kompetensi, q["kompetensi"]), bagian=q["bagian"], level=q["level"],
-                instruksi=q["instruksi"], petunjuk=q["petunjuk"], kunci=q["kunci"], data=q["data"], urutan=q["urutan"],
-            ),
-        )
-
-    # Misi lama: tempatkan di bagian yang sesuai dengan kompetensinya supaya kemajuan lama ikut terhitung.
-    for kode, bagian in BAGIAN_NUMERASI.items():
-        Misi.objects.filter(kompetensi__kode=kode).update(bagian=bagian)
+    impor_soal_bawaan(apps)
 
 
 def hapus(apps, schema_editor):
@@ -3537,9 +3629,127 @@ class Migration(migrations.Migration):
     ]
 
 ============================================================================
+FILE: belajar/migrations/0006_ganti_kompetensi_numerasi_ketepatan.py
+============================================================================
+"""Mengganti kompetensi lama dengan taksonomi baru.
+
+- Literasi : LT-PAHAM (Pemahaman bacaan) diganti LT-KETEPATAN (Ketepatan membaca, soal baca kalimat lewat mikrofon).
+             Susun kalimat dan baca kalimat satu kesatuan dalam satu level Game 1.
+- Numerasi : Nilai tempat, Regrouping, Pola bilangan, dan Soal cerita diganti empat operasi hitung:
+             NM-TAMBAH, NM-KURANG, NM-KALI, NM-BAGI (satu operasi = satu bagian).
+
+Kompetensi lama dihapus beserta data turunannya (aktivitas, penguasaan, misi, jawaban, hasil diagnostik, dan
+soal numerasi lama) karena level yang sudah selesai pada kompetensi lama tidak boleh terhitung sebagai level
+selesai pada bagian baru. Data murid, kelas, guru, dan poin tidak berubah.
+
+Soal Game 1 bergambar yang dulu bertanda LT-PAHAM tetap dipakai sebagai soal susun kalimat (kini LT-KOSAKATA).
+Soal bawaan baru (empat operasi hitung dan 25 kalimat baca) diimpor; soal buatan guru tidak disentuh.
+"""
+
+from django.db import migrations
+
+from ._bawaan import impor_soal_bawaan, kompetensi as ambil_kompetensi
+
+LAMA = ["LT-PAHAM", "NM-NILAI-TEMPAT", "NM-REGROUPING", "NM-POLA", "NM-CERITA"]
+
+
+def ganti(apps, schema_editor):
+    Kompetensi = apps.get_model("belajar", "Kompetensi")
+    SoalGame = apps.get_model("belajar", "SoalGame")
+    Aktivitas = apps.get_model("belajar", "Aktivitas")
+
+    # 1. Soal susun kalimat bertanda LT-PAHAM tetap dipakai: pindahkan ke LT-KOSAKATA sebelum LT-PAHAM dihapus.
+    paham = Kompetensi.objects.filter(kode="LT-PAHAM").first()
+    if paham:
+        SoalGame.objects.filter(kompetensi=paham).update(kompetensi=ambil_kompetensi(Kompetensi, "LT-KOSAKATA"))
+
+    # 2. Hapus kompetensi lama; data turunannya ikut terhapus (CASCADE).
+    Kompetensi.objects.filter(kode__in=LAMA).delete()
+
+    # 3. Aktivitas susun kalimat kini memuat baca kalimat juga.
+    Aktivitas.objects.filter(kompetensi__kode="LT-KALIMAT", judul="Menyusun Kalimat").update(judul="Susun & Baca Kalimat")
+
+    # 4. Soal bawaan baru.
+    impor_soal_bawaan(apps)
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ("belajar", "0005_impor_soal_bawaan"),
+    ]
+
+    operations = [
+        # Tidak dapat dibalik: data kompetensi lama sudah dihapus.
+        migrations.RunPython(ganti, migrations.RunPython.noop),
+    ]
+
+============================================================================
 FILE: belajar/migrations/__init__.py
 ============================================================================
 
+
+============================================================================
+FILE: belajar/migrations/_bawaan.py
+============================================================================
+"""Bantuan impor soal bawaan untuk migrasi 0005 dan 0006.
+
+Nama berkas berawalan "_" sehingga Django tidak memuatnya sebagai migrasi.
+Sumber data: belajar/data/soal_bawaan.json (Game 1: susun kalimat + baca kalimat; Game 2: empat operasi hitung).
+"""
+
+import json
+from pathlib import Path
+
+from belajar import engine
+
+
+def kompetensi(Kompetensi, kode):
+    """Ambil kompetensi; bila database baru (belum disinkronkan), buat dari taksonomi engine."""
+    obj = Kompetensi.objects.filter(kode=kode).first()
+    if obj:
+        return obj
+    for urutan, (k, ranah, nama, judul, cakupan, _contoh) in enumerate(engine.TAKSONOMI):
+        if k == kode:
+            return Kompetensi.objects.create(kode=k, ranah=ranah, nama=nama, judul=judul, cakupan=cakupan, urutan=urutan)
+    raise LookupError(kode)
+
+
+def impor_soal_bawaan(apps):
+    """Isi bank soal dari soal bawaan. Soal yang kode_bawaan-nya sudah ada tidak dibuat ulang."""
+    SoalGame = apps.get_model("belajar", "SoalGame")
+    Kompetensi = apps.get_model("belajar", "Kompetensi")
+
+    berkas = Path(__file__).resolve().parent.parent / "data" / "soal_bawaan.json"
+    data = json.loads(berkas.read_text(encoding="utf-8"))
+
+    for q in data["game1"]:
+        if q.get("tipe") == "baca":
+            isi = dict(
+                instruksi=q["instruksi"], gambar="", kolom_kata=[], jawaban=[], jawaban_lain=[], urutan_bebas=False,
+                data={"emoji": q["emoji"]},
+            )
+        else:
+            isi = dict(
+                instruksi=q["instruksi"], gambar=q["gambar"], kolom_kata=q["kolom_kata"], jawaban=q["jawaban"],
+                jawaban_lain=q["jawaban_lain"], urutan_bebas=q["urutan_bebas"],
+            )
+        SoalGame.objects.get_or_create(
+            kode_bawaan=q["kode"],
+            defaults=dict(
+                game="literasi", kompetensi=kompetensi(Kompetensi, q["kompetensi"]), bagian=q.get("bagian", 1),
+                level=q["level"], urutan=q["urutan"], **isi,
+            ),
+        )
+
+    for q in data["game2"]:
+        SoalGame.objects.get_or_create(
+            kode_bawaan=q["kode"],
+            defaults=dict(
+                game="numerasi", kompetensi=kompetensi(Kompetensi, q["kompetensi"]), bagian=q["bagian"], level=q["level"],
+                instruksi=q["instruksi"], petunjuk=q["petunjuk"], kunci=q["kunci"], data=q["data"], urutan=q["urutan"],
+            ),
+        )
 
 ============================================================================
 FILE: belajar/models.py
@@ -3668,8 +3878,11 @@ class Misi(models.Model):
 class SoalGame(models.Model):
     """Bank soal Game 1 (Literasi) dan Game 2 (Numerasi) yang dikelola guru dari dashboard.
 
-    Game 1  : gambar soal + kolom kata + jawaban benar (urutan kata).
-    Game 2  : teks/angka soal + jawaban benar (angka), tergantung kompetensi.
+    Game 1  : satu level memuat dua jenis soal yang satu kesatuan.
+              Susun kalimat: gambar soal + kolom kata + jawaban benar (urutan kata).
+              Baca kalimat (LT-KETEPATAN): kalimat di `instruksi` + emoji di `data`, dibaca lantang lewat mikrofon.
+    Game 2  : empat operasi hitung (penjumlahan, pengurangan, perkalian, pembagian): dua bilangan di `data`
+              (a, b), cerita di `instruksi` (opsional), jawaban benar dihitung otomatis.
     """
     GAME = [("literasi", "Game 1 · Literasi"), ("numerasi", "Game 2 · Numerasi")]
     game = models.CharField(max_length=10, choices=GAME)
@@ -3819,18 +4032,23 @@ AVATAR = [
 KODE_LITERASI = {
     "LT-KOSAKATA",
     "LT-LANCAR",
-    "LT-PAHAM",
+    "LT-KETEPATAN",
     "LT-KALIMAT",
 }
 
 KODE_NUMERASI = {
-    "NM-CERITA",
-    "NM-NILAI-TEMPAT",
-    "NM-REGROUPING",
-    "NM-POLA",
+    "NM-TAMBAH",
+    "NM-KURANG",
+    "NM-KALI",
+    "NM-BAGI",
 }
 
 KODE_GAME = KODE_LITERASI | KODE_NUMERASI
+
+# Soal baca kalimat (mikrofon) hanya mengukur LT-KETEPATAN. Jawabannya tidak dicerminkan
+# ke kompetensi lain, dan jawaban susun kalimat tidak dicerminkan ke LT-KETEPATAN.
+KODE_BACA = "LT-KETEPATAN"
+KODE_LITERASI_CERMIN = KODE_LITERASI - {KODE_BACA}
 
 JUMLAH_SOAL_PER_LEVEL = 5
 
@@ -3987,17 +4205,22 @@ def cerminkan_jawaban_literasi(
     misi=None,
 ):
     """
-    Gunakan jawaban Game 1 untuk memperbarui seluruh kompetensi
-    literasi lain yang terdaftar.
+    Gunakan jawaban susun kalimat Game 1 untuk memperbarui kompetensi
+    literasi lain yang terdaftar (kecuali LT-KETEPATAN, yang hanya
+    diukur oleh soal baca kalimat lewat mikrofon).
 
-    Ini memastikan semua indikator literasi menerima data
-    ketika hanya satu bank soal Game 1 yang digunakan.
+    Ini memastikan indikator literasi menerima data ketika bank soal
+    susun kalimat Game 1 yang digunakan.
 
     Catatan: hasil seluruh indikator berasal dari bukti jawaban
     yang sama. Ini adalah pencerminan data, bukan pengukuran
     kompetensi yang benar-benar terpisah.
     """
     if not misi or misi.kompetensi.ranah != "literasi":
+        return
+
+    # Bacaan lewat mikrofon hanya milik LT-KETEPATAN: tidak ada pencerminan.
+    if kompetensi_asal.kode == KODE_BACA:
         return
 
     diagnostik = misi.jenis == "diagnostik"
@@ -4012,7 +4235,7 @@ def cerminkan_jawaban_literasi(
 
     kompetensi_lain = (
         Kompetensi.objects
-        .filter(kode__in=KODE_LITERASI)
+        .filter(kode__in=KODE_LITERASI_CERMIN)
         .exclude(pk=kompetensi_asal.pk)
     )
 
@@ -5105,7 +5328,8 @@ def ringkasan_kelas(kelas):
 FILE: belajar/soal_views.py
 ============================================================================
 """
-Bank Soal guru: membuat, mengubah, menonaktifkan, dan menghapus soal Game 1 (Literasi) dan Game 2 (Numerasi).
+Bank Soal guru: membuat, mengubah, menonaktifkan, dan menghapus soal Game 1 (Literasi: susun kalimat + baca kalimat)
+dan Game 2 (Numerasi: empat operasi hitung).
 
 Soal yang dibuat di sini langsung dipakai game melalui GET /api/game/soal/ (lihat game_api.py).
 Satu BAGIAN = 5 LEVEL; tiap level dimainkan dengan 5 soal (5 lampu).
@@ -5190,11 +5414,13 @@ def guru_soal(request, kelas):
     daftar = list(daftar)
     for s in daftar:
         s.judul, s.detail, s.jawaban_teks = bank_soal.ringkas(s)
+        s.jenis, s.thumb = bank_soal.jenis_dan_thumb(s)
 
     matriks = _matriks(game)
     return render(request, "belajar/guru_soal.html", _ctx(
         request, kelas, "soal", game=game, daftar=daftar, f=filter_, matriks=matriks,
         bagian_ada=[m["no"] for m in matriks], per_level=jalur.soal_per_level(),
+        per_level_baca=getattr(settings, "LENTERA_SOAL_BACA_PER_LEVEL", 2),
         jumlah={g: SoalGame.objects.filter(game=g).count() for g in GAME_SAH},
         kembali=request.get_full_path(),
     ))
@@ -5214,9 +5440,9 @@ def guru_soal_form(request, kelas, soal_id=None):
     soal = get_object_or_404(SoalGame.objects.select_related("kompetensi"), pk=soal_id) if soal_id else None
     game = soal.game if soal else _game(request.GET.get("game") or request.POST.get("game"))
     nilai = bank_soal.nilai_form(soal) if soal else {
-        "kompetensi": request.GET.get("kompetensi") or ("LT-KALIMAT" if game == "literasi" else "NM-NILAI-TEMPAT"),
+        "kompetensi": request.GET.get("kompetensi") or ("LT-KALIMAT" if game == "literasi" else "NM-TAMBAH"),
         "bagian": request.GET.get("bagian") or _bagian_awal(game), "level": request.GET.get("level") or 1, "aktif": "1",
-        "op": "+", "ikon": "bintang", "langkah": 1,
+        "ikon": "bintang",
     }
     kode_pilihan = bank_soal.KODE_LITERASI if game == "literasi" else bank_soal.KODE_NUMERASI
 
@@ -5263,6 +5489,8 @@ def guru_soal_form(request, kelas, soal_id=None):
         request, kelas, "soal", game=game, soal=soal, v=nilai,
         kompetensi=list(Kompetensi.objects.filter(kode__in=kode_pilihan)),
         ikon=[(k, v[0]) for k, v in IKON_CERITA.items()], peta_bagian=peta_bagian,
+        per_level_baca=getattr(settings, "LENTERA_SOAL_BACA_PER_LEVEL", 2),
+        kode_baca=bank_soal.KOMPETENSI_BACA,
         ringkasan=bank_soal.ringkasan_bank()[game], per_level=jalur.soal_per_level(),
         gambar_url=soal.gambar.url if soal and soal.gambar else "",
         gambar_maks_mb=getattr(settings, "LENTERA_GAMBAR_MAKS_MB", 5),
@@ -5358,7 +5586,7 @@ class JalurTest(DasarUji):
         num = jalur.struktur("numerasi")
         self.assertEqual([b["no"] for b in lit], [1])
         self.assertEqual([b["no"] for b in num], [1, 2, 3, 4])
-        self.assertEqual([b["kompetensi"].kode for b in num], ["NM-NILAI-TEMPAT", "NM-REGROUPING", "NM-POLA", "NM-CERITA"])
+        self.assertEqual([b["kompetensi"].kode for b in num], ["NM-TAMBAH", "NM-KURANG", "NM-KALI", "NM-BAGI"])
         for b in lit + num:
             self.assertTrue(b["lengkap"])
             self.assertEqual([x["jumlah"] for x in b["level"]], [5] * 5)
@@ -5367,7 +5595,7 @@ class JalurTest(DasarUji):
         misi = jalur.misi_aktif(self.siswa)
         self.assertEqual([m.kompetensi.ranah for m in misi], ["literasi", "numerasi"])
         self.assertTrue(all((m.bagian, m.level) == (1, 1) for m in misi))
-        self.assertEqual(misi[1].kompetensi.kode, "NM-NILAI-TEMPAT")
+        self.assertEqual(misi[1].kompetensi.kode, "NM-TAMBAH")
         # Memanggil ulang tidak membuat misi ganda.
         self.assertEqual([m.id for m in jalur.misi_aktif(self.siswa)], [m.id for m in misi])
 
@@ -5384,13 +5612,13 @@ class JalurTest(DasarUji):
             self.assertEqual((num.bagian, num.level), (1, harapan))
             self.selesaikan_level(num)
         num = jalur.misi_aktif(self.siswa)[0]
-        self.assertEqual((num.bagian, num.level, num.kompetensi.kode), (2, 1, "NM-REGROUPING"))
+        self.assertEqual((num.bagian, num.level, num.kompetensi.kode), (2, 1, "NM-KURANG"))
         j = jalur.jalur_siswa(self.siswa)
         self.assertTrue(j["numerasi"]["bagian"][0]["penuh"])
         self.assertTrue(j["literasi"]["selesai_semua"])
         lencana = {n: nyala for _, n, _, nyala in jalur.lencana_siswa(j, 3)}
-        self.assertTrue(lencana["Pembaca Cilik"] and lencana["Ahli Puluhan"])
-        self.assertFalse(lencana["Jagoan Simpan-Pinjam"])
+        self.assertTrue(lencana["Pembaca Tekun"] and lencana["Raja Tambah"])
+        self.assertFalse(lencana["Jagoan Kurang"])
 
     def test_bagian_tidak_lengkap_tidak_tampil_di_jalur_murid(self):
         guru_soal = SoalGame.objects.filter(game="literasi")
@@ -5428,19 +5656,21 @@ class ApiGameTest(DasarUji):
         q1 = self.api(self.token_untuk(lit)).json()
         self.assertEqual((q1["game"], q1["bagian"], q1["level"], q1["total"]), ("literasi", 1, 1, 5))
         s = q1["soal"][0]
-        for kunci in ("id", "gambar", "instruksi", "correctOrder", "words", "kompetensiDashboard", "errorPatterns"):
+        for kunci in ("id", "tipe", "gambar", "instruksi", "correctOrder", "words", "kompetensiDashboard", "errorPatterns"):
             self.assertIn(kunci, s)
         self.assertTrue(s["gambar"].startswith("http://testserver/media/soal/bawaan/"))
         self.assertEqual(s["id"], "LIT-SPO-01")
         self.assertEqual(s["correctOrder"], ["Ibu", "membeli", "sayur"])
         self.assertEqual(s["errorPatterns"], {"sayur_membeli_Ibu": "SPO_TERBALIK"})
+        self.assertEqual(s["tipe"], "susun")
 
         q2 = self.api(self.token_untuk(num)).json()
-        self.assertEqual((q2["game"], q2["kompetensi"], q2["total"]), ("numerasi", "NM-NILAI-TEMPAT", 5))
+        self.assertEqual((q2["game"], q2["kompetensi"], q2["total"]), ("numerasi", "NM-TAMBAH", 5))
         s = q2["soal"][0]
-        self.assertEqual(s["id"], "M2-NM-NILAI-TEMPAT-L1-Q1")
-        self.assertEqual((s["tipe"], s["kunciJawaban"], s["val1"], s["val2"]), ("nilai_tempat", 12, 1, 2))
-        self.assertIn("<b>1 ikat puluhan</b>", s["teksSoal"])
+        self.assertEqual(s["id"], "M2-NM-TAMBAH-L1-Q1")
+        self.assertEqual((s["tipe"], s["operator"], s["kunciJawaban"], s["val1"], s["val2"]), ("penjumlahan", "+", 5, 2, 3))
+        self.assertIn("<b>2 apel</b>", s["teksSoal"])
+        self.assertEqual((s["label1"], s["label2"]), ("Punya", "Dapat lagi"))
 
     def test_token_wajib_dan_cors_get(self):
         self.assertEqual(Client().get("/api/game/soal/").status_code, 401)
@@ -5458,7 +5688,7 @@ class ApiGameTest(DasarUji):
         misi = jalur.misi_aktif(self.siswa)[1]
         token = self.token_untuk(misi)
         soal = self.api(token).json()["soal"]
-        r = self.kirim(token, {"events": [{"item_id": "M2-NM-NILAI-TEMPAT-L2-Q1", "benar": True}]})
+        r = self.kirim(token, {"events": [{"item_id": "M2-NM-TAMBAH-L2-Q1", "benar": True}]})
         self.assertEqual(r.status_code, 400)
         # selesai sebelum semua benar -> tidak ditandai selesai
         jawab(Client(), token, soal[0])
@@ -5477,20 +5707,77 @@ class ApiGameTest(DasarUji):
         self.assertEqual(self.api(token).status_code, 409)
 
     def test_game1_menerima_kompetensi_literasi_lain_dalam_satu_level(self):
-        # level 2 Game 1 memuat soal LT-KALIMAT, LT-KOSAKATA, dan LT-PAHAM
-        for _ in range(1):
-            self.selesaikan_level(jalur.misi_aktif(self.siswa)[0])
+        # level 2 Game 1 memuat soal susun (LT-KALIMAT / LT-KOSAKATA) dan soal baca (LT-KETEPATAN)
+        self.selesaikan_level(jalur.misi_aktif(self.siswa)[0])
         misi = jalur.misi_aktif(self.siswa)[0]
         token = self.token_untuk(misi)
         soal = self.api(token).json()["soal"]
-        self.assertEqual({q["kompetensiDashboard"] for q in soal}, {"LT-KALIMAT", "LT-KOSAKATA", "LT-PAHAM"})
+        kode = {q["kompetensiDashboard"] for q in soal}
+        self.assertIn("LT-KETEPATAN", kode)
+        self.assertTrue(kode <= {"LT-KALIMAT", "LT-KOSAKATA", "LT-KETEPATAN"}, kode)
         for q in soal:
             self.assertEqual(jawab(Client(), token, q).status_code, 200)
         # kompetensi numerasi pada misi literasi ditolak
-        r = self.kirim(token, {"events": [{"item_id": soal[0]["id"], "kompetensi": "NM-POLA", "benar": True}]})
+        r = self.kirim(token, {"events": [{"item_id": soal[0]["id"], "kompetensi": "NM-KALI", "benar": True}]})
         self.assertEqual(r.status_code, 400)
         # jawaban tercatat pada kompetensinya masing-masing
-        self.assertTrue(Jawaban.objects.filter(misi=misi, kompetensi__kode="LT-KOSAKATA").exists())
+        self.assertTrue(Jawaban.objects.filter(misi=misi, kompetensi__kode="LT-KETEPATAN").exists())
+
+    def test_level_literasi_memadukan_susun_dan_baca_satu_kesatuan(self):
+        lit = jalur.misi_aktif(self.siswa)[0]
+        token = self.token_untuk(lit)
+        data = self.api(token).json()
+        soal = data["soal"]
+        # tiga soal susun lalu dua soal baca, dalam satu level dan satu jam yang sama
+        self.assertEqual([q["tipe"] for q in soal], ["susun", "susun", "susun", "baca", "baca"])
+        self.assertEqual(data["total"], 5)
+        for q in soal[3:]:
+            self.assertEqual(q["kompetensiDashboard"], "LT-KETEPATAN")
+            self.assertEqual(q["jenisKompetensi"], "baca_lantang")
+            for kunci in ("kalimat", "emoji"):
+                self.assertTrue(q[kunci])
+            self.assertTrue(q["id"].startswith("LIT-BACA-"))
+        for q in soal[:3]:
+            self.assertNotEqual(q["kompetensiDashboard"], "LT-KETEPATAN")
+        # selesai hanya bila kelima lampu (susun + baca) menyala
+        for q in soal[:4]:
+            jawab(Client(), token, q)
+        self.assertFalse(self.kirim(token, {"events": [], "selesai": True}).json()["selesai"])
+        jawab(Client(), token, soal[4])
+        self.assertTrue(self.kirim(token, {"events": [], "selesai": True, "skor": 90, "durasi_detik": 120}).json()["selesai"])
+        self.assertEqual(jalur.level_selesai([self.siswa.id])[(self.siswa.id, "literasi")], {(1, 1)})
+
+    def test_server_menentukan_kompetensi_jawaban_baca_dan_susun(self):
+        lit = jalur.misi_aktif(self.siswa)[0]
+        token = self.token_untuk(lit)
+        soal = self.api(token).json()["soal"]
+        susun, baca = soal[0], soal[4]
+        # game keliru mengirim bacaan sebagai LT-KALIMAT: server tetap mencatatnya sebagai LT-KETEPATAN
+        r = self.kirim(token, {"events": [{"event_id": "e-baca", "item_id": baca["id"], "kompetensi": "LT-KALIMAT", "level": 1, "benar": True}]})
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(Jawaban.objects.get(event_id="e-baca").kompetensi.kode, "LT-KETEPATAN")
+        # soal susun yang ditandai LT-KETEPATAN dicatat pada kompetensi soalnya, bukan ketepatan membaca
+        r = self.kirim(token, {"events": [{"event_id": "e-susun", "item_id": susun["id"], "kompetensi": "LT-KETEPATAN", "level": 1, "benar": True}]})
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(Jawaban.objects.get(event_id="e-susun", kompetensi__kode=susun["kompetensiDashboard"]).item_id, susun["id"])
+        self.assertFalse(Jawaban.objects.filter(item_id=susun["id"], kompetensi__kode="LT-KETEPATAN").exists())
+
+    def test_jawaban_baca_hanya_milik_ketepatan_dan_tidak_dicerminkan(self):
+        lit = jalur.misi_aktif(self.siswa)[0]
+        token = self.token_untuk(lit)
+        soal = self.api(token).json()["soal"]
+        susun, baca = soal[0], soal[4]
+        # bacaan lewat mikrofon: hanya LT-KETEPATAN yang menerima
+        jawab(Client(), token, baca)
+        self.assertEqual(Jawaban.objects.filter(siswa=self.siswa).count(), 1)
+        self.assertEqual(Jawaban.objects.get(siswa=self.siswa).kompetensi.kode, "LT-KETEPATAN")
+        # jawaban susun kalimat dicerminkan ke kompetensi susun lain, tetapi tidak ke LT-KETEPATAN
+        jawab(Client(), token, susun)
+        asal = susun["kompetensiDashboard"]
+        diterima = set(Jawaban.objects.filter(siswa=self.siswa, item_id=susun["id"]).values_list("kompetensi__kode", flat=True))
+        self.assertEqual(diterima, {"LT-KALIMAT", "LT-KOSAKATA", "LT-LANCAR"} | {asal})
+        self.assertNotIn("LT-KETEPATAN", diterima)
+        self.assertEqual(Jawaban.objects.filter(siswa=self.siswa, kompetensi__kode="LT-KETEPATAN").count(), 1)
 
     def test_diagnostik_tidak_dibatasi_waktu_dan_tidak_menghalangi_jalur(self):
         n = aktifkan_diagnostik(self.kelas)
@@ -5499,16 +5786,16 @@ class ApiGameTest(DasarUji):
         self.assertEqual(diag.count(), 8)
         # misi jalur tetap tampil walau diagnostik belum dikerjakan
         self.assertEqual([m.jenis for m in jalur.misi_aktif(self.siswa)], ["misi", "misi"])
-        d = diag.get(kompetensi__kode="NM-POLA")
+        d = diag.get(kompetensi__kode="NM-KALI")
         self.assertEqual((d.bagian, d.level), (3, 1))
         token = self.token_untuk(d)
         r = self.api(token).json()
         self.assertEqual((r["batas_detik"], r["mode"]), (0, "diagnostik"))
-        self.assertEqual(r["soal"][0]["tipe"], "pola")
+        self.assertEqual(r["soal"][0]["tipe"], "perkalian")
         for q in r["soal"]:
             jawab(Client(), token, q, benar=True)
         self.assertTrue(self.kirim(token, {"events": [], "selesai": True}).json()["selesai"])
-        self.assertTrue(HasilDiagnostik.objects.filter(siswa=self.siswa, kompetensi__kode="NM-POLA", benar=5, total=5).exists())
+        self.assertTrue(HasilDiagnostik.objects.filter(siswa=self.siswa, kompetensi__kode="NM-KALI", benar=5, total=5).exists())
         # diagnostik tidak menghitung sebagai level jalur
         self.assertEqual(jalur.level_selesai([self.siswa.id]), {})
 
@@ -5517,7 +5804,7 @@ class BatasWaktuTest(DasarUji):
     def test_batas_dari_menit_bank_aktivitas(self):
         lit, num = jalur.misi_aktif(self.siswa)
         self.assertEqual((jalur.batas_detik(lit), jalur.batas_detik(num)), (8 * 60, 10 * 60))
-        a = Aktivitas.objects.get(judul="Nilai Tempat: Puluhan & Satuan")
+        a = Aktivitas.objects.get(judul="Penjumlahan Seru")
         a.menit = 3
         a.save()
         self.assertEqual(jalur.batas_detik(num), 180)
@@ -5527,7 +5814,7 @@ class BatasWaktuTest(DasarUji):
         self.assertEqual(jalur.batas_detik(num), 0)
 
     def test_aktivitas_yang_ditugaskan_menentukan_waktu(self):
-        khusus = Aktivitas.objects.create(judul="Kilat", kompetensi=Kompetensi.objects.get(kode="NM-NILAI-TEMPAT"), level_min=1,
+        khusus = Aktivitas.objects.create(judul="Kilat", kompetensi=Kompetensi.objects.get(kode="NM-TAMBAH"), level_min=1,
                                           level_maks=2, menit=2, tervalidasi=True)
         n, main = tugaskan_aktivitas(self.guru, self.kelas, khusus, "kelas")
         self.assertTrue(main)
@@ -5581,7 +5868,7 @@ class BatasWaktuTest(DasarUji):
         self.assertEqual(jalur.level_selesai([self.siswa.id]), {})
 
     def test_gagal_ditolak_bila_tanpa_batas_waktu(self):
-        a = Aktivitas.objects.get(judul="Nilai Tempat: Puluhan & Satuan")
+        a = Aktivitas.objects.get(judul="Penjumlahan Seru")
         a.menit = 0
         a.save()
         misi = jalur.misi_aktif(self.siswa)[1]
@@ -5630,7 +5917,7 @@ class PetaKompetensiTest(DasarUji):
             self.selesaikan_level(jalur.misi_aktif(self.siswa)[1])
         d = ringkasan_kelas(self.kelas)
         baris = d["baris"][0]
-        nt = [k.kode for k in d["kompetensi"]].index("NM-NILAI-TEMPAT")
+        nt = [k.kode for k in d["kompetensi"]].index("NM-TAMBAH")
         self.assertLess(baris["sel"][nt]["pct"], 100)
         self.assertEqual(baris["sel"][nt]["pct"], 53)
         self.assertEqual(d["target_bagian"], 3)
@@ -5646,21 +5933,21 @@ class PetaKompetensiTest(DasarUji):
             self.selesaikan_level(misi)
         d = ringkasan_kelas(self.kelas)
         pct = {k.kode: d["baris"][0]["sel"][i]["pct"] for i, k in enumerate(d["kompetensi"])}
-        self.assertEqual(pct["NM-NILAI-TEMPAT"], 100)
-        self.assertEqual(pct["NM-REGROUPING"], 100)
-        self.assertEqual(pct["NM-POLA"], 100)
-        self.assertLess(pct["NM-CERITA"], 100)  # bagian 4 belum dimainkan
+        self.assertEqual(pct["NM-TAMBAH"], 100)
+        self.assertEqual(pct["NM-KURANG"], 100)
+        self.assertEqual(pct["NM-KALI"], 100)
+        self.assertLess(pct["NM-BAGI"], 100)  # bagian 4 belum dimainkan
 
 
 class PenugasanTest(DasarUji):
     def test_terapkan_ke_kelompok_mengarahkan_ke_level_berikutnya_kompetensi(self):
-        kompetensi = Kompetensi.objects.get(kode="NM-POLA")
+        kompetensi = Kompetensi.objects.get(kode="NM-KALI")
         n = terapkan_ke_kelompok(self.guru, self.kelas, kompetensi)
         self.assertEqual(n, 1)
         num = [m for m in jalur.misi_aktif(self.siswa) if m.kompetensi.ranah == "numerasi"][0]
-        self.assertEqual((num.kompetensi.kode, num.bagian, num.level, num.dari_guru), ("NM-POLA", 3, 1, True))
+        self.assertEqual((num.kompetensi.kode, num.bagian, num.level, num.dari_guru), ("NM-KALI", 3, 1, True))
         self.selesaikan_level(num)
-        # setelah selesai, kembali mengikuti jalur alami (bagian 1) tetapi level pola 1 tetap tercatat selesai
+        # setelah selesai, kembali mengikuti jalur alami (bagian 1) tetapi level perkalian 1 tetap tercatat selesai
         num2 = [m for m in jalur.misi_aktif(self.siswa) if m.kompetensi.ranah == "numerasi"][0]
         self.assertEqual((num2.bagian, num2.level), (1, 1))
         self.assertIn((3, 1), jalur.level_selesai([self.siswa.id])[(self.siswa.id, "numerasi")])
@@ -5677,7 +5964,11 @@ class BankSoalGuruTest(DasarUji):
         r = self.guru_klien.get("/guru/soal/")
         self.assertContains(r, "LIT-SPO-01")
         r = self.guru_klien.get("/guru/soal/?game=numerasi&bagian=3&level=2")
-        self.assertContains(r, "Pola bilangan")
+        self.assertContains(r, "Perkalian")
+        r = self.guru_klien.get("/guru/soal/?game=literasi&level=1")
+        self.assertContains(r, "LIT-BACA-01")
+        self.assertContains(r, "Baca kalimat")
+        self.assertContains(r, "Susun kalimat")
         self.assertEqual(self.guru_klien.get("/guru/soal/baru/?game=literasi").status_code, 200)
         self.assertEqual(self.guru_klien.get("/guru/soal/baru/?game=numerasi").status_code, 200)
         self.assertEqual(self.klien.get("/guru/soal/").status_code, 302)  # murid dialihkan
@@ -5725,43 +6016,85 @@ class BankSoalGuruTest(DasarUji):
         self.assertEqual(SoalGame.objects.filter(bagian=2, game="literasi").count(), 0)
         self.assertEqual(coba(), 1)                                      # isian benar tersimpan
 
-    def test_buat_soal_game2_semua_jenis_dan_jawaban_otomatis(self):
-        def kirim(**d):
-            return self.guru_klien.post("/guru/soal/baru/?game=numerasi", {"bagian": "7", "level": "1", **d})
+    def test_buat_soal_game2_empat_operasi_dengan_cerita_yang_diatur_guru(self):
+        def kirim(bagian="7", **d):
+            return self.guru_klien.post("/guru/soal/baru/?game=numerasi", {"bagian": bagian, "level": "1", **d})
 
-        # bagian 7 untuk nilai tempat; jawaban dihitung otomatis
-        kirim(kompetensi="NM-NILAI-TEMPAT", puluhan="3", satuan="4")
+        # penjumlahan di bagian 7: jawaban dihitung otomatis, cerita dan nama kelompok diatur guru
+        kirim(kompetensi="NM-TAMBAH", a="27", b="15", instruksi="Ani punya **27 apel** <script>x</script>\nlalu beli 15.",
+              label1="Apel Ani", label2="Beli", ikon="apel")
         s = SoalGame.objects.get(bagian=7)
-        self.assertEqual(s.kunci, 34)
+        self.assertEqual(s.kunci, 42)
         q = bank_soal.untuk_game2(s)
-        self.assertEqual((q["tipe"], q["kunciJawaban"]), ("nilai_tempat", 34))
-        # jawaban salah dari guru ditolak
-        kirim(kompetensi="NM-NILAI-TEMPAT", puluhan="3", satuan="5", kunci="99")
-        self.assertEqual(SoalGame.objects.filter(bagian=7).count(), 1)
-        # satu bagian = satu kompetensi
-        kirim(kompetensi="NM-POLA", deret="2,4,6", kunci="8")
-        self.assertEqual(SoalGame.objects.filter(bagian=7).count(), 1)
-        # regrouping
-        self.guru_klien.post("/guru/soal/baru/?game=numerasi", {"kompetensi": "NM-REGROUPING", "bagian": "8", "level": "2", "a": "52", "op": "-", "b": "27"})
-        s = SoalGame.objects.get(bagian=8)
-        self.assertEqual((s.kunci, bank_soal.untuk_game2(s)["operasi"]), (25, "pengurangan"))
-        self.guru_klien.post("/guru/soal/baru/?game=numerasi", {"kompetensi": "NM-REGROUPING", "bagian": "8", "level": "2", "a": "5", "op": "-", "b": "27"})
-        self.assertEqual(SoalGame.objects.filter(bagian=8).count(), 1)   # a < b pada pengurangan
-        # pola dengan jawaban dari guru
-        self.guru_klien.post("/guru/soal/baru/?game=numerasi", {"kompetensi": "NM-POLA", "bagian": "9", "level": "3", "deret": "3, 6, 12, 24", "kunci": "48", "petunjuk": "Dikali 2"})
-        q = bank_soal.untuk_game2(SoalGame.objects.get(bagian=9))
-        self.assertEqual((q["tipe"], q["deret"], q["kunciJawaban"], q["hint"]), ("pola", [3, 6, 12, 24], 48, "Dikali 2"))
-        self.assertIn("<b>3, 6, 12, 24, ...</b>", q["teksSoal"])
-        # soal cerita: teks aman (HTML di-escape, **tebal** diubah)
-        self.guru_klien.post("/guru/soal/baru/?game=numerasi", {
-            "kompetensi": "NM-CERITA", "bagian": "10", "level": "1", "instruksi": "Ani punya **3 apel** <script>x</script>\nlalu beli 2.",
-            "kunci": "5", "label1": "Apel Ani", "val1": "3", "label2": "Beli", "val2": "2", "ikon": "apel", "langkah": "2"})
-        q = bank_soal.untuk_game2(SoalGame.objects.get(bagian=10))
-        self.assertEqual(q["kunciJawaban"], 5)
-        self.assertIn("<b>3 apel</b>", q["teksSoal"])
+        self.assertEqual((q["tipe"], q["operator"], q["kunciJawaban"], q["val1"], q["val2"]), ("penjumlahan", "+", 42, 27, 15))
+        self.assertEqual((q["label1"], q["label2"], q["icon"]), ("Apel Ani", "Beli", "fa-apple-whole"))
+        self.assertIn("<b>27 apel</b>", q["teksSoal"])
         self.assertNotIn("<script>", q["teksSoal"])
         self.assertIn("&lt;script&gt;", q["teksSoal"])
-        self.assertEqual((q["tipe"], q["jumlahLangkah"], q["icon"]), ("cerita_dua_langkah", 2, "fa-apple-whole"))
+        self.assertIn("simpan", q["hint"])  # 27 + 15: satuan 7 + 5 melewati 10
+        # tanpa cerita dan nama kelompok -> kalimat dan nama bawaan operasi
+        kirim(kompetensi="NM-TAMBAH", a="8", b="5")
+        bawaan = bank_soal.untuk_game2(SoalGame.objects.get(bagian=7, kunci=13))
+        self.assertEqual((bawaan["label1"], bawaan["label2"]), ("Kelompok pertama", "Kelompok kedua"))
+        self.assertIn("Hitung <b>8 + 5</b>", bawaan["teksSoal"])
+        # jawaban salah dari guru ditolak
+        kirim(kompetensi="NM-TAMBAH", a="3", b="4", kunci="99")
+        self.assertEqual(SoalGame.objects.filter(bagian=7).count(), 2)
+        # satu bagian = satu operasi
+        kirim(kompetensi="NM-KALI", a="3", b="4")
+        self.assertEqual(SoalGame.objects.filter(bagian=7).count(), 2)
+
+        # pengurangan: a < b ditolak
+        kirim(bagian="8", kompetensi="NM-KURANG", a="52", b="27")
+        s = SoalGame.objects.get(bagian=8)
+        self.assertEqual((s.kunci, bank_soal.untuk_game2(s)["operasi"]), (25, "pengurangan"))
+        kirim(bagian="8", kompetensi="NM-KURANG", a="5", b="27")
+        self.assertEqual(SoalGame.objects.filter(bagian=8).count(), 1)
+        self.assertIn("Pinjam", bank_soal.untuk_game2(s)["hint"])
+        # perkalian: a kelompok isi b
+        kirim(bagian="9", kompetensi="NM-KALI", a="4", b="6", label1="Kotak", label2="Isi kotak")
+        q = bank_soal.untuk_game2(SoalGame.objects.get(bagian=9))
+        self.assertEqual((q["tipe"], q["operator"], q["kunciJawaban"], q["label1"]), ("perkalian", "\u00d7", 24, "Kotak"))
+        # pembagian: harus habis dibagi dan pembagi bukan nol
+        kirim(bagian="10", kompetensi="NM-BAGI", a="25", b="4")
+        kirim(bagian="10", kompetensi="NM-BAGI", a="8", b="0")
+        self.assertEqual(SoalGame.objects.filter(bagian=10).count(), 0)
+        kirim(bagian="10", kompetensi="NM-BAGI", a="24", b="4")
+        q = bank_soal.untuk_game2(SoalGame.objects.get(bagian=10))
+        self.assertEqual((q["tipe"], q["operator"], q["kunciJawaban"]), ("pembagian", "\u00f7", 6))
+        # kompetensi numerasi lama tidak dikenal lagi
+        kirim(bagian="11", kompetensi="NM-POLA", a="1", b="1")
+        self.assertEqual(SoalGame.objects.filter(bagian=11).count(), 0)
+
+    def test_buat_soal_baca_kalimat_untuk_level_literasi(self):
+        def kirim(**d):
+            return self.guru_klien.post("/guru/soal/baru/?game=literasi", {"kompetensi": "LT-KETEPATAN", "bagian": "2", "level": "1", **d})
+
+        kirim(kalimat="Ani menyapu lantai.", emoji="\U0001F9F9")
+        s = SoalGame.objects.get(bagian=2, game="literasi")
+        self.assertEqual((s.kompetensi.kode, s.instruksi, s.data["emoji"], s.jawaban, s.kolom_kata), ("LT-KETEPATAN", "Ani menyapu lantai.", "\U0001F9F9", [], []))
+        q = bank_soal.untuk_game1(s)
+        self.assertEqual((q["tipe"], q["kalimat"], q["emoji"], q["kompetensiDashboard"]), ("baca", "Ani menyapu lantai.", "\U0001F9F9", "LT-KETEPATAN"))
+        self.assertEqual(bank_soal.ringkas(s)[2], "dibaca lantang")
+        self.assertEqual(bank_soal.jenis_dan_thumb(s), ("Baca kalimat", "\U0001F9F9"))
+        # emoji bawaan bila kosong; satu kata, kalimat kosong, dan kalimat terlalu panjang ditolak
+        kirim(kalimat="Budi membaca buku.", bagian="3")
+        self.assertEqual(SoalGame.objects.get(game="literasi", bagian=3).data["emoji"], bank_soal.EMOJI_BACA_BAWAAN)
+        kirim(kalimat="Halo", bagian="4")
+        kirim(kalimat="", bagian="4")
+        kirim(kalimat=" ".join(["kata"] * 21), bagian="4")
+        self.assertEqual(SoalGame.objects.filter(game="literasi", bagian=4).count(), 0)
+        # formulir ubah soal baca menampilkan kalimatnya
+        self.assertContains(self.guru_klien.get(f"/guru/soal/{s.pk}/"), "Ani menyapu lantai.")
+
+    def test_komposisi_level_literasi_tiga_susun_dua_baca(self):
+        pilih = bank_soal.pilih_soal("literasi", 1, 3, benih=1)
+        self.assertEqual([s.kompetensi.kode == "LT-KETEPATAN" for s in pilih], [False, False, False, True, True])
+        # benih berbeda memberi kombinasi berbeda, tetapi komposisi tetap
+        beda = {tuple(s.kode_bawaan for s in bank_soal.pilih_soal("literasi", 1, 3, benih=n)) for n in range(12)}
+        self.assertGreater(len(beda), 1)
+        for kombinasi in beda:
+            self.assertEqual(sum(k.startswith("LIT-BACA-") for k in kombinasi), 2)
 
     def test_soal_buatan_guru_dimainkan_murid_setelah_bagian_lengkap(self):
         # selesaikan semua level Literasi bagian 1
@@ -5785,7 +6118,7 @@ class BankSoalGuruTest(DasarUji):
 
     def test_lebih_dari_5_soal_dipilih_5_dan_tetap_untuk_misi_yang_sama(self):
         for i in range(4):
-            self.guru_klien.post("/guru/soal/baru/?game=numerasi", {"kompetensi": "NM-NILAI-TEMPAT", "bagian": "1", "level": "1", "puluhan": str(i + 2), "satuan": "1"})
+            self.guru_klien.post("/guru/soal/baru/?game=numerasi", {"kompetensi": "NM-TAMBAH", "bagian": "1", "level": "1", "a": str(i + 2), "b": "1"})
         self.assertEqual(SoalGame.objects.filter(game="numerasi", bagian=1, level=1).count(), 9)
         misi = jalur.misi_aktif(self.siswa)[1]
         a = [q["id"] for q in self.api(self.token_untuk(misi)).json()["soal"]]
@@ -5798,18 +6131,21 @@ class BankSoalGuruTest(DasarUji):
         self.guru_klien.post("/guru/soal/", {"aksi": "aktif", "id": s.pk, "game": "literasi"})
         s.refresh_from_db()
         self.assertFalse(s.aktif)
-        # level 1 Literasi tinggal 4 soal tetapi tetap bisa dimainkan dengan 4 lampu
+        # soal nonaktif tidak dipakai di game; level tetap 5 soal (susun yang tersisa + soal baca)
         misi = jalur.misi_aktif(self.siswa)[0]
-        self.assertEqual(len(self.api(self.token_untuk(misi)).json()["soal"]), 4)
+        ids = [q["id"] for q in self.api(self.token_untuk(misi)).json()["soal"]]
+        self.assertEqual(len(ids), 5)
+        self.assertNotIn("LIT-SPO-01", ids)
         self.guru_klien.post("/guru/soal/", {"aksi": "hapus", "id": s.pk, "game": "literasi"})
         self.assertFalse(SoalGame.objects.filter(kode_bawaan="LIT-SPO-01").exists())
         self.assertTrue(SoalGame.objects.filter(kode_bawaan="LIT-SPO-02").exists())  # soal lain dan gambar bawaan tidak terhapus
         # ubah soal numerasi
-        n = SoalGame.objects.get(kode_bawaan="M2-NM-POLA-L1-Q1")
-        r = self.guru_klien.post(f"/guru/soal/{n.pk}/", {"kompetensi": "NM-POLA", "bagian": "3", "level": "1", "deret": "2, 4, 6, 8, 10", "kunci": "12", "petunjuk": "Tambah 2"})
+        n = SoalGame.objects.get(kode_bawaan="M2-NM-KALI-L1-Q1")
+        r = self.guru_klien.post(f"/guru/soal/{n.pk}/", {"kompetensi": "NM-KALI", "bagian": "3", "level": "1", "a": "7", "b": "6",
+                                                       "instruksi": "Ada **7 kotak** berisi **6 kue**.", "label1": "Kotak", "petunjuk": "Jumlahkan 6 tujuh kali"})
         self.assertEqual(r.status_code, 302)
         n.refresh_from_db()
-        self.assertEqual((n.data["deret"], n.kunci), ([2, 4, 6, 8, 10], 12))
+        self.assertEqual((n.data["a"], n.data["b"], n.kunci, n.data["label1"]), (7, 6, 42, "Kotak"))
 
     def test_level_tanpa_soal_tidak_bisa_dibuka(self):
         SoalGame.objects.filter(game="numerasi", bagian=1, level=1).update(aktif=False)
@@ -5819,17 +6155,47 @@ class BankSoalGuruTest(DasarUji):
 
 class MigrasiDanBawaanTest(TestCase):
     def test_bank_bawaan_terisi(self):
-        self.assertEqual(SoalGame.objects.filter(game="literasi").count(), 25)
+        self.assertEqual(SoalGame.objects.filter(game="literasi").count(), 50)
         self.assertEqual(SoalGame.objects.filter(game="numerasi").count(), 100)
-        for kode in ("LT-KALIMAT", "LT-KOSAKATA", "LT-PAHAM"):
+        self.assertEqual(
+            set(Kompetensi.objects.values_list("kode", flat=True)),
+            {"LT-KOSAKATA", "LT-LANCAR", "LT-KETEPATAN", "LT-KALIMAT", "NM-TAMBAH", "NM-KURANG", "NM-KALI", "NM-BAGI"},
+        )
+        for kode in ("LT-KALIMAT", "LT-KOSAKATA", "LT-KETEPATAN"):
             self.assertTrue(SoalGame.objects.filter(game="literasi", kompetensi__kode=kode).exists())
-        for s in SoalGame.objects.filter(game="literasi"):
+        # 25 soal susun bergambar bawaan + 25 kalimat baca (5 per level)
+        susun = SoalGame.objects.filter(game="literasi").exclude(kompetensi__kode="LT-KETEPATAN")
+        baca = SoalGame.objects.filter(game="literasi", kompetensi__kode="LT-KETEPATAN")
+        self.assertEqual((susun.count(), baca.count()), (25, 25))
+        for s in susun:
             self.assertTrue(s.gambar.name.startswith("soal/bawaan/"))
-        self.assertEqual(SoalGame.objects.get(kode_bawaan="M2-NM-CERITA-L3-Q1").data["langkah"], 2)
-        self.assertEqual(SoalGame.objects.get(kode_bawaan="M2-NM-CERITA-L5-Q1").data["langkah"], 3)
-        # jawaban bawaan konsisten dengan hitungan
-        for s in SoalGame.objects.filter(kompetensi__kode__in=("NM-NILAI-TEMPAT", "NM-REGROUPING")):
-            self.assertEqual(s.kunci, bank_soal.hitung_kunci(s.kompetensi.kode, s.data))
+        for level in range(1, 6):
+            self.assertEqual(baca.filter(level=level).count(), 5)
+            self.assertEqual(susun.filter(level=level).count(), 5)
+        for s in baca:
+            self.assertGreaterEqual(len(s.instruksi.split()), 3)
+            self.assertTrue(s.data["emoji"])
+        # empat operasi: satu operasi satu bagian, 5 level x 5 soal
+        for kode, bagian in bank_soal.BAGIAN_NUMERASI_BAWAAN.items():
+            qs = SoalGame.objects.filter(game="numerasi", kompetensi__kode=kode)
+            self.assertEqual((qs.count(), set(qs.values_list("bagian", flat=True))), (25, {bagian}))
+            for level in range(1, 6):
+                self.assertEqual(qs.filter(level=level).count(), 5)
+        # jawaban bawaan konsisten dengan hitungan, cerita memuat kedua angka, nama kelompok muat di game
+        for s in SoalGame.objects.filter(game="numerasi"):
+            a, b = s.data["a"], s.data["b"]
+            self.assertEqual(s.kunci, bank_soal.hitung_kunci(s.kompetensi.kode, s.data), s.item_id)
+            self.assertGreaterEqual(s.kunci, 0)
+            self.assertIn(str(a), s.instruksi, s.item_id)
+            self.assertIn(str(b), s.instruksi, s.item_id)
+            self.assertLessEqual(len(s.data["label1"]), 30)
+            self.assertLessEqual(len(s.data["label2"]), 30)
+            if s.kompetensi.kode == "NM-BAGI":
+                self.assertEqual(a % b, 0, s.item_id)
+        # tingkat kesulitan naik: bilangan level 5 lebih besar dari level 1 pada tiap operasi
+        for kode in ("NM-TAMBAH", "NM-KURANG", "NM-KALI", "NM-BAGI"):
+            besar = lambda level: max(s.data["a"] for s in SoalGame.objects.filter(kompetensi__kode=kode, level=level))
+            self.assertGreater(besar(5), besar(1))
 
 
 class TampilanTest(DasarUji):
@@ -5845,11 +6211,40 @@ class TampilanTest(DasarUji):
     def test_beranda_murid_dua_kategori_lampu_dan_lencana(self):
         r = self.klien.get("/murid/")
         self.assertEqual(r.status_code, 200)
-        for teks in ("Jalan Lenteraku", 'id="tab-literasi"', 'id="tab-numerasi"', "5 lampu = 1 level", "Lencana", "Mulai misi"):
+        for teks in ("Jalan Lenteraku", 'id="tab-literasi"', 'id="tab-numerasi"', "Kelima titik emas = 1 bagian", "Lencana", "Mulai misi"):
             self.assertContains(r, teks)
         self.assertNotContains(r, "Lencana minggu ini")
         self.assertEqual([k["total"] for k in r.context["kartu"]], [5, 5])
         self.assertEqual([g["nama"] for g in r.context["jalan"]], ["Literasi", "Numerasi"])
+
+    def test_jalur_zigzag_satu_titik_per_level_emas_bila_selesai(self):
+        def titik(html, bagian_id):
+            potong = html.split(f'id="bagian-{bagian_id}"')[1].split("</svg>")[0]
+            return {
+                "node": potong.count('class="zig-node'),
+                "selesai": potong.count('class="zig-node selesai'),
+                "kini": potong.count('class="zig-node kini'),
+                "ruas_emas": potong.count('class="seg on"'),
+            }
+
+        html = self.klien.get("/murid/").content.decode()
+        self.assertEqual(titik(html, "numerasi-1"), {"node": 5, "selesai": 0, "kini": 1, "ruas_emas": 0})
+        # level 1 dan 2 berhasil -> dua titik menyala emas, titik 3 giliran sekarang
+        for _ in range(2):
+            self.selesaikan_level([m for m in jalur.misi_aktif(self.siswa) if m.kompetensi.ranah == "numerasi"][0])
+        html = self.klien.get("/murid/").content.decode()
+        self.assertEqual(titik(html, "numerasi-1"), {"node": 5, "selesai": 2, "kini": 1, "ruas_emas": 2})
+        # bagian 2 masih terkunci sampai kelima titik bagian 1 emas
+        self.assertIn('class="zig kunci"', html.split('id="bagian-numerasi-2"')[1].split("</svg>")[0])
+        self.assertIn("Selesaikan bagian sebelumnya dulu", html)
+        for _ in range(3):
+            self.selesaikan_level([m for m in jalur.misi_aktif(self.siswa) if m.kompetensi.ranah == "numerasi"][0])
+        html = self.klien.get("/murid/").content.decode()
+        self.assertEqual(titik(html, "numerasi-1"), {"node": 5, "selesai": 5, "kini": 0, "ruas_emas": 4})
+        self.assertNotIn('class="zig kunci"', html.split('id="bagian-numerasi-2"')[1].split("</svg>")[0])
+        self.assertIn("Kelima titiknya menyala emas", html)
+        # literasi: satu jalur untuk susun + baca (tidak ada jalur terpisah per jenis soal)
+        self.assertEqual(html.count('id="bagian-literasi-'), 1)
 
     def test_bagian_1_penuh_tapi_murid_bisa_lanjut_ke_bagian_2(self):
         for _ in range(5):
@@ -5895,7 +6290,7 @@ class TampilanTest(DasarUji):
         self.assertContains(r, "Batas waktu (menit)")
         self.assertContains(r, "0 = tanpa batas")
         r = self.guru_klien.post("/guru/aktivitas/", {
-            "aksi": "tambah", "judul": "Tanpa batas", "kompetensi": "NM-NILAI-TEMPAT", "level_min": "1", "level_maks": "5", "menit": "0", "deskripsi": "",
+            "aksi": "tambah", "judul": "Tanpa batas", "kompetensi": "NM-TAMBAH", "level_min": "1", "level_maks": "5", "menit": "0", "deskripsi": "",
         })
         self.assertEqual(r.status_code, 302)
         self.assertEqual(Aktivitas.objects.get(judul="Tanpa batas").menit, 0)
@@ -5915,11 +6310,15 @@ class TampilanTest(DasarUji):
 
     def test_form_soal_sesuai_game_dan_pengalihan_aman(self):
         r = self.guru_klien.get("/guru/soal/baru/?game=literasi")
-        for teks in ('name="gambar"', 'name="kolom_kata"', 'name="jawaban"', 'name="jawaban_lain"', 'name="urutan_bebas"', 'enctype="multipart/form-data"'):
+        for teks in ('name="gambar"', 'name="kolom_kata"', 'name="jawaban"', 'name="jawaban_lain"', 'name="urutan_bebas"', 'enctype="multipart/form-data"',
+                     'data-jenis="susun"', 'data-jenis="baca"', 'name="kalimat"', 'name="emoji"'):
             self.assertContains(r, teks)
+        # template soal numerasi seperti soal cerita: cerita, nama kelompok, angka, dan gambar ilustrasi bisa diatur
         r = self.guru_klien.get("/guru/soal/baru/?game=numerasi")
-        for teks in ('name="puluhan"', 'name="deret"', 'name="label1"', 'name="kunci"', 'data-komp="NM-POLA"', 'name="petunjuk"'):
+        for teks in ('name="instruksi"', 'name="label1"', 'name="label2"', 'name="a"', 'name="b"', 'name="ikon"', 'id="btn-cerita"', 'name="kunci"', 'name="petunjuk"'):
             self.assertContains(r, teks)
+        for lama in ('name="puluhan"', 'name="deret"', 'data-komp='):
+            self.assertNotContains(r, lama)
         s = SoalGame.objects.get(kode_bawaan="LIT-SPO-01")
         self.assertContains(self.guru_klien.get(f"/guru/soal/{s.pk}/"), f"Ubah soal {s.item_id}")
 
@@ -6040,6 +6439,7 @@ def murid_beranda(request):
     return render(request, "belajar/murid_beranda.html", {
         "siswa": siswa, "kartu": [_kartu(m, jalan) for m in aktif], "peta": [{"p": p, "i": i} for p, i in peta],
         "jalan": [jalan["literasi"], jalan["numerasi"]], "lencana": jalur.lencana_siswa(jalan, target),
+        "zig_lebar": jalur.ZIGZAG_LEBAR, "zig_tinggi": jalur.ZIGZAG_TINGGI,
         "lencana_menyala": sum(1 for x in jalur.lencana_siswa(jalan, target) if x[3]),
         "diagnostik": diagnostik, "target_bagian": target, "aturan": jalur.aturan_waktu(), "sekolah": settings.LENTERA_SEKOLAH})
 
@@ -6583,6 +6983,10 @@ LENTERA_GAME_EVENT_GRACE = 7 * 86400
 LENTERA_SOAL_PER_LEVEL = 5
 LENTERA_LEVEL_PER_BAGIAN = 5
 
+# Level Literasi memadukan soal susun kalimat dan soal baca kalimat (mikrofon).
+# Bila bank level memuat keduanya, sebanyak ini dari soal per level berupa baca kalimat.
+LENTERA_SOAL_BACA_PER_LEVEL = 2
+
 # Aturan batas waktu game. Waktu dasar = menit pada Bank Aktivitas.
 # Setelah waktu dasar habis, poin dikurangi setiap `tick` detik.
 # Bila keterlambatan melewati `maks_lewat` detik, level dinyatakan GAGAL.
@@ -6637,24 +7041,25 @@ URL_GAME_MISI2 = os.getenv(
 LENTERA_GAMES = {
     # ------------------------------------------------------
     # GAME 1 — LITERASI
-    # Menggunakan aplikasi Game 1 yang sama.
-    # Pemilihan soal per kompetensi diatur pada kode Game 1.
+    # Satu aplikasi Game 1 yang sama. Susun kalimat dan baca
+    # kalimat (mikrofon) adalah satu kesatuan: satu level memuat
+    # kedua jenis soal, tanpa pilihan game terpisah.
     # ------------------------------------------------------
 
     "LT-KOSAKATA": URL_GAME_MISI1,
     "LT-LANCAR": URL_GAME_MISI1,
-    "LT-PAHAM": URL_GAME_MISI1,
+    "LT-KETEPATAN": URL_GAME_MISI1,
     "LT-KALIMAT": URL_GAME_MISI1,
 
     # ------------------------------------------------------
     # GAME 2 — NUMERASI
-    # Seluruh pemetaan numerasi lama dipertahankan.
+    # Empat operasi hitung: satu kompetensi = satu bagian.
     # ------------------------------------------------------
 
-    "NM-CERITA": URL_GAME_MISI2,
-    "NM-NILAI-TEMPAT": URL_GAME_MISI2,
-    "NM-REGROUPING": URL_GAME_MISI2,
-    "NM-POLA": URL_GAME_MISI2,
+    "NM-TAMBAH": URL_GAME_MISI2,
+    "NM-KURANG": URL_GAME_MISI2,
+    "NM-KALI": URL_GAME_MISI2,
+    "NM-BAGI": URL_GAME_MISI2,
 }
 
 ============================================================================
@@ -6863,17 +7268,27 @@ a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{o
 .pill.kunci{opacity:.6}
 .b-judul{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.78rem;margin-bottom:10px}
 .kosong-info{font-size:.72rem;color:var(--mut);background:#f3f6fb;border-radius:10px;padding:.6rem .8rem;margin:8px 0}
-.lv-list{list-style:none;position:relative;display:grid;gap:10px;margin:0;padding:0}
-.lv-list::before{content:"";position:absolute;left:19px;top:20px;bottom:20px;width:4px;border-radius:4px;background:#e3e9f5}
-.lv{position:relative;display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px;align-items:center}
-.lv-node{width:40px;height:40px;border-radius:50%;background:#e3e9f5;color:#8693b3;display:grid;place-items:center;font-weight:700;font-size:.95rem;z-index:1;border:3px solid #fff}
-.lv.selesai .lv-node{background:var(--amber);color:#fff;box-shadow:0 0 0 2px var(--amber),0 0 14px rgba(245,166,35,.55)}
-.lv.kini .lv-node{background:#fff;color:#a76b00;border-color:var(--amber)}
-.lv-body{background:#f7f9fd;border-radius:12px;padding:8px 10px;border:2px solid transparent}
-.lv.selesai .lv-body{background:#fff8e6}
-.lv.kini .lv-body{background:#fff;border-color:var(--amber)}
-.lv.belum .lv-body,.lv.terkunci .lv-body,.lv.kosong .lv-body{opacity:.75}
-.lv-top{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:.74rem}
+/* Jalur zig-zag: satu bagian = satu jalur, satu titik = satu level, titik menyala emas bila level selesai */
+.zig{display:block;width:100%;height:auto;margin:4px 0 0;overflow:visible}
+.zig .seg{stroke:#dbe3f3;stroke-width:7;stroke-linecap:round;fill:none}
+.zig .seg.on{stroke:var(--amber)}
+.zig .dot{fill:#e3e9f5;stroke:#fff;stroke-width:3}
+.zig .no{font:700 12px Poppins,system-ui,sans-serif;fill:#8693b3}
+.zig .lbl{font:600 9.5px Poppins,system-ui,sans-serif;fill:var(--mut)}
+.zig-node.selesai .dot{fill:var(--amber);filter:drop-shadow(0 0 6px rgba(245,166,35,.8))}
+.zig-node.selesai .no{fill:#fff;font-size:13px}
+.zig-node.selesai .lbl{fill:#a76b00}
+.zig-node.kini .dot{fill:#fff;stroke:var(--amber);stroke-width:4}
+.zig-node.kini .no{fill:#a76b00;font-size:15px}
+.zig-node.kini .lbl{fill:#a76b00}
+.zig-node.kini .aura{fill:rgba(245,166,35,.24);transform-box:fill-box;transform-origin:center;animation:zigdenyut 1.8s ease-in-out infinite}
+.zig-node.terkunci,.zig-node.kosong{opacity:.55}
+.zig.kunci{opacity:.65}
+@keyframes zigdenyut{0%,100%{transform:scale(.88);opacity:.95}50%{transform:scale(1.14);opacity:.4}}
+@media (prefers-reduced-motion:reduce){.zig-node.kini .aura{animation:none}}
+.zig-info{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 10px;background:#fff8e6;border:1px solid #f3d99b;border-radius:12px;padding:.45rem .7rem;margin-top:6px;font-size:.72rem;color:#8a5a00}
+.zig-info .lampu-baris{margin-top:0;gap:5px}.zig-info .lampu{width:20px;height:20px;font-size:.62rem}
+.misi.num .kata{background:#d9f3f0;color:#0c7a70}
 .selamat{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:12px;background:#fff4d6;border:1px solid #f3c46a;color:#8a5a00;border-radius:12px;padding:.6rem .8rem;font-size:.74rem;font-weight:600}
 .selamat .btn{padding:.4rem .9rem}
 .lencana-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:14px 10px;margin-top:12px}
@@ -6924,6 +7339,10 @@ a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{o
 .peta .angka small{display:block;font-weight:400;font-size:.55rem;opacity:.85}
 @media (max-width:980px){.form-soal{grid-template-columns:1fr}.form-soal aside.kolom{position:static}.soal{grid-template-columns:56px minmax(0,1fr)}.soal .thumb{width:56px;height:56px}.soal .aksi{grid-column:1/-1;justify-content:flex-start;max-width:none}}
 @media (max-width:520px){.lampu{width:22px;height:22px}.lampu-baris.besar .lampu{width:28px;height:28px}}
+
+/* Form soal guru: operasi hitung dan baca kalimat */
+.tanda-op{font-size:1.5rem;font-weight:700;color:var(--navy);text-align:center;line-height:1;margin:-4px 0}
+.pv .pv-emoji{font-size:3rem;text-align:center;margin:6px 0;line-height:1.2}
 
 ============================================================================
 FILE: static/js/item-selector.js
@@ -7425,8 +7844,8 @@ FILE: templates/belajar/guru_soal.html
   <ul class="aturan">
     <li><b>1 bagian = 5 level</b>, dan <b>1 level dimainkan dengan {{ per_level }} soal</b> (tiap jawaban benar menyalakan 1 lampu ✓).</li>
     <li>Bagian baru muncul di Jalan Lentera murid setelah <b>kelima levelnya</b> punya soal aktif. Ideal: minimal {{ per_level }} soal aktif per level. Bila lebih, murid mendapat {{ per_level }} soal yang dipilih acak.</li>
-    {% if game == 'literasi' %}<li>Setiap soal berisi <b>gambar</b>, <b>pertanyaan</b>, <b>kolom kata</b> (kata yang tampil di game), dan <b>jawaban benar</b> (urutan kata yang benar).</li>
-    {% else %}<li>Numerasi: <b>1 bagian = 1 kompetensi</b> (mis. Bagian 1 Nilai Tempat). Jawaban benar berupa angka; untuk Nilai Tempat dan Simpan-Pinjam jawabannya dihitung otomatis.</li>{% endif %}
+    {% if game == 'literasi' %}<li><b>Susun kalimat dan baca kalimat satu kesatuan</b> dalam satu level. Soal <b>susun kalimat</b> berisi gambar, pertanyaan, kolom kata, dan jawaban benar. Soal <b>baca kalimat</b> berisi kalimat yang dibaca murid dengan suara (mikrofon memeriksa ketepatannya). Bila bank level memuat keduanya, murid mendapat {{ per_level_baca }} soal baca dan sisanya soal susun.</li>
+    {% else %}<li>Numerasi: <b>1 bagian = 1 operasi hitung</b> (Bagian 1 Penjumlahan, 2 Pengurangan, 3 Perkalian, 4 Pembagian). Guru mengisi dua bilangan; jawaban benar dihitung otomatis.</li>{% endif %}
     <li>Soal yang baru dibuat dipakai pada misi <b>berikutnya</b>. Misi yang sedang berjalan memakai soal yang sudah dikunci, jadi murid tidak terganggu.</li>
   </ul>
 </section>
@@ -7458,9 +7877,9 @@ FILE: templates/belajar/guru_soal.html
 <div class="soal-list" style="margin-top:16px">
 {% for s in daftar %}
   <article class="soal{% if not s.aktif %} mati{% endif %}">
-    {% if s.gambar %}<img class="thumb" src="{{ s.gambar.url }}" alt="Gambar soal {{ s.item_id }}" loading="lazy">{% else %}<span class="thumb" aria-hidden="true">🔢</span>{% endif %}
+    {% if s.gambar %}<img class="thumb" src="{{ s.gambar.url }}" alt="Gambar soal {{ s.item_id }}" loading="lazy">{% else %}<span class="thumb" aria-hidden="true">{{ s.thumb }}</span>{% endif %}
     <div class="isi">
-      <div class="meta"><span class="chip biru">Bagian {{ s.bagian }} · Level {{ s.level }}</span><span class="chip {% if game == 'literasi' %}merah{% else %}hijau{% endif %}">{{ s.kompetensi.nama }}</span>
+      <div class="meta"><span class="chip biru">Bagian {{ s.bagian }} · Level {{ s.level }}</span><span class="chip {% if game == 'literasi' %}merah{% else %}hijau{% endif %}">{{ s.kompetensi.nama }}</span><span class="chip abu">{{ s.jenis }}</span>
         {% if s.aktif %}<span class="chip hijau">Aktif</span>{% else %}<span class="chip kuning">Nonaktif</span>{% endif %}<span class="kecil">{{ s.item_id }}</span></div>
       <h3>{{ s.judul }}</h3>
       <p>{{ s.detail }}</p>
@@ -7492,16 +7911,17 @@ FILE: templates/belajar/guru_soal_form.html
     <section class="card f">
       <h2>1 · Posisi di Jalan Lentera</h2>
       <div class="f baris">
-        <label>{% if game == 'literasi' %}Jenis kemampuan{% else %}Kompetensi (jenis soal){% endif %}<select name="kompetensi" id="f-komp">{% for k in kompetensi %}<option value="{{ k.kode }}" {% if k.kode == v.kompetensi %}selected{% endif %}>{{ k.nama }}</option>{% endfor %}</select></label>
+        <label>{% if game == 'literasi' %}Jenis soal (kemampuan){% else %}Operasi hitung{% endif %}<select name="kompetensi" id="f-komp">{% for k in kompetensi %}<option value="{{ k.kode }}" {% if k.kode == v.kompetensi %}selected{% endif %}>{{ k.nama }}{% if k.kode == kode_baca %} (baca){% endif %}</option>{% endfor %}</select></label>
         <label>Bagian<input type="number" name="bagian" min="1" max="20" value="{{ v.bagian }}" required></label>
         <label>Level (1–5)<input type="number" name="level" min="1" max="5" value="{{ v.level }}" required></label>
       </div>
+      {% if game == 'literasi' %}<p class="hint">Susun kalimat dan baca kalimat satu kesatuan: satu level memuat keduanya. Pilih <b>Ketepatan membaca</b> untuk soal baca kalimat; jenis lain untuk soal susun kalimat.</p>{% endif %}
       <p class="hint" id="info-posisi" role="status"></p>
       <label class="cek"><input type="hidden" name="aktif" value="0"><input type="checkbox" name="aktif" value="1" {% if v.aktif != "0" %}checked{% endif %}> Aktif (dipakai di game)</label>
     </section>
 
 {% if game == 'literasi' %}
-    <section class="card f">
+    <section class="card f" data-jenis="susun">
       <h2>2 · Gambar dan pertanyaan</h2>
       <label>Gambar soal {% if soal %}(kosongkan bila tidak diganti){% else %}(wajib){% endif %}<input type="file" name="gambar" id="f-gambar" accept="image/png,image/jpeg,image/gif,image/webp" {% if not soal %}required{% endif %}></label>
       <p class="hint">JPG, PNG, GIF, atau WEBP, maksimal {{ gambar_maks_mb }} MB. Bila form gagal tersimpan, pilih lagi gambarnya.</p>
@@ -7509,7 +7929,7 @@ FILE: templates/belajar/guru_soal_form.html
       <label>Pertanyaan / perintah untuk murid<input name="instruksi" id="f-instruksi" maxlength="300" required value="{{ v.instruksi }}" placeholder="mis. Susunlah kata-kata menjadi kalimat yang benar!"></label>
     </section>
 
-    <section class="card f">
+    <section class="card f" data-jenis="susun">
       <h2>3 · Kolom kata dan jawaban benar</h2>
       <label>Kolom kata (kata yang tampil di game)<textarea name="kolom_kata" id="f-kolom" rows="5" required placeholder="Satu kata per baris, atau pisahkan dengan koma&#10;Ibu&#10;memasak&#10;nasi">{{ v.kolom_kata }}</textarea></label>
       <p class="hint">Boleh menambahkan kata pengecoh yang tidak dipakai di jawaban. Klik sebuah kata di bawah untuk memasukkannya ke jawaban.</p>
@@ -7522,43 +7942,42 @@ FILE: templates/belajar/guru_soal_form.html
         <p class="hint">Dipakai bila ada lebih dari satu susunan kalimat yang benar.</p></details>
       <label class="cek"><input type="checkbox" name="urutan_bebas" value="1" {% if v.urutan_bebas %}checked{% endif %}> Urutan bebas: kata benar boleh dipilih dalam urutan apa pun (mis. soal mengelompokkan benda)</label>
     </section>
+
+    <section class="card f" data-jenis="baca" hidden>
+      <h2>2 · Kalimat yang dibaca</h2>
+      <label>Kalimat yang harus dibaca murid<input name="kalimat" id="f-kalimat" maxlength="160" required value="{{ v.kalimat }}" placeholder="mis. Ibu memasak nasi di dapur."></label>
+      <p class="hint">2 sampai 20 kata. Murid membaca kalimat ini dengan suara; mikrofon memeriksa ketepatan bacaannya.</p>
+      <div class="f baris">
+        <label>Emoji pendamping<input name="emoji" id="f-emoji" maxlength="8" value="{{ v.emoji }}" placeholder="📖"></label>
+        <label>Gambar (opsional){% if soal %} · kosongkan bila tidak diganti{% endif %}<input type="file" name="gambar" id="f-gambar-baca" accept="image/png,image/jpeg,image/gif,image/webp"></label>
+      </div>
+      <p class="hint">Bila gambar tidak diunggah, game menampilkan emoji di atas kalimat.</p>
+    </section>
 {% else %}
     <section class="card f">
-      <h2>2 · Isi soal</h2>
-      <div data-komp="NM-NILAI-TEMPAT">
-        <div class="f baris"><label>Ikat puluhan (1–20)<input type="number" name="puluhan" min="1" max="20" value="{{ v.puluhan }}" required></label>
-          <label>Satuan (0–9)<input type="number" name="satuan" min="0" max="9" value="{{ v.satuan }}" required></label></div>
-        <p class="hint" style="margin-top:8px">Murid menghitung jumlah semuanya (1 ikat = 10). Jawaban dihitung otomatis.</p>
+      <h2>2 · Cerita dan angka soal</h2>
+      <label>Teks soal cerita<textarea name="instruksi" id="f-cerita" rows="4" maxlength="400" placeholder="mis. Ayah membeli 12 apel dan 15 jeruk. **Berapa** jumlah buah semuanya?">{{ v.instruksi }}</textarea></label>
+      <div class="aksi"><button type="button" class="btn abu" id="btn-cerita">✎ Isi contoh cerita dari angka di bawah</button></div>
+      <p class="hint">Atur ceritanya sendiri. Gunakan **kata** untuk menebalkan kata penting. Kosongkan bila ingin kalimat bawaan game (“Hitung 12 + 7”).</p>
+      <p class="cek-info" id="cek-cerita" role="status"></p>
+
+      <div class="f baris">
+        <label><span id="lbl-n1">Nama kelompok 1</span><input name="label1" id="f-n1" maxlength="30" value="{{ v.label1 }}" placeholder="Kelompok pertama"></label>
+        <label><span id="lbl-a">Bilangan pertama</span><input type="number" name="a" id="f-a" min="0" max="999" value="{{ v.a }}" required></label>
       </div>
-      <div data-komp="NM-REGROUPING">
-        <div class="f baris"><label>Bilangan pertama (0–999)<input type="number" name="a" min="0" max="999" value="{{ v.a }}" required></label>
-          <label>Operasi<select name="op"><option value="+" {% if v.op != '-' %}selected{% endif %}>＋ penjumlahan</option><option value="-" {% if v.op == '-' %}selected{% endif %}>− pengurangan</option></select></label>
-          <label>Bilangan kedua (0–999)<input type="number" name="b" min="0" max="999" value="{{ v.b }}" required></label></div>
-        <p class="hint" style="margin-top:8px">Jawaban dihitung otomatis.</p>
+      <div class="tanda-op" id="tanda-op" aria-hidden="true">+</div>
+      <div class="f baris">
+        <label><span id="lbl-n2">Nama kelompok 2</span><input name="label2" id="f-n2" maxlength="30" value="{{ v.label2 }}" placeholder="Kelompok kedua"></label>
+        <label><span id="lbl-b">Bilangan kedua</span><input type="number" name="b" id="f-b" min="0" max="999" value="{{ v.b }}" required></label>
       </div>
-      <div data-komp="NM-POLA">
-        <label>Deret bilangan (3–8 angka, pisahkan dengan koma)<input name="deret" value="{{ v.deret }}" placeholder="2, 4, 6, 8" required></label>
-        <p class="hint" style="margin-top:8px">Murid menebak angka berikutnya. Isi jawabannya di bagian 3.</p>
-      </div>
-      <div data-komp="NM-CERITA">
-        <label>Teks soal cerita<textarea name="instruksi" id="f-cerita" rows="4" maxlength="400" required placeholder="mis. Ayah membeli 12 apel dan 15 jeruk. **Berapa** jumlah buah semuanya?">{{ v.instruksi }}</textarea></label>
-        <p class="hint" style="margin:6px 0 12px">Gunakan **kata** untuk menebalkan kata penting. Kelompok di bawah ini opsional (tampil sebagai kartu bantu di game).</p>
-        <div class="f baris">
-          <label>Nama kelompok 1<input name="label1" maxlength="30" value="{{ v.label1 }}" placeholder="Apel"></label>
-          <label>Jumlah kelompok 1<input type="number" name="val1" min="0" max="500" value="{{ v.val1 }}"></label>
-          <label>Nama kelompok 2<input name="label2" maxlength="30" value="{{ v.label2 }}" placeholder="Jeruk"></label>
-          <label>Jumlah kelompok 2<input type="number" name="val2" min="0" max="500" value="{{ v.val2 }}"></label>
-          <label>Gambar ilustrasi<select name="ikon">{% for k, nama in ikon %}<option value="{{ k }}" {% if k == v.ikon %}selected{% endif %}>{{ nama }}</option>{% endfor %}</select></label>
-          <label>Jumlah langkah hitung<select name="langkah">{% for n in "123" %}<option value="{{ n }}" {% if n == v.langkah|stringformat:"s" %}selected{% endif %}>{{ n }} langkah</option>{% endfor %}</select></label>
-        </div>
-      </div>
+      <p class="hint" id="hint-op">Jawaban dihitung otomatis dari dua bilangan.</p>
+      <label>Gambar ilustrasi<select name="ikon" id="f-ikon">{% for k, nama in ikon %}<option value="{{ k }}" {% if k == v.ikon %}selected{% endif %}>{{ nama }}</option>{% endfor %}</select></label>
     </section>
 
     <section class="card f">
       <h2>3 · Jawaban benar dan petunjuk</h2>
-      <label>Jawaban benar (angka)<input type="number" name="kunci" id="f-kunci" min="0" max="99999" value="{{ v.kunci }}"></label>
+      <label>Jawaban benar (dihitung otomatis)<input type="number" name="kunci" id="f-kunci" readonly value="{{ v.kunci }}"></label>
       <p class="cek-info" id="info-kunci" role="status"></p>
-      <div class="aksi"><button type="button" class="btn abu" id="btn-saran" hidden>Pakai saran jawaban</button></div>
       <label>Petunjuk untuk murid (opsional)<input name="petunjuk" maxlength="240" value="{{ v.petunjuk }}" placeholder="Tampil saat murid meminta petunjuk. Kosongkan untuk petunjuk otomatis."></label>
     </section>
 {% endif %}
@@ -7580,11 +7999,13 @@ FILE: templates/belajar/guru_soal_form.html
       <h2>Pratinjau untuk murid</h2>
       {% if game == 'literasi' %}
       <img id="pv-gambar2" class="unggah-preview" alt="Gambar soal"{% if gambar_url %} src="{{ gambar_url }}"{% else %} hidden{% endif %}>
+      <p class="pv-emoji" id="pv-emoji" aria-hidden="true" hidden></p>
       <p class="pv-q" id="pv-q"></p>
       <div class="chips-kata pv-chips" id="pv-chips"></div>
       <p class="pv-jawab" id="pv-jawab"></p>
       {% else %}
       <p class="pv-q" id="pv-q"></p>
+      <div class="chips-kata pv-chips" id="pv-chips"></div>
       <p class="pv-jawab" id="pv-jawab"></p>
       {% endif %}
     </section>
@@ -7681,79 +8102,102 @@ FILE: templates/belajar/guru_soal_form.html
     $('pv-jawab').textContent = jawaban.length ? '✔ Jawaban benar: ' + jawaban.join(' ') + (form.querySelector('[name=urutan_bebas]').checked ? ' (urutan bebas)' : '') : '';
   }
 
-  // ---------- Game 2 ----------
-  var kunci = $('f-kunci');
-  var saran = null;
-
-  function terapkanKomp() {
-    var kode = komp.value;
-    [].forEach.call(form.querySelectorAll('[data-komp]'), function (s) {
-      var tampil = s.dataset.komp.split(' ').indexOf(kode) >= 0;
+  // Soal baca kalimat (LT-KETEPATAN) memakai bagian form yang berbeda dari soal susun kalimat.
+  function terapkanJenis() {
+    var baca = komp.value === 'LT-KETEPATAN';
+    [].forEach.call(form.querySelectorAll('[data-jenis]'), function (s) {
+      var tampil = (s.dataset.jenis === 'baca') === baca;
       s.hidden = !tampil;
       [].forEach.call(s.querySelectorAll('input,select,textarea'), function (e) { e.disabled = !tampil; });
     });
-    var manual = (kode === 'NM-POLA' || kode === 'NM-CERITA');
-    kunci.readOnly = !manual; kunci.required = manual;
   }
 
-  function sarankanPola(d) {
-    if (d.length < 3) return null;
-    var s = d[1] - d[0], tetap = d.every(function (x, i) { return i === 0 || x - d[i - 1] === s; });
-    if (tetap) return { nilai: d[d.length - 1] + s, ket: 'selisih tetap ' + (s >= 0 ? '+' : '') + s };
-    if (d[0] !== 0 && d[1] % d[0] === 0) {
-      var r = d[1] / d[0], geo = d.every(function (x, i) { return i === 0 || (d[i - 1] !== 0 && x === d[i - 1] * r); });
-      if (geo) return { nilai: d[d.length - 1] * r, ket: 'dikali ' + r + ' tiap langkah' };
-    }
-    return null;
+  function segarBaca() {
+    var kalimat = val('kalimat').trim().replace(/\s+/g, ' '), kata = kalimat ? kalimat.split(' ') : [];
+    var box = $('pv-chips'), emoji = $('pv-emoji'), cek = $('cek-jawaban');
+    box.textContent = '';
+    kata.forEach(function (k) { var p = document.createElement('span'); p.className = 'kata'; p.textContent = k; box.appendChild(p); });
+    emoji.textContent = val('emoji').trim() || '📖';
+    emoji.hidden = !!($('pv-gambar2') && !$('pv-gambar2').hidden);
+    $('pv-q').textContent = kalimat || 'Kalimat yang dibaca tampil di sini.';
+    $('pv-jawab').textContent = kata.length >= 2 ? '🎤 Murid membaca kalimat ini dengan suara (' + kata.length + ' kata).' : '';
+    if (cek) cek.textContent = '';
   }
+
+  // ---------- Game 2 ----------
+  var kunci = $('f-kunci');
+  var OP = {
+    'NM-TAMBAH': { s: '+', n1: 'Kelompok pertama', n2: 'Kelompok kedua', l1: 'Jumlah kelompok pertama (0–999)', l2: 'Jumlah kelompok kedua (0–999)',
+      mA: 999, mB: 999, mnB: 0, hint: 'Murid menjumlahkan kedua kelompok. Contoh: 27 + 15.',
+      cerita: function (n, a, b) { return 'Lumi punya **' + a + ' ' + n + '**, lalu mendapat lagi **' + b + ' ' + n + '**. Berapa ' + n + ' Lumi sekarang?'; } },
+    'NM-KURANG': { s: '−', n1: 'Mula-mula', n2: 'Diambil', l1: 'Jumlah mula-mula (0–999)', l2: 'Jumlah yang diambil (0–999)',
+      mA: 999, mB: 999, mnB: 0, hint: 'Jumlah mula-mula tidak boleh lebih kecil dari jumlah yang diambil.',
+      cerita: function (n, a, b) { return 'Lumi punya **' + a + ' ' + n + '**. Sebanyak **' + b + ' ' + n + '** diberikan kepada teman. Berapa ' + n + ' yang tersisa?'; } },
+    'NM-KALI': { s: '×', n1: 'Banyak kelompok', n2: 'Isi tiap kelompok', l1: 'Banyak kelompok (0–99)', l2: 'Isi tiap kelompok (0–99)',
+      mA: 99, mB: 99, mnB: 0, hint: 'Murid mencari jumlah semuanya. Contoh: 4 kotak, tiap kotak 6 benda (4 × 6).',
+      cerita: function (n, a, b) { return 'Ada **' + a + ' kotak**. Setiap kotak berisi **' + b + ' ' + n + '**. Berapa ' + n + ' semuanya?'; } },
+    'NM-BAGI': { s: '÷', n1: 'Semua benda', n2: 'Banyak kelompok', l1: 'Jumlah semua benda (0–999)', l2: 'Banyak kelompok / pembagi (1–99)',
+      mA: 999, mB: 99, mnB: 1, hint: 'Harus habis dibagi (tanpa sisa). Contoh: 24 ÷ 4.',
+      cerita: function (n, a, b) { return 'Lumi membagi **' + a + ' ' + n + '** sama banyak ke **' + b + ' piring**. Berapa ' + n + ' di setiap piring?'; } }
+  };
+  var TEKS_OP = { 'NM-TAMBAH': '+', 'NM-KURANG': '−', 'NM-KALI': '×', 'NM-BAGI': '÷' };
+
+  function namaIkon() {
+    var sel = el('ikon'), o = sel && sel.options[sel.selectedIndex];
+    return o ? o.textContent.trim().toLowerCase() : 'benda';
+  }
+
+  function terapkanKomp() {
+    var o = OP[komp.value] || OP['NM-TAMBAH'];
+    $('lbl-n1').textContent = 'Nama kelompok 1 (' + o.n1.toLowerCase() + ')'; $('lbl-n2').textContent = 'Nama kelompok 2 (' + o.n2.toLowerCase() + ')';
+    el('label1').placeholder = o.n1; el('label2').placeholder = o.n2;
+    $('lbl-a').textContent = o.l1; $('lbl-b').textContent = o.l2;
+    $('tanda-op').textContent = o.s; $('hint-op').textContent = o.hint;
+    el('a').max = o.mA; el('b').max = o.mB; el('b').min = o.mnB;
+  }
+
+  function adaAngka(teks, n) { return new RegExp('(^|[^0-9])' + n + '([^0-9]|$)').test(teks); }
 
   function segarGame2() {
-    var kode = komp.value, q = $('pv-q'), info = $('info-kunci'), hasil = null, teks = '';
-    saran = null; $('btn-saran').hidden = true;
+    var kode = komp.value, o = OP[kode] || OP['NM-TAMBAH'], q = $('pv-q'), info = $('info-kunci'), cek = $('cek-cerita'), hasil = null;
+    var a = bil('a'), b = bil('b'), s = o.s, cerita = val('instruksi').trim();
     info.className = 'cek-info'; info.textContent = '';
-    if (kode === 'NM-NILAI-TEMPAT') {
-      var p = bil('puluhan'), s = bil('satuan');
-      teks = 'Ada <b>' + (p === null ? '…' : p) + ' ikat puluhan</b> dan <b>' + (s === null ? '…' : s) + ' satuan</b>. Jika satu ikat berisi 10 benda, berapa jumlah semuanya?';
-      if (p !== null && s !== null) hasil = p * 10 + s;
-    } else if (kode === 'NM-REGROUPING') {
-      var a = bil('a'), b = bil('b'), op = val('op') === '-' ? '-' : '+';
-      teks = 'Hitung <b>' + (a === null ? '…' : a) + ' ' + op + ' ' + (b === null ? '…' : b) + '</b>. Berapa hasilnya?';
-      if (a !== null && b !== null) {
-        hasil = op === '+' ? a + b : a - b;
-        if (hasil < 0) { info.textContent = '⚠ Pada pengurangan, bilangan pertama tidak boleh lebih kecil dari bilangan kedua.'; info.classList.add('salah'); hasil = null; }
+    cek.className = 'cek-info'; cek.textContent = '';
+    var teks = cerita ? markup(val('instruksi')) : 'Hitung <b>' + (a === null ? '…' : a) + ' ' + s + ' ' + (b === null ? '…' : b) + '</b>. Berapa hasilnya?';
+    if (a !== null && b !== null) {
+      if (kode === 'NM-TAMBAH') hasil = a + b;
+      else if (kode === 'NM-KURANG') hasil = a - b;
+      else if (kode === 'NM-KALI') hasil = a * b;
+      else if (b === 0) { info.textContent = '⚠ Pembagi tidak boleh 0.'; info.classList.add('salah'); }
+      else if (a % b !== 0) { info.textContent = '⚠ ' + a + ' tidak habis dibagi ' + b + '. Pilih bilangan agar hasilnya bulat tanpa sisa.'; info.classList.add('salah'); }
+      else hasil = a / b;
+      if (kode === 'NM-KURANG' && hasil < 0) { info.textContent = '⚠ Pada pengurangan, bilangan pertama tidak boleh lebih kecil dari bilangan kedua.'; info.classList.add('salah'); hasil = null; }
+      if (kode === 'NM-TAMBAH' && hasil > 999) { info.textContent = '⚠ Hasil penjumlahan maksimal 999.'; info.classList.add('salah'); hasil = null; }
+      if (cerita) {
+        var hilang = [a, b].filter(function (n) { return !adaAngka(cerita, n); });
+        if (hilang.length) { cek.textContent = '⚠ Cerita belum menyebut angka ' + hilang.join(' dan ') + '. Pastikan angka di cerita sama dengan angka soal.'; cek.classList.add('salah'); }
+        else { cek.textContent = '✓ Cerita memuat kedua angka soal.'; cek.classList.add('benar'); }
       }
-    } else if (kode === 'NM-POLA') {
-      var d = val('deret').trim().split(/[,\s]+/).filter(function (x) { return x !== ''; }).map(Number);
-      var sah = d.length >= 3 && d.length <= 8 && d.every(function (x) { return Number.isInteger(x); });
-      teks = 'Perhatikan pola bilangan berikut: <b>' + esc(d.join(', ')) + ', ...</b><br>Angka berikutnya adalah?';
-      if (sah) { saran = sarankanPola(d); }
-      if (!sah && val('deret').trim() !== '') { info.textContent = '⚠ Deret harus berisi 3 sampai 8 angka bulat.'; info.classList.add('salah'); }
-    } else {
-      teks = markup(val('instruksi')) || 'Teks soal cerita tampil di sini.';
     }
     q.innerHTML = teks;
-
-    var otomatis = (kode === 'NM-NILAI-TEMPAT' || kode === 'NM-REGROUPING');
-    if (otomatis) {
-      kunci.value = hasil === null ? '' : hasil;
-      if (hasil !== null) { info.textContent = 'Jawaban dihitung otomatis dari isi soal.'; }
-    } else if (kode === 'NM-POLA' && saran) {
-      info.textContent = 'Saran jawaban: ' + saran.nilai + ' (' + saran.ket + '). Periksa lagi sebelum menyimpan.';
-      $('btn-saran').hidden = false;
-    } else if (!info.textContent) {
-      info.textContent = 'Isi jawaban benar (bilangan bulat, 0 atau lebih).';
-    }
-    var k = kunci.value;
-    $('pv-jawab').textContent = k !== '' ? '✔ Jawaban benar: ' + k : '';
+    var chips = $('pv-chips'); chips.textContent = '';
+    [[val('label1').trim() || o.n1, a], [val('label2').trim() || o.n2, b]].forEach(function (x) {
+      var p = document.createElement('span'); p.className = 'kata'; p.textContent = x[0] + ': ' + (x[1] === null ? '…' : x[1]); chips.appendChild(p);
+    });
+    kunci.value = hasil === null ? '' : hasil;
+    if (hasil !== null) info.textContent = 'Jawaban dihitung otomatis: ' + a + ' ' + s + ' ' + b + ' = ' + hasil + '.';
+    else if (!info.textContent) info.textContent = 'Isi kedua bilangan untuk menghitung jawaban.';
+    $('pv-jawab').textContent = hasil !== null ? '✔ Jawaban benar: ' + hasil : '';
   }
 
   // ---------- pemasangan ----------
   function segarkan() {
     infoPosisi();
-    if (GAME === 'literasi') segarGame1(); else segarGame2();
+    if (GAME === 'literasi') { if (komp.value === 'LT-KETEPATAN') segarBaca(); else segarGame1(); }
+    else segarGame2();
   }
   form.addEventListener('input', function (e) {
-    if (e.target === komp && GAME === 'numerasi') terapkanKomp();
+    if (e.target === komp) { if (GAME === 'numerasi') terapkanKomp(); else terapkanJenis(); }
     segarkan();
   });
   // Hanya "input": event "change" muncul saat kolom kehilangan fokus dan akan membangun ulang chip kata
@@ -7761,19 +8205,30 @@ FILE: templates/belajar/guru_soal_form.html
 
   if (GAME === 'literasi') {
     $('btn-kosong').addEventListener('click', function () { el('jawaban').value = ''; segarkan(); });
-    $('f-gambar').addEventListener('change', function () {
-      var f = this.files && this.files[0], gambar = [$('pv-gambar'), $('pv-gambar2')];
-      if (!f) return;
-      if (f.size > MAKS_MB * 1024 * 1024) {
-        alert('Ukuran gambar maksimal ' + MAKS_MB + ' MB. Pilih gambar yang lebih kecil.');
-        this.value = ''; return;
-      }
-      var url = URL.createObjectURL(f);
-      gambar.forEach(function (g) { g.src = url; g.hidden = false; });
+    [$('f-gambar'), $('f-gambar-baca')].forEach(function (input) {
+      input.addEventListener('change', function () {
+        var f = this.files && this.files[0], gambar = [$('pv-gambar'), $('pv-gambar2')];
+        if (!f) return;
+        if (f.size > MAKS_MB * 1024 * 1024) {
+          alert('Ukuran gambar maksimal ' + MAKS_MB + ' MB. Pilih gambar yang lebih kecil.');
+          this.value = ''; return;
+        }
+        var url = URL.createObjectURL(f);
+        gambar.forEach(function (g) { g.src = url; g.hidden = false; });
+        segarkan();
+      });
     });
+    terapkanJenis();
   } else {
-    $('btn-saran').addEventListener('click', function () { if (saran) { kunci.value = saran.nilai; segarGame2(); $('pv-jawab').textContent = '✔ Jawaban benar: ' + saran.nilai; } });
     terapkanKomp();
+    $('btn-cerita').addEventListener('click', function () {
+      var o = OP[komp.value] || OP['NM-TAMBAH'], a = bil('a'), b = bil('b');
+      if (a === null || b === null) { alert('Isi kedua bilangan dulu, lalu klik tombol ini.'); return; }
+      var tulis = el('instruksi');
+      if (tulis.value.trim() && !confirm('Ganti teks cerita yang sudah ada dengan contoh baru?')) return;
+      tulis.value = o.cerita(namaIkon(), a, b);
+      segarkan();
+    });
   }
   segarkan();
 })();
@@ -7788,8 +8243,6 @@ FILE: templates/belajar/murid_beranda.html
 <header class="mtop">
   <div class="logo"><i>✦</i><span>LENTERA</span></div>
   <div class="bar">
-    <span class="chip hijau">● Mode Touchless aktif</span>
-    <span class="chip kuning">★ {{ siswa.poin }} poin</span>
     <span class="av" aria-hidden="true">{{ siswa.avatar }}</span>
     <a class="chip merah" href="/logout/">Keluar</a>
   </div>
@@ -7847,7 +8300,7 @@ FILE: templates/belajar/murid_beranda.html
   <aside class="mright">
     <section class="card jalan" id="jalur" aria-label="Jalan Lenteraku">
       <h3>Jalan Lenteraku</h3>
-      <p class="hint">Jawaban benar = 1 lampu menyala ✓. 5 lampu = 1 level, 5 level = 1 bagian.</p>
+      <p class="hint">Selesaikan 1 level, 1 titik di jalan menyala emas. Kelima titik emas = 1 bagian selesai, lalu bagian berikutnya terbuka.</p>
       <div class="tabs" role="tablist" aria-label="Pilih kategori jalan">
         {% for g in jalan %}<button type="button" role="tab" class="tab t-{{ g.game|slice:':3' }}" id="tab-{{ g.game }}" data-game="{{ g.game }}" aria-controls="panel-{{ g.game }}" aria-selected="false">{{ g.nama }}</button>{% endfor %}
       </div>
@@ -7856,7 +8309,7 @@ FILE: templates/belajar/murid_beranda.html
         {% if not g.ada_main %}
         <p class="kosong-info">Belum ada bagian {{ g.nama }} yang siap. Gurumu sedang menyiapkan soalnya.</p>
         {% else %}
-        <p class="ringkas"><b>{{ g.jumlah_penuh }}</b> dari {{ g.jumlah_main }} bagian selesai · <b>{{ g.lampu_nyala }}</b> lampu menyala</p>
+        <p class="ringkas"><b>{{ g.jumlah_penuh }}</b> dari {{ g.jumlah_main }} bagian selesai · <b>{{ g.level_selesai }}</b> level selesai</p>
         <div class="pills" role="group" aria-label="Pilih bagian {{ g.nama }}">
           {% for b in g.bagian %}{% if b.bisa_main %}<button type="button" class="pill{% if b.penuh %} penuh{% elif not b.terbuka %} kunci{% endif %}" data-bagian="{{ g.game }}-{{ b.no }}" aria-pressed="false">Bagian {{ b.no }}{% if b.penuh %} ✓{% elif not b.terbuka %} 🔒{% endif %}</button>{% endif %}{% endfor %}
         </div>
@@ -7864,20 +8317,25 @@ FILE: templates/belajar/murid_beranda.html
         <div class="bagian{% if b.penuh %} penuh{% endif %}" id="bagian-{{ g.game }}-{{ b.no }}" data-bagian="{{ g.game }}-{{ b.no }}"{% if g.buka == b.no %} data-buka="1"{% endif %}>
           <p class="b-judul"><b>Bagian {{ b.no }} · {{ b.judul }}</b><span class="chip {% if b.penuh %}kuning{% else %}biru{% endif %}">{{ b.selesai }}/{{ b.level|length }} level</span></p>
           {% if not b.terbuka %}<p class="kosong-info">🔒 Selesaikan bagian sebelumnya dulu untuk membuka bagian ini.</p>{% endif %}
-          <ol class="lv-list">
+          <svg class="zig{% if not b.terbuka %} kunci{% endif %}" viewBox="0 0 {{ zig_lebar }} {{ zig_tinggi }}" role="img" focusable="false"
+               aria-label="Jalan Bagian {{ b.no }}: {{ b.selesai }} dari {{ b.level|length }} level selesai{% if not b.terbuka %}, masih terkunci{% endif %}">
+            {% for x in b.level %}{% if x.seg_x is not None %}<line class="seg{% if x.status == 'selesai' %} on{% endif %}" x1="{{ x.gx }}" y1="{{ x.gy }}" x2="{{ x.seg_x }}" y2="{{ x.seg_y }}"/>{% endif %}{% endfor %}
             {% for x in b.level %}
-            <li class="lv {{ x.status }}">
-              <span class="lv-node" aria-hidden="true">{% if x.status == 'selesai' %}✓{% else %}{{ x.nomor }}{% endif %}</span>
-              <div class="lv-body">
-                <div class="lv-top"><b>Level {{ x.nomor }}</b>
-                  <span class="chip {% if x.status == 'selesai' %}hijau{% elif x.status == 'kini' %}kuning{% else %}abu{% endif %}">{% if x.status == 'selesai' %}Selesai ✓{% elif x.status == 'kini' %}Sedang dimainkan{% else %}Belum{% endif %}</span></div>
-                <div class="lampu-baris" role="img" aria-label="Level {{ x.nomor }}: {% if x.status == 'selesai' %}semua lampu menyala{% elif x.status == 'kini' %}sebagian lampu menyala{% else %}lampu belum menyala{% endif %}">{% for l in x.lampu %}<span class="lampu{% if l %} on{% endif %}">{% if l %}✓{% endif %}</span>{% endfor %}</div>
-              </div>
-            </li>
+            <g class="zig-node {{ x.status }}" transform="translate({{ x.gx }} {{ x.gy }})">
+              <title>Level {{ x.nomor }}: {% if x.status == 'selesai' %}selesai, titik menyala emas{% elif x.status == 'kini' %}giliranmu sekarang ({{ x.nyala }} dari {{ x.total }} lampu menyala){% elif x.status == 'belum' %}belum dimainkan{% else %}terkunci{% endif %}</title>
+              {% if x.status == 'kini' %}<circle class="aura" r="23"/>{% endif %}
+              <circle class="dot" r="{% if x.status == 'kini' %}18{% else %}13{% endif %}"/>
+              <text class="no" y="5" text-anchor="middle">{% if x.status == 'selesai' %}✓{% else %}{{ x.nomor }}{% endif %}</text>
+              <text class="lbl" y="{% if x.status == 'kini' %}36{% else %}31{% endif %}" text-anchor="middle">Level {{ x.nomor }}</text>
+            </g>
             {% endfor %}
-          </ol>
+          </svg>
+          {% for x in b.level %}{% if x.status == 'kini' %}
+          <div class="zig-info"><span><b>Level {{ x.nomor }}</b> · giliranmu sekarang</span>
+            <span class="lampu-baris" role="img" aria-label="{{ x.nyala }} dari {{ x.total }} lampu menyala">{% for l in x.lampu %}<span class="lampu{% if l %} on{% endif %}">{% if l %}✓{% endif %}</span>{% endfor %}</span></div>
+          {% endif %}{% endfor %}
           {% if b.penuh %}
-          <div class="selamat">🎉 Bagian {{ b.no }} penuh! Semua lampunya menyala.
+          <div class="selamat">🎉 Bagian {{ b.no }} penuh! Kelima titiknya menyala emas.
             {% if b.berikut %}<button type="button" class="btn navy lanjut" data-pilih="{{ g.game }}-{{ b.berikut }}">Lanjut ke Bagian {{ b.berikut }} →</button>{% else %}<span>Bagian berikutnya sedang disiapkan gurumu.</span>{% endif %}</div>
           {% endif %}
         </div>

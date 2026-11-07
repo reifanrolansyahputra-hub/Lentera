@@ -4,8 +4,6 @@
 <header class="mtop">
   <div class="logo"><i>✦</i><span>LENTERA</span></div>
   <div class="bar">
-    <span class="chip hijau">● Mode Touchless aktif</span>
-    <span class="chip kuning">★ {{ siswa.poin }} poin</span>
     <span class="av" aria-hidden="true">{{ siswa.avatar }}</span>
     <a class="chip merah" href="/logout/">Keluar</a>
   </div>
@@ -63,7 +61,7 @@
   <aside class="mright">
     <section class="card jalan" id="jalur" aria-label="Jalan Lenteraku">
       <h3>Jalan Lenteraku</h3>
-      <p class="hint">Jawaban benar = 1 lampu menyala ✓. 5 lampu = 1 level, 5 level = 1 bagian.</p>
+      <p class="hint">Selesaikan 1 level, 1 titik di jalan menyala emas. Kelima titik emas = 1 bagian selesai, lalu bagian berikutnya terbuka.</p>
       <div class="tabs" role="tablist" aria-label="Pilih kategori jalan">
         {% for g in jalan %}<button type="button" role="tab" class="tab t-{{ g.game|slice:':3' }}" id="tab-{{ g.game }}" data-game="{{ g.game }}" aria-controls="panel-{{ g.game }}" aria-selected="false">{{ g.nama }}</button>{% endfor %}
       </div>
@@ -72,7 +70,7 @@
         {% if not g.ada_main %}
         <p class="kosong-info">Belum ada bagian {{ g.nama }} yang siap. Gurumu sedang menyiapkan soalnya.</p>
         {% else %}
-        <p class="ringkas"><b>{{ g.jumlah_penuh }}</b> dari {{ g.jumlah_main }} bagian selesai · <b>{{ g.lampu_nyala }}</b> lampu menyala</p>
+        <p class="ringkas"><b>{{ g.jumlah_penuh }}</b> dari {{ g.jumlah_main }} bagian selesai · <b>{{ g.level_selesai }}</b> level selesai</p>
         <div class="pills" role="group" aria-label="Pilih bagian {{ g.nama }}">
           {% for b in g.bagian %}{% if b.bisa_main %}<button type="button" class="pill{% if b.penuh %} penuh{% elif not b.terbuka %} kunci{% endif %}" data-bagian="{{ g.game }}-{{ b.no }}" aria-pressed="false">Bagian {{ b.no }}{% if b.penuh %} ✓{% elif not b.terbuka %} 🔒{% endif %}</button>{% endif %}{% endfor %}
         </div>
@@ -80,20 +78,25 @@
         <div class="bagian{% if b.penuh %} penuh{% endif %}" id="bagian-{{ g.game }}-{{ b.no }}" data-bagian="{{ g.game }}-{{ b.no }}"{% if g.buka == b.no %} data-buka="1"{% endif %}>
           <p class="b-judul"><b>Bagian {{ b.no }} · {{ b.judul }}</b><span class="chip {% if b.penuh %}kuning{% else %}biru{% endif %}">{{ b.selesai }}/{{ b.level|length }} level</span></p>
           {% if not b.terbuka %}<p class="kosong-info">🔒 Selesaikan bagian sebelumnya dulu untuk membuka bagian ini.</p>{% endif %}
-          <ol class="lv-list">
+          <svg class="zig{% if not b.terbuka %} kunci{% endif %}" viewBox="0 0 {{ zig_lebar }} {{ zig_tinggi }}" role="img" focusable="false"
+               aria-label="Jalan Bagian {{ b.no }}: {{ b.selesai }} dari {{ b.level|length }} level selesai{% if not b.terbuka %}, masih terkunci{% endif %}">
+            {% for x in b.level %}{% if x.seg_x is not None %}<line class="seg{% if x.status == 'selesai' %} on{% endif %}" x1="{{ x.gx }}" y1="{{ x.gy }}" x2="{{ x.seg_x }}" y2="{{ x.seg_y }}"/>{% endif %}{% endfor %}
             {% for x in b.level %}
-            <li class="lv {{ x.status }}">
-              <span class="lv-node" aria-hidden="true">{% if x.status == 'selesai' %}✓{% else %}{{ x.nomor }}{% endif %}</span>
-              <div class="lv-body">
-                <div class="lv-top"><b>Level {{ x.nomor }}</b>
-                  <span class="chip {% if x.status == 'selesai' %}hijau{% elif x.status == 'kini' %}kuning{% else %}abu{% endif %}">{% if x.status == 'selesai' %}Selesai ✓{% elif x.status == 'kini' %}Sedang dimainkan{% else %}Belum{% endif %}</span></div>
-                <div class="lampu-baris" role="img" aria-label="Level {{ x.nomor }}: {% if x.status == 'selesai' %}semua lampu menyala{% elif x.status == 'kini' %}sebagian lampu menyala{% else %}lampu belum menyala{% endif %}">{% for l in x.lampu %}<span class="lampu{% if l %} on{% endif %}">{% if l %}✓{% endif %}</span>{% endfor %}</div>
-              </div>
-            </li>
+            <g class="zig-node {{ x.status }}" transform="translate({{ x.gx }} {{ x.gy }})">
+              <title>Level {{ x.nomor }}: {% if x.status == 'selesai' %}selesai, titik menyala emas{% elif x.status == 'kini' %}giliranmu sekarang ({{ x.nyala }} dari {{ x.total }} lampu menyala){% elif x.status == 'belum' %}belum dimainkan{% else %}terkunci{% endif %}</title>
+              {% if x.status == 'kini' %}<circle class="aura" r="23"/>{% endif %}
+              <circle class="dot" r="{% if x.status == 'kini' %}18{% else %}13{% endif %}"/>
+              <text class="no" y="5" text-anchor="middle">{% if x.status == 'selesai' %}✓{% else %}{{ x.nomor }}{% endif %}</text>
+              <text class="lbl" y="{% if x.status == 'kini' %}36{% else %}31{% endif %}" text-anchor="middle">Level {{ x.nomor }}</text>
+            </g>
             {% endfor %}
-          </ol>
+          </svg>
+          {% for x in b.level %}{% if x.status == 'kini' %}
+          <div class="zig-info"><span><b>Level {{ x.nomor }}</b> · giliranmu sekarang</span>
+            <span class="lampu-baris" role="img" aria-label="{{ x.nyala }} dari {{ x.total }} lampu menyala">{% for l in x.lampu %}<span class="lampu{% if l %} on{% endif %}">{% if l %}✓{% endif %}</span>{% endfor %}</span></div>
+          {% endif %}{% endfor %}
           {% if b.penuh %}
-          <div class="selamat">🎉 Bagian {{ b.no }} penuh! Semua lampunya menyala.
+          <div class="selamat">🎉 Bagian {{ b.no }} penuh! Kelima titiknya menyala emas.
             {% if b.berikut %}<button type="button" class="btn navy lanjut" data-pilih="{{ g.game }}-{{ b.berikut }}">Lanjut ke Bagian {{ b.berikut }} →</button>{% else %}<span>Bagian berikutnya sedang disiapkan gurumu.</span>{% endif %}</div>
           {% endif %}
         </div>

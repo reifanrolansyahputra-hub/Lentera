@@ -148,6 +148,10 @@ LENTERA_GAME_EVENT_GRACE = 7 * 86400
 LENTERA_SOAL_PER_LEVEL = 5
 LENTERA_LEVEL_PER_BAGIAN = 5
 
+# Level Literasi memadukan soal susun kalimat dan soal baca kalimat (mikrofon).
+# Bila bank level memuat keduanya, sebanyak ini dari soal per level berupa baca kalimat.
+LENTERA_SOAL_BACA_PER_LEVEL = 2
+
 # Aturan batas waktu game. Waktu dasar = menit pada Bank Aktivitas.
 # Setelah waktu dasar habis, poin dikurangi setiap `tick` detik.
 # Bila keterlambatan melewati `maks_lewat` detik, level dinyatakan GAGAL.
@@ -171,7 +175,7 @@ LENTERA_WAKTU = {
 # Pisahkan beberapa origin menggunakan koma.
 LENTERA_GAME_ORIGIN = os.getenv(
     "LENTERA_GAME_ORIGIN",
-    "http://127.0.0.1:5000,http://127.0.0.1:5500",
+    "http://127.0.0.1:5000,http://127.0.0.1:5500,http://127.0.0.1:5501",
 )
 
 
@@ -191,7 +195,7 @@ URL_GAME_MISI1 = os.getenv(
 
 URL_GAME_MISI2 = os.getenv(
     "GAME_MISI2_URL",
-    "http://127.0.0.1:5500/Misi-2-lentera/index.html",
+    "http://127.0.0.1:5501/Misi-2-lentera/index.html",
 )
 
 
@@ -202,22 +206,23 @@ URL_GAME_MISI2 = os.getenv(
 LENTERA_GAMES = {
     # ------------------------------------------------------
     # GAME 1 — LITERASI
-    # Menggunakan aplikasi Game 1 yang sama.
-    # Pemilihan soal per kompetensi diatur pada kode Game 1.
+    # Satu aplikasi Game 1 yang sama. Susun kalimat dan baca
+    # kalimat (mikrofon) adalah satu kesatuan: satu level memuat
+    # kedua jenis soal, tanpa pilihan game terpisah.
     # ------------------------------------------------------
 
     "LT-KOSAKATA": URL_GAME_MISI1,
     "LT-LANCAR": URL_GAME_MISI1,
-    "LT-PAHAM": URL_GAME_MISI1,
+    "LT-KETEPATAN": URL_GAME_MISI1,
     "LT-KALIMAT": URL_GAME_MISI1,
 
     # ------------------------------------------------------
     # GAME 2 — NUMERASI
-    # Seluruh pemetaan numerasi lama dipertahankan.
+    # Empat operasi hitung: satu kompetensi = satu bagian.
     # ------------------------------------------------------
 
-    "NM-CERITA": URL_GAME_MISI2,
-    "NM-NILAI-TEMPAT": URL_GAME_MISI2,
-    "NM-REGROUPING": URL_GAME_MISI2,
-    "NM-POLA": URL_GAME_MISI2,
+    "NM-TAMBAH": URL_GAME_MISI2,
+    "NM-KURANG": URL_GAME_MISI2,
+    "NM-KALI": URL_GAME_MISI2,
+    "NM-BAGI": URL_GAME_MISI2,
 }

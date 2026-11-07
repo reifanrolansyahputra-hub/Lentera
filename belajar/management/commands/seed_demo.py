@@ -14,7 +14,7 @@ from belajar.services import catat_jawaban
 
 MURID = [("Raka", "🦊"), ("Alya", "🐼"), ("Bima", "🐯"), ("Citra", "🦄"), ("Dimas", "🐸"), ("Fitri", "🐰"),
          ("Gilang", "🦁"), ("Hana", "🐙"), ("Indra", "🐧"), ("Jihan", "🐨"), ("Kirana", "🦋"), ("Laras", "🐢")]
-POLA_DEMO = {"LT-LANCAR": "ny_ng", "LT-KALIMAT": "urutan_spo", "NM-NILAI-TEMPAT": "nilai_tempat", "NM-REGROUPING": "regrouping"}
+POLA_DEMO = {"LT-LANCAR": "ny_ng", "LT-KALIMAT": "urutan_spo", "LT-KETEPATAN": "baca_kata_terlewat", "NM-TAMBAH": "tambah_simpan", "NM-KURANG": "kurang_pinjam"}
 
 
 def buat_user(username, nama, role, sandi=None):

@@ -4,8 +4,12 @@ Jalan Lentera: jalur belajar murid per kategori (Literasi dan Numerasi).
 Aturan inti
 -----------
 - Satu BAGIAN = 5 LEVEL. Satu LEVEL = 5 soal = 5 lampu (satu lampu menyala + centang tiap jawaban benar).
+- Di beranda murid, satu BAGIAN digambar sebagai satu jalur zig-zag: 5 titik, satu titik per level.
+  Level selesai = titik menyala emas. Bagian berikutnya terkunci sampai kelima titik bagian sebelumnya emas.
 - Jalur dibangun dari bank soal (SoalGame). Bagian baru tampil bila kelima levelnya sudah punya soal.
 - Murid memainkan level secara berurutan: level 1 -> 5 bagian 1, lalu bagian 2, dst.
+- Literasi: susun kalimat dan baca kalimat (mikrofon) satu kesatuan; satu level memuat keduanya.
+- Numerasi: satu bagian = satu operasi hitung (penjumlahan, pengurangan, perkalian, pembagian).
 - Batas waktu level = menit pada Bank Aktivitas (lihat `batas_waktu`).
 - Peta Kompetensi dicicil: persen = dasar + (100 - dasar) x kemajuan jalur x penguasaan,
   100% baru tercapai setelah murid menyelesaikan `Kelas.target_bagian` bagian.
@@ -71,7 +75,7 @@ def struktur(game):
                 judul = f"{judul} {muncul[komp.id]}"
         else:
             komp = utama
-            judul = "Petualangan Kata & Kalimat" if no == 1 else f"Petualangan Literasi {no}"
+            judul = "Susun & Baca Kalimat" if no == 1 else f"Susun & Baca Kalimat {no}"
         level = [
             {"level": n, "jumlah": min(maks, b["level"].get(n, 0)), "tersedia": b["level"].get(n, 0)}
             for n in range(1, level_per_bagian() + 1)
@@ -321,6 +325,21 @@ def lampu_misi(misi):
 # 6. TAMPILAN JALUR MURID
 # ==========================================================
 
+# Jalur zig-zag satu bagian digambar pada kanvas SVG 320 x 156: tangga naik ke kanan
+# (datar, naik, datar, naik, ...) seperti peta perjalanan. Satu titik = satu level.
+ZIGZAG_LEBAR, ZIGZAG_TINGGI = 320, 156
+
+
+def titik_zigzag(n):
+    """[(x, y)] untuk n titik jalur zig-zag (bilangan bulat supaya aman di template berlokal Indonesia)."""
+    n = max(1, int(n))
+    kiri, kanan, dasar = 34, ZIGZAG_LEBAR - 38, 116
+    langkah = (kanan - kiri) / (n - 1) if n > 1 else 0
+    naik = (n - 1) // 2
+    dy = min(36, 72 / naik) if naik else 0
+    return [(round(kiri + i * langkah), round(dasar - dy * (i // 2))) for i in range(n)]
+
+
 def jalur_siswa(siswa, aktif=None):
     """Data jalur Literasi dan Numerasi untuk beranda murid (tanpa menulis ke database).
 
@@ -329,7 +348,8 @@ def jalur_siswa(siswa, aktif=None):
     Per bagian: bisa_main = kelima levelnya sudah punya soal; terbuka = bisa dimainkan sekarang
     (semua bagian sebelumnya sudah penuh); penuh = kelima level selesai; berikut = nomor bagian
     berikutnya yang bisa dimainkan (untuk tombol "Lanjut ke bagian berikutnya").
-    Per level: status selesai / kini / belum / terkunci / kosong, dan daftar lampu (True = menyala).
+    Per level (= satu titik zig-zag): status selesai / kini / belum / terkunci / kosong, daftar lampu
+    (True = menyala), serta nyala/total lampu untuk titik yang sedang dimainkan.
     """
     aktif = aktif if aktif is not None else misi_aktif(siswa)
     selesai = level_selesai([siswa.id])
@@ -362,7 +382,15 @@ def jalur_siswa(siswa, aktif=None):
                     kini_bagian = b["no"]
                 else:
                     status, lamp = "belum", [False] * x["jumlah"]
-                level.append({**x, "status": status, "lampu": lamp, "nomor": x["level"]})
+                level.append({
+                    **x, "status": status, "lampu": lamp, "nomor": x["level"],
+                    "nyala": sum(1 for l in lamp if l), "total": len(lamp) or x["jumlah"] or maks,
+                })
+            # titik jalur zig-zag + ruas menuju titik berikutnya (menyala emas bila level ini selesai)
+            titik = titik_zigzag(len(level))
+            for i, x in enumerate(level):
+                x["gx"], x["gy"] = titik[i]
+                x["seg_x"], x["seg_y"] = titik[i + 1] if i + 1 < len(level) else (None, None)
             penuh = main and nyala == len(b["level"])
             daftar.append({
                 "no": b["no"], "judul": b["judul"], "lengkap": b["lengkap"], "bisa_main": main,
@@ -396,8 +424,8 @@ def jalur_siswa(siswa, aktif=None):
 # ==========================================================
 
 _IKON_LENCANA = {
-    "literasi": [("📖", "Pembaca Cilik"), ("✏️", "Penulis Cilik"), ("📚", "Kutu Buku"), ("🦉", "Bijak Bahasa")],
-    "numerasi": [("🔢", "Ahli Puluhan"), ("➕", "Jagoan Simpan-Pinjam"), ("🏆", "Juara Pola"), ("🧮", "Pemecah Cerita")],
+    "literasi": [("📖", "Pembaca Tekun"), ("🎤", "Pembaca Lantang"), ("📚", "Kutu Buku"), ("🦉", "Bijak Bahasa")],
+    "numerasi": [("➕", "Raja Tambah"), ("➖", "Jagoan Kurang"), ("✖️", "Bintang Kali"), ("➗", "Ahli Bagi")],
 }
 
 
@@ -455,6 +483,11 @@ def dasar_diagnostik(siswa_ids):
     return hasil
 
 
+def pernah_jawab(siswa_ids):
+    """{(siswa_id, kompetensi_id)} yang pernah punya minimal satu Jawaban (sepanjang waktu, bukan 7 hari)."""
+    return set(Jawaban.objects.filter(siswa_id__in=siswa_ids).values_list("siswa_id", "kompetensi_id").distinct())
+
+
 def _levels_kompetensi(done, game, kompetensi, bagian_numerasi):
     """Level yang relevan untuk satu kompetensi: Literasi = semua level literasi, Numerasi = level bagian kompetensi itu."""
     if game == "literasi":
@@ -471,6 +504,7 @@ def hitung_peta(siswa_ids, kompetensi, penguasaan, target_bagian, sebelum=None, 
     """
     selesai = level_selesai(siswa_ids, sebelum)
     dasar = dasar_diagnostik(siswa_ids)
+    jawab = pernah_jawab(siswa_ids)
     strukt = {g: struktur(g) for g in GAMES}
     bagian_numerasi = {b["no"]: b["kompetensi"].id for b in strukt["numerasi"] if b["kompetensi"]}
     hasil = {}
@@ -485,7 +519,16 @@ def hitung_peta(siswa_ids, kompetensi, penguasaan, target_bagian, sebelum=None, 
                 p_l = p_l_sebelum.get((sid, k.id), engine.P_AWAL)
             else:
                 p_l = p.p_l if p else engine.P_AWAL
-            pct = persen_peta(p_l, k_game[game], dasar.get((sid, k.id)))
+            # Belum ada bukti sama sekali (belum pernah menjawab, belum diagnostik) -> tampilkan
+            # 0% polos, bukan dasar P_AWAL. "Mulai" dipakai hanya setelah murid benar-benar mencoba,
+            # supaya warna "perlu diperhatikan" tidak salah kena murid yang memang belum mulai.
+            ada_bukti = (sid, k.id) in dasar or (sid, k.id) in jawab
+            if ada_bukti:
+                pct = persen_peta(p_l, k_game[game], dasar.get((sid, k.id)))
+                st = status_persen(pct)
+            else:
+                pct = 0
+                st = "Belum mulai"
             # posisi di jalur: level berikutnya untuk kompetensi ini
             relevan = _levels_kompetensi(done_game[game], game, k, bagian_numerasi)
             pos = None
@@ -499,7 +542,7 @@ def hitung_peta(siswa_ids, kompetensi, penguasaan, target_bagian, sebelum=None, 
                 if pos:
                     break
             hasil[(sid, k.id)] = {
-                "pct": pct, "st": status_persen(pct), "p_l": p_l, "selesai": len(relevan),
+                "pct": pct, "st": st, "p_l": p_l, "selesai": len(relevan),
                 "bagian": pos[0] if pos else None, "level": pos[1] if pos else None, "penuh": pos is None and bool(relevan),
             }
     return hasil

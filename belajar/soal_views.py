@@ -1,5 +1,6 @@
 """
-Bank Soal guru: membuat, mengubah, menonaktifkan, dan menghapus soal Game 1 (Literasi) dan Game 2 (Numerasi).
+Bank Soal guru: membuat, mengubah, menonaktifkan, dan menghapus soal Game 1 (Literasi: susun kalimat + baca kalimat)
+dan Game 2 (Numerasi: empat operasi hitung).
 
 Soal yang dibuat di sini langsung dipakai game melalui GET /api/game/soal/ (lihat game_api.py).
 Satu BAGIAN = 5 LEVEL; tiap level dimainkan dengan 5 soal (5 lampu).
@@ -84,11 +85,13 @@ def guru_soal(request, kelas):
     daftar = list(daftar)
     for s in daftar:
         s.judul, s.detail, s.jawaban_teks = bank_soal.ringkas(s)
+        s.jenis, s.thumb = bank_soal.jenis_dan_thumb(s)
 
     matriks = _matriks(game)
     return render(request, "belajar/guru_soal.html", _ctx(
         request, kelas, "soal", game=game, daftar=daftar, f=filter_, matriks=matriks,
         bagian_ada=[m["no"] for m in matriks], per_level=jalur.soal_per_level(),
+        per_level_baca=getattr(settings, "LENTERA_SOAL_BACA_PER_LEVEL", 2),
         jumlah={g: SoalGame.objects.filter(game=g).count() for g in GAME_SAH},
         kembali=request.get_full_path(),
     ))
@@ -108,9 +111,9 @@ def guru_soal_form(request, kelas, soal_id=None):
     soal = get_object_or_404(SoalGame.objects.select_related("kompetensi"), pk=soal_id) if soal_id else None
     game = soal.game if soal else _game(request.GET.get("game") or request.POST.get("game"))
     nilai = bank_soal.nilai_form(soal) if soal else {
-        "kompetensi": request.GET.get("kompetensi") or ("LT-KALIMAT" if game == "literasi" else "NM-NILAI-TEMPAT"),
+        "kompetensi": request.GET.get("kompetensi") or ("LT-KALIMAT" if game == "literasi" else "NM-TAMBAH"),
         "bagian": request.GET.get("bagian") or _bagian_awal(game), "level": request.GET.get("level") or 1, "aktif": "1",
-        "op": "+", "ikon": "bintang", "langkah": 1,
+        "ikon": "bintang",
     }
     kode_pilihan = bank_soal.KODE_LITERASI if game == "literasi" else bank_soal.KODE_NUMERASI
 
@@ -157,6 +160,8 @@ def guru_soal_form(request, kelas, soal_id=None):
         request, kelas, "soal", game=game, soal=soal, v=nilai,
         kompetensi=list(Kompetensi.objects.filter(kode__in=kode_pilihan)),
         ikon=[(k, v[0]) for k, v in IKON_CERITA.items()], peta_bagian=peta_bagian,
+        per_level_baca=getattr(settings, "LENTERA_SOAL_BACA_PER_LEVEL", 2),
+        kode_baca=bank_soal.KOMPETENSI_BACA,
         ringkasan=bank_soal.ringkasan_bank()[game], per_level=jalur.soal_per_level(),
         gambar_url=soal.gambar.url if soal and soal.gambar else "",
         gambar_maks_mb=getattr(settings, "LENTERA_GAMBAR_MAKS_MB", 5),

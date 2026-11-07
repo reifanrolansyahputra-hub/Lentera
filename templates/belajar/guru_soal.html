@@ -15,8 +15,8 @@
   <ul class="aturan">
     <li><b>1 bagian = 5 level</b>, dan <b>1 level dimainkan dengan {{ per_level }} soal</b> (tiap jawaban benar menyalakan 1 lampu ✓).</li>
     <li>Bagian baru muncul di Jalan Lentera murid setelah <b>kelima levelnya</b> punya soal aktif. Ideal: minimal {{ per_level }} soal aktif per level. Bila lebih, murid mendapat {{ per_level }} soal yang dipilih acak.</li>
-    {% if game == 'literasi' %}<li>Setiap soal berisi <b>gambar</b>, <b>pertanyaan</b>, <b>kolom kata</b> (kata yang tampil di game), dan <b>jawaban benar</b> (urutan kata yang benar).</li>
-    {% else %}<li>Numerasi: <b>1 bagian = 1 kompetensi</b> (mis. Bagian 1 Nilai Tempat). Jawaban benar berupa angka; untuk Nilai Tempat dan Simpan-Pinjam jawabannya dihitung otomatis.</li>{% endif %}
+    {% if game == 'literasi' %}<li><b>Susun kalimat dan baca kalimat satu kesatuan</b> dalam satu level. Soal <b>susun kalimat</b> berisi gambar, pertanyaan, kolom kata, dan jawaban benar. Soal <b>baca kalimat</b> berisi kalimat yang dibaca murid dengan suara (mikrofon memeriksa ketepatannya). Bila bank level memuat keduanya, murid mendapat {{ per_level_baca }} soal baca dan sisanya soal susun.</li>
+    {% else %}<li>Numerasi: <b>1 bagian = 1 operasi hitung</b> (Bagian 1 Penjumlahan, 2 Pengurangan, 3 Perkalian, 4 Pembagian). Guru mengisi dua bilangan; jawaban benar dihitung otomatis.</li>{% endif %}
     <li>Soal yang baru dibuat dipakai pada misi <b>berikutnya</b>. Misi yang sedang berjalan memakai soal yang sudah dikunci, jadi murid tidak terganggu.</li>
   </ul>
 </section>
@@ -48,9 +48,9 @@
 <div class="soal-list" style="margin-top:16px">
 {% for s in daftar %}
   <article class="soal{% if not s.aktif %} mati{% endif %}">
-    {% if s.gambar %}<img class="thumb" src="{{ s.gambar.url }}" alt="Gambar soal {{ s.item_id }}" loading="lazy">{% else %}<span class="thumb" aria-hidden="true">🔢</span>{% endif %}
+    {% if s.gambar %}<img class="thumb" src="{{ s.gambar.url }}" alt="Gambar soal {{ s.item_id }}" loading="lazy">{% else %}<span class="thumb" aria-hidden="true">{{ s.thumb }}</span>{% endif %}
     <div class="isi">
-      <div class="meta"><span class="chip biru">Bagian {{ s.bagian }} · Level {{ s.level }}</span><span class="chip {% if game == 'literasi' %}merah{% else %}hijau{% endif %}">{{ s.kompetensi.nama }}</span>
+      <div class="meta"><span class="chip biru">Bagian {{ s.bagian }} · Level {{ s.level }}</span><span class="chip {% if game == 'literasi' %}merah{% else %}hijau{% endif %}">{{ s.kompetensi.nama }}</span><span class="chip abu">{{ s.jenis }}</span>
         {% if s.aktif %}<span class="chip hijau">Aktif</span>{% else %}<span class="chip kuning">Nonaktif</span>{% endif %}<span class="kecil">{{ s.item_id }}</span></div>
       <h3>{{ s.judul }}</h3>
       <p>{{ s.detail }}</p>

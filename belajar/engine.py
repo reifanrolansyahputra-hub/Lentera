@@ -60,52 +60,52 @@ TAKSONOMI = [
         ["nyala", "nyanyi", "ngantuk"],
     ),
     (
-        "LT-PAHAM",
+        "LT-KETEPATAN",
         "literasi",
-        "Pemahaman bacaan",
-        "Detektif Cerita",
-        "Menemukan informasi dan menyimpulkan isi bacaan pendek",
-        ["Siapa?", "Di mana?", "Mengapa?"],
+        "Ketepatan membaca",
+        "Baca Kalimat",
+        "Membaca kalimat dengan suara lantang secara tepat (diperiksa lewat mikrofon)",
+        ["Ibu", "memasak", "nasi"],
     ),
     (
         "LT-KALIMAT",
         "literasi",
         "Susun kalimat",
-        "Menyusun Kalimat",
-        "Menyusun kata menjadi kalimat berpola S-P-O",
+        "Susun & Baca Kalimat",
+        "Menyusun kata menjadi kalimat berpola S-P-O, lalu membacanya dengan tepat",
         ["Ibu", "membeli", "sayur"],
     ),
     (
-        "NM-NILAI-TEMPAT",
+        "NM-TAMBAH",
         "numerasi",
-        "Nilai tempat",
-        "Petualangan Nilai Tempat",
-        "Memahami nilai satuan dan puluhan",
-        34,
+        "Penjumlahan",
+        "Penjumlahan Seru",
+        "Menjumlahkan bilangan, dengan dan tanpa menyimpan",
+        ["12", "+", "7", "=", "?"],
     ),
     (
-        "NM-REGROUPING",
+        "NM-KURANG",
         "numerasi",
-        "Regrouping",
-        "Hitung Seru",
-        "Penjumlahan dan pengurangan dengan pengelompokan ulang",
-        27,
+        "Pengurangan",
+        "Pengurangan Seru",
+        "Mengurangkan bilangan, dengan dan tanpa meminjam",
+        ["15", "-", "8", "=", "?"],
     ),
     (
-        "NM-POLA",
+        "NM-KALI",
         "numerasi",
-        "Pola bilangan",
-        "Jejak Pola Bilangan",
-        "Melengkapi dan membuat pola bilangan sederhana",
-        12,
+        "Perkalian",
+        "Perkalian Seru",
+        "Perkalian sebagai penjumlahan berulang dan kelompok sama banyak",
+        ["4", "\u00d7", "6", "=", "?"],
     ),
     (
-        "NM-CERITA",
+        "NM-BAGI",
         "numerasi",
-        "Soal cerita",
-        "Cerita Hitung Lumi",
-        "Menerjemahkan cerita sehari-hari menjadi operasi hitung",
-        45,
+        "Pembagian",
+        "Pembagian Seru",
+        "Membagi rata dan mengelompokkan benda secara sama banyak",
+        ["24", "\u00f7", "4", "=", "?"],
     ),
 ]
 
@@ -125,14 +125,22 @@ CONTOH = {
 # dengan butir soal yang sedang dikerjakan.
 
 ALIAS_GAME = {
-    # Alias Game 2: numerasi
-    "NILAI_TEMPAT": "NM-NILAI-TEMPAT",
-    "PENGURANGAN": "NM-REGROUPING",
-    "KOMBINASI": "NM-REGROUPING",
-    "POLA_BILANGAN": "NM-POLA",
-    "SOAL_CERITA": "NM-CERITA",
+    # Alias Game 2: numerasi (empat operasi hitung)
+    "PENJUMLAHAN": "NM-TAMBAH",
+    "penjumlahan": "NM-TAMBAH",
+    "PERTAMBAHAN": "NM-TAMBAH",
+    "pertambahan": "NM-TAMBAH",
 
-    # Alias Game 1: literasi
+    "PENGURANGAN": "NM-KURANG",
+    "pengurangan": "NM-KURANG",
+
+    "PERKALIAN": "NM-KALI",
+    "perkalian": "NM-KALI",
+
+    "PEMBAGIAN": "NM-BAGI",
+    "pembagian": "NM-BAGI",
+
+    # Alias Game 1: literasi (susun kalimat dan baca kalimat satu kesatuan)
     "MENYUSUN_KALIMAT": "LT-KALIMAT",
     "menyusun_kalimat": "LT-KALIMAT",
 
@@ -142,8 +150,12 @@ ALIAS_GAME = {
     "MEMBACA_LANCAR": "LT-LANCAR",
     "membaca_lancar": "LT-LANCAR",
 
-    "PEMAHAMAN_BACAAN": "LT-PAHAM",
-    "pemahaman_bacaan": "LT-PAHAM",
+    "KETEPATAN": "LT-KETEPATAN",
+    "ketepatan": "LT-KETEPATAN",
+    "BACA_LANTANG": "LT-KETEPATAN",
+    "baca_lantang": "LT-KETEPATAN",
+    "BACA_KALIMAT": "LT-KETEPATAN",
+    "baca_kalimat": "LT-KETEPATAN",
 }
 
 
@@ -171,6 +183,20 @@ POLA = {
         "Latihan suku kata ny- dan ng- bergambar",
     ),
 
+    # Dikirim game saat bacaan lewat mikrofon belum tepat.
+
+    "baca_kata_terlewat": (
+        "Ada kata yang tidak terbaca saat membaca lantang",
+        "LT-KETEPATAN",
+        "Baca kalimat bersama per kata, jari menunjuk tiap kata",
+    ),
+
+    "baca_kata_berbeda": (
+        "Kata yang dibaca berbeda dari tulisan",
+        "LT-KETEPATAN",
+        "Eja kata yang salah per suku kata, lalu baca ulang kalimatnya",
+    ),
+
     # ------------------------------------------------------
     # Literasi: menyusun kalimat
     # Pola lama Game 1 dipertahankan.
@@ -195,67 +221,73 @@ POLA = {
     ),
 
     # ------------------------------------------------------
-    # Numerasi: nilai tempat
+    # Numerasi: penjumlahan
     # ------------------------------------------------------
 
-    "nilai_tempat": (
-        "Menulis puluhan dan satuan secara tidak tepat",
-        "NM-NILAI-TEMPAT",
-        "Gunakan blok puluhan dan satuan",
+    "tambah_simpan": (
+        "Lupa menyimpan 1 puluhan saat menjumlahkan",
+        "NM-TAMBAH",
+        "Latihan menukar 10 satuan menjadi 1 puluhan dengan blok",
     ),
 
-    "tertukar": (
-        "Menukar posisi puluhan dan satuan",
-        "NM-NILAI-TEMPAT",
-        "Gunakan kartu puluhan dan satuan dengan warna berbeda",
-    ),
-
-    # ------------------------------------------------------
-    # Numerasi: regrouping
-    # ------------------------------------------------------
-
-    "regrouping": (
-        "Kesalahan pengelompokan satuan menjadi puluhan",
-        "NM-REGROUPING",
-        "Latihan menukar 10 satuan menjadi 1 puluhan",
-    ),
-
-    "salah_operasi": (
-        "Memilih operasi hitung yang tidak sesuai",
-        "NM-REGROUPING",
-        'Perhatikan kata kunci "sisa", "diberikan", dan "hilang"',
-    ),
-
-    "langkah_terlewat": (
-        "Melewatkan satu langkah perhitungan",
-        "NM-REGROUPING",
-        "Pecah soal dua langkah menjadi dua tahap",
+    "tambah_salah_operasi": (
+        "Mengurangkan padahal soal meminta menjumlahkan",
+        "NM-TAMBAH",
+        'Garis bawahi kata kunci "bertambah", "semua", dan "seluruhnya"',
     ),
 
     # ------------------------------------------------------
-    # Numerasi: soal cerita
+    # Numerasi: pengurangan
     # ------------------------------------------------------
 
-    "cerita_salah_operasi": (
-        "Memilih operasi hitung yang tidak sesuai cerita",
-        "NM-CERITA",
-        "Identifikasi informasi yang diketahui dan yang ditanyakan",
+    "kurang_pinjam": (
+        "Salah meminjam puluhan saat mengurangkan",
+        "NM-KURANG",
+        "Latihan meminjam 1 puluhan menjadi 10 satuan dengan blok",
     ),
 
-    "cerita_langkah_terlewat": (
-        "Melewatkan langkah dalam soal cerita",
-        "NM-CERITA",
-        "Pisahkan soal cerita menjadi langkah pertama dan kedua",
+    "kurang_terbalik": (
+        "Mengurangkan angka kecil dengan angka besar pada tiap tempat",
+        "NM-KURANG",
+        "Kurangi dari satuan dulu, pinjam puluhan bila satuan tidak cukup",
+    ),
+
+    "kurang_salah_operasi": (
+        "Menjumlahkan padahal soal meminta mengurangkan",
+        "NM-KURANG",
+        'Garis bawahi kata kunci "sisa", "diambil", dan "hilang"',
     ),
 
     # ------------------------------------------------------
-    # Numerasi: pola bilangan
+    # Numerasi: perkalian
     # ------------------------------------------------------
 
-    "pola_bilangan": (
-        "Belum mengenali aturan pola bilangan",
-        "NM-POLA",
-        "Bandingkan selisih atau operasi antarangka",
+    "kali_salah_operasi": (
+        "Menjumlahkan kedua bilangan padahal soal meminta mengalikan",
+        "NM-KALI",
+        "Tunjukkan perkalian sebagai kelompok sama banyak dengan benda",
+    ),
+
+    "kali_fakta": (
+        "Hasil perkalian meleset satu kelompok",
+        "NM-KALI",
+        "Latihan penjumlahan berulang dan hafalan tabel bertahap",
+    ),
+
+    # ------------------------------------------------------
+    # Numerasi: pembagian
+    # ------------------------------------------------------
+
+    "bagi_salah_operasi": (
+        "Memilih operasi lain padahal soal meminta membagi rata",
+        "NM-BAGI",
+        "Peragakan membagi rata benda ke beberapa piring",
+    ),
+
+    "bagi_terbalik": (
+        "Menukar bilangan yang dibagi dengan pembaginya",
+        "NM-BAGI",
+        "Tegaskan: yang dibagi adalah jumlah semua benda",
     ),
 }
 
@@ -267,25 +299,28 @@ POLA = {
 TINDAK = {
     "literasi": {
         "Mulai": (
-            "Latihan suku kata dan kartu kata bergambar."
+            "Latihan suku kata dan kartu kata bergambar, "
+            "lalu baca kalimat bersama per kata."
         ),
         "Berkembang": (
-            "Menyusun kalimat dengan kartu kata berpasangan."
+            "Menyusun kalimat dengan kartu kata berpasangan, "
+            "lalu membacakannya bergantian."
         ),
         "Cakap": (
-            "Tantangan membaca pemahaman dua paragraf."
+            "Tantangan membaca lantang kalimat panjang "
+            "dengan jeda dan lafal yang tepat."
         ),
     },
     "numerasi": {
         "Mulai": (
-            "Gunakan benda konkret seperti sapu lidi dan "
-            "latihan menukar 10 satuan."
+            "Gunakan benda konkret seperti sapu lidi untuk menambah, "
+            "mengurangi, mengelompokkan, dan membagi rata."
         ),
         "Berkembang": (
-            "Latihan berpasangan dengan blok puluhan dan satuan."
+            "Latihan berpasangan dengan kartu operasi dan garis bilangan."
         ),
         "Cakap": (
-            "Tantangan soal cerita dua langkah."
+            "Tantangan soal cerita yang memadukan beberapa operasi hitung."
         ),
     },
 }
@@ -588,6 +623,66 @@ def level_dari_skor(benar, total):
 
     p_awal = round(
         0.10 + 0.75 * rasio,
+        2,
+    )
+
+    return level_awal, p_awal
+
+
+def level_dari_tangga(level, benar, total):
+    """
+    Konversi hasil asesmen BERTANGGA (diagnostik yang naik level selama benar terus,
+    berhenti begitu ada yang salah atau sudah tuntas level 5) ke (level_awal, P(L)_awal).
+
+    `level`  = level tempat murid berhenti (level yang baru saja ia kerjakan).
+    `benar`, `total` = skor percobaan-pertama murid PADA LEVEL ITU SAJA.
+
+    Setiap level yang sudah ia lewati dengan sempurna (sebelum level ini) dihitung
+    sebagai satu anak tangga penuh; level tempat ia berhenti memberi anak tangga
+    SEBAGIAN sebesar rasio-nya di situ -- supaya nilai makin tinggi hanya kalau ia
+    sungguh-sungguh naik lewat beberapa level, bukan cuma tuntas level 1 saja:
+
+        sempurna     = (benar == total)
+        anak_tangga  = level jika sempurna dan level == LEVEL_MAKS (tuntas semua level)
+                       else (level - 1) + benar/total
+        level_awal   = LEVEL_MAKS jika sempurna dan level == LEVEL_MAKS, else level
+        P(L)         = 0.10 + 0.75 * (anak_tangga / LEVEL_MAKS)
+    """
+    try:
+        level = int(level)
+        benar = int(benar)
+        total = int(total)
+    except (TypeError, ValueError):
+        raise ValueError(
+            "Level, jumlah benar, dan total harus berupa bilangan bulat."
+        )
+
+    if total <= 0:
+        raise ValueError(
+            "Jumlah soal harus lebih besar dari nol."
+        )
+
+    if benar < 0 or benar > total:
+        raise ValueError(
+            "Jumlah jawaban benar harus berada antara 0 dan total."
+        )
+
+    if level < 1 or level > LEVEL_MAKS:
+        raise ValueError(
+            f"Level harus antara 1 dan {LEVEL_MAKS}."
+        )
+
+    sempurna = benar == total
+
+    if sempurna and level == LEVEL_MAKS:
+        anak_tangga = LEVEL_MAKS
+        level_awal = LEVEL_MAKS
+    else:
+        anak_tangga = (level - 1) + benar / total
+        level_awal = level
+
+    p_awal = round(
+        0.10 + 0.75 * (anak_tangga / LEVEL_MAKS),
         2,
     )
 

@@ -22,6 +22,7 @@ from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import Count, F, Max, Q, Sum
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 from django.utils.text import slugify
 
 from accounts.models import Profile
@@ -29,6 +30,7 @@ from accounts.models import Profile
 from . import engine, jalur
 from .models import (
     Aktivitas,
+    ArsipReset,
     HasilDiagnostik,
     Jawaban,
     Kelas,
@@ -55,18 +57,23 @@ AVATAR = [
 KODE_LITERASI = {
     "LT-KOSAKATA",
     "LT-LANCAR",
-    "LT-PAHAM",
+    "LT-KETEPATAN",
     "LT-KALIMAT",
 }
 
 KODE_NUMERASI = {
-    "NM-CERITA",
-    "NM-NILAI-TEMPAT",
-    "NM-REGROUPING",
-    "NM-POLA",
+    "NM-TAMBAH",
+    "NM-KURANG",
+    "NM-KALI",
+    "NM-BAGI",
 }
 
 KODE_GAME = KODE_LITERASI | KODE_NUMERASI
+
+# Soal baca kalimat (mikrofon) hanya mengukur LT-KETEPATAN. Jawabannya tidak dicerminkan
+# ke kompetensi lain, dan jawaban susun kalimat tidak dicerminkan ke LT-KETEPATAN.
+KODE_BACA = "LT-KETEPATAN"
+KODE_LITERASI_CERMIN = KODE_LITERASI - {KODE_BACA}
 
 JUMLAH_SOAL_PER_LEVEL = 5
 
@@ -223,17 +230,22 @@ def cerminkan_jawaban_literasi(
     misi=None,
 ):
     """
-    Gunakan jawaban Game 1 untuk memperbarui seluruh kompetensi
-    literasi lain yang terdaftar.
+    Gunakan jawaban susun kalimat Game 1 untuk memperbarui kompetensi
+    literasi lain yang terdaftar (kecuali LT-KETEPATAN, yang hanya
+    diukur oleh soal baca kalimat lewat mikrofon).
 
-    Ini memastikan semua indikator literasi menerima data
-    ketika hanya satu bank soal Game 1 yang digunakan.
+    Ini memastikan indikator literasi menerima data ketika bank soal
+    susun kalimat Game 1 yang digunakan.
 
     Catatan: hasil seluruh indikator berasal dari bukti jawaban
     yang sama. Ini adalah pencerminan data, bukan pengukuran
     kompetensi yang benar-benar terpisah.
     """
     if not misi or misi.kompetensi.ranah != "literasi":
+        return
+
+    # Bacaan lewat mikrofon hanya milik LT-KETEPATAN: tidak ada pencerminan.
+    if kompetensi_asal.kode == KODE_BACA:
         return
 
     diagnostik = misi.jenis == "diagnostik"
@@ -248,7 +260,7 @@ def cerminkan_jawaban_literasi(
 
     kompetensi_lain = (
         Kompetensi.objects
-        .filter(kode__in=KODE_LITERASI)
+        .filter(kode__in=KODE_LITERASI_CERMIN)
         .exclude(pk=kompetensi_asal.pk)
     )
 
@@ -495,8 +507,18 @@ def terapkan_diagnostik(
     benar,
     total,
     sumber="manual",
+    level_tangga=None,
 ):
-    """Terapkan hasil diagnostik menjadi state awal siswa."""
+    """
+    Terapkan hasil diagnostik menjadi state awal siswa.
+
+    `level_tangga`: isi dengan nomor level kalau hasil ini datang dari diagnostik
+    BERTANGGA (lihat selesaikan_diagnostik) -- `benar`/`total` lalu dibaca sebagai
+    skor PADA LEVEL ITU dan dikonversi lewat engine.level_dari_tangga(), supaya murid
+    yang sudah naik lewat beberapa level dulu mendapat P(L) yang mencerminkan itu,
+    bukan cuma skor level tempat ia berhenti. Kosongkan (default) untuk input manual
+    guru, yang tetap memakai engine.level_dari_skor() seperti sebelumnya.
+    """
     benar = int(benar)
     total = int(total)
 
@@ -515,10 +537,17 @@ def terapkan_diagnostik(
             poin=F("poin") + 1
         )
 
-    level_awal, p_awal = engine.level_dari_skor(
-        benar,
-        total,
-    )
+    if level_tangga is not None:
+        level_awal, p_awal = engine.level_dari_tangga(
+            level_tangga,
+            benar,
+            total,
+        )
+    else:
+        level_awal, p_awal = engine.level_dari_skor(
+            benar,
+            total,
+        )
 
     hasil = HasilDiagnostik.objects.create(
         siswa=siswa,
@@ -604,7 +633,15 @@ def aktifkan_diagnostik(kelas):
 
 @transaction.atomic
 def selesaikan_diagnostik(misi):
-    """Hitung hasil diagnostik dari jawaban unik per soal."""
+    """
+    Hitung hasil diagnostik dari jawaban unik per soal (percobaan pertama tiap soal).
+
+    Diagnostik naik tangga: kalau level ini TUNTAS SEMPURNA (seluruh percobaan
+    pertama benar) dan belum level maksimal, langsung kirim misi diagnostik level
+    berikutnya dan JANGAN tetapkan hasil akhir dulu -- murid lanjut naik. Hasil akhir
+    baru ditetapkan (lewat terapkan_diagnostik) begitu ada jawaban pertama yang salah
+    di suatu level, atau level maksimal sudah dituntaskan juga.
+    """
     jawaban_pertama = {}
 
     for jawaban in (
@@ -644,15 +681,57 @@ def selesaikan_diagnostik(misi):
     hasil = []
 
     for statistik in per_kompetensi.values():
+        kompetensi = statistik["kompetensi"]
+        benar, total = statistik["benar"], statistik["total"]
+        sempurna = total > 0 and benar == total
+
+        # Satu misi literasi bisa memuat beberapa kompetensi sub-skill sekaligus
+        # (kosakata, kelancaran, kalimat, dst). Kalau salah satunya sudah lebih dulu
+        # punya hasil (lewat misi lain yang kebetulan menyentuh soal kompetensi yang
+        # sama), jangan tetapkan ulang atau naikkan lagi -- cukup lewati.
+        if HasilDiagnostik.objects.filter(siswa=misi.siswa, kompetensi=kompetensi).exists():
+            continue
+
+        if sempurna and misi.level < engine.LEVEL_MAKS:
+            # Sempurna dan belum level maksimal -> lanjut, jangan tetapkan hasil akhir.
+            # Kalau kompetensi ini kebetulan sudah punya misi diagnostik 'baru' lain
+            # (dari aktifkan_diagnostik, atau dari kompetensi lain yang tumpang tindih),
+            # tidak perlu bikin duplikat -- biarkan yang sudah ada dipakai.
+            sudah_ada = Misi.objects.filter(
+                siswa=misi.siswa, kompetensi=kompetensi, jenis="diagnostik", status="baru",
+            ).exclude(id=misi.id).exists()
+            if not sudah_ada:
+                Misi.objects.create(
+                    siswa=misi.siswa,
+                    kompetensi=kompetensi,
+                    bagian=misi.bagian,
+                    level=misi.level + 1,
+                    jenis="diagnostik",
+                    dari_guru=True,
+                )
+            hasil.append({
+                "kompetensi": kompetensi,
+                "lanjut": True,
+                "level_berikutnya": misi.level + 1,
+            })
+            continue
+
         hasil.append(
             terapkan_diagnostik(
                 siswa=misi.siswa,
-                kompetensi=statistik["kompetensi"],
-                benar=statistik["benar"],
-                total=statistik["total"],
+                kompetensi=kompetensi,
+                benar=benar,
+                total=total,
                 sumber="game",
+                level_tangga=misi.level,
             )
         )
+
+        # Hasil sudah ditetapkan -- misi diagnostik 'baru' lain utk kompetensi yang
+        # sama (kalau ada, dari tumpang tindih di atas) jadi tidak relevan lagi.
+        Misi.objects.filter(
+            siswa=misi.siswa, kompetensi=kompetensi, jenis="diagnostik", status="baru",
+        ).exclude(id=misi.id).delete()
 
     return hasil
 
@@ -1184,6 +1263,10 @@ def ringkasan_kelas(kelas):
             "siswa": murid,
             "sel": sel,
             "perhatian": (
+                # "Mulai" cuma dipakai jalur.hitung_peta() untuk kompetensi yang SUDAH ada
+                # buktinya (pernah dijawab atau didiagnostik) tapi masih di bawah 40%. Yang
+                # belum ada bukti sama sekali berstatus "Belum mulai", jadi murid yang
+                # memang belum mulai tidak ikut kehitung di sini.
                 sum(
                     item["st"] == "Mulai"
                     for item in sel
@@ -1263,23 +1346,29 @@ def ringkasan_kelas(kelas):
     ]
 
     rekomendasi = None
+    indeks_terendah = None
 
     if siswa and kompetensi:
-        rata_kompetensi = [
-            (
-                sum(
-                    data["sel"][i]["pct"]
-                    for data in baris
-                ) / len(baris)
-            )
-            for i in range(len(kompetensi))
-        ]
+        # Rata-rata cuma dihitung dari murid yang sudah ada buktinya (bukan "Belum mulai"),
+        # supaya kompetensi yang memang belum disentuh siapa pun (baru ditambah, atau kelas
+        # baru direset) tidak otomatis kelihatan "paling lemah" cuma karena belum dicoba.
+        rata_kompetensi = []
+        for i in range(len(kompetensi)):
+            nilai = [
+                data["sel"][i]["pct"]
+                for data in baris
+                if data["sel"][i]["st"] != "Belum mulai"
+            ]
+            rata_kompetensi.append(sum(nilai) / len(nilai) if nilai else None)
 
-        indeks_terendah = min(
-            range(len(kompetensi)),
-            key=lambda i: rata_kompetensi[i],
+        kandidat = [i for i, r in enumerate(rata_kompetensi) if r is not None]
+
+        indeks_terendah = (
+            min(kandidat, key=lambda i: rata_kompetensi[i])
+            if kandidat else None
         )
 
+    if indeks_terendah is not None:
         k = kompetensi[indeks_terendah]
         kelompok = []
 
@@ -1336,3 +1425,200 @@ def ringkasan_kelas(kelas):
         ),
         "kesulitan": daftar_kesulitan,
     }
+
+
+# ==========================================================
+# 10. RESET & ARSIP PROGRES SISWA
+# ==========================================================
+#
+# Tombol "Reset" guru (menu Pengaturan) mengosongkan progres belajar satu siswa --
+# Jalan Lentera, Peta Kompetensi, dan statistiknya kembali seperti murid baru --
+# tanpa menyentuh akun/login/avatar/ID samaran siswa itu. Datanya tidak langsung
+# hilang: dicadangkan dulu ke ArsipReset, lalu bisa dipulihkan dari Log Reset
+# selama RESET_RETENSI_HARI hari dan selama siswa belum mulai progres baru.
+
+RESET_RETENSI_HARI = 30
+
+
+def _dt(nilai):
+    """Parse balik string ISO (hasil DjangoJSONEncoder) jadi datetime; None bila kosong."""
+    if not nilai:
+        return None
+    if isinstance(nilai, timezone.datetime):
+        return nilai
+    return parse_datetime(nilai)
+
+
+def ada_progres(siswa):
+    """True bila siswa punya sesuatu untuk direset (pernah main, atau punya poin)."""
+    return (
+        siswa.poin > 0
+        or Misi.objects.filter(siswa=siswa).exists()
+        or Jawaban.objects.filter(siswa=siswa).exists()
+        or Penguasaan.objects.filter(siswa=siswa).exists()
+        or HasilDiagnostik.objects.filter(siswa=siswa).exists()
+    )
+
+
+def _snapshot_progres(siswa):
+    """Salin seluruh baris progres siswa (sebelum dihapus) jadi dict yang aman disimpan di JSONField."""
+    return {
+        "misi": list(Misi.objects.filter(siswa=siswa).values(
+            "id", "kompetensi_id", "bagian", "level", "status", "jenis", "dari_guru",
+            "aktivitas_id", "soal_ids", "skor", "durasi_detik", "mulai_pada", "selesai_pada", "dibuat",
+        )),
+        "jawaban": list(Jawaban.objects.filter(siswa=siswa).values(
+            "kompetensi_id", "misi_id", "level", "item_id", "benar", "pola",
+            "waktu_ms", "petunjuk", "p_setelah", "event_id", "dibuat",
+        )),
+        "penguasaan": list(Penguasaan.objects.filter(siswa=siswa).values(
+            "kompetensi_id", "p_l", "level", "salah_beruntun",
+        )),
+        "diagnostik": list(HasilDiagnostik.objects.filter(siswa=siswa).values(
+            "kompetensi_id", "benar", "total", "level_awal", "p_awal", "sumber", "dibuat",
+        )),
+    }
+
+
+def _ringkasan_snapshot(snap, poin_lama):
+    bagian = [f"{len(snap['misi'])} misi", f"{len(snap['jawaban'])} jawaban"]
+    if snap["penguasaan"]:
+        bagian.append(f"{len(snap['penguasaan'])} penguasaan")
+    if snap["diagnostik"]:
+        bagian.append(f"{len(snap['diagnostik'])} diagnostik")
+    if poin_lama:
+        bagian.append(f"{poin_lama} poin")
+    return " · ".join(bagian)
+
+
+@transaction.atomic
+def reset_progres_siswa(siswa, oleh=None, retensi_hari=RESET_RETENSI_HARI):
+    """
+    Cadangkan lalu kosongkan seluruh progres belajar satu siswa (Jalan Lentera, Peta
+    Kompetensi, dan statistiknya). Akun, login, avatar, dan ID samaran siswa TIDAK
+    disentuh. Mengembalikan ArsipReset yang dibuat, atau None bila siswa memang
+    belum punya progres untuk direset (supaya Log Reset tidak kebanjiran arsip kosong).
+    """
+    siswa = Siswa.objects.select_for_update().get(pk=siswa.pk)
+
+    if not ada_progres(siswa):
+        return None
+
+    snap = _snapshot_progres(siswa)
+    poin_lama = siswa.poin
+
+    arsip = ArsipReset.objects.create(
+        siswa=siswa,
+        oleh=oleh,
+        poin_lama=poin_lama,
+        ringkasan=_ringkasan_snapshot(snap, poin_lama),
+        data=snap,
+        kedaluwarsa_pada=timezone.now() + timedelta(days=retensi_hari),
+    )
+
+    Jawaban.objects.filter(siswa=siswa).delete()
+    Misi.objects.filter(siswa=siswa).delete()
+    Penguasaan.objects.filter(siswa=siswa).delete()
+    HasilDiagnostik.objects.filter(siswa=siswa).delete()
+    Siswa.objects.filter(pk=siswa.pk).update(poin=0)
+
+    return arsip
+
+
+def reset_progres_kelas(kelas, oleh=None, retensi_hari=RESET_RETENSI_HARI):
+    """Reset semua siswa di satu kelas sekaligus. Mengembalikan jumlah siswa yang benar-benar dicadangkan."""
+    return sum(
+        1
+        for s in kelas.siswa.all()
+        if reset_progres_siswa(s, oleh=oleh, retensi_hari=retensi_hari)
+    )
+
+
+def bersihkan_arsip_kedaluwarsa(kelas=None):
+    """Hapus permanen arsip yang sudah lewat kedaluwarsa dan belum dipulihkan (dipanggil tiap Log Reset dibuka)."""
+    qs = ArsipReset.objects.filter(dipulihkan_pada__isnull=True, kedaluwarsa_pada__lt=timezone.now())
+    if kelas is not None:
+        qs = qs.filter(siswa__kelas=kelas)
+    n = qs.count()
+    if n:
+        qs.delete()
+    return n
+
+
+def arsip_bisa_dipulihkan(arsip):
+    return (
+        arsip.dipulihkan_pada is None
+        and timezone.now() < arsip.kedaluwarsa_pada
+        and not ada_progres(arsip.siswa)
+    )
+
+
+@transaction.atomic
+def pulihkan_arsip(arsip):
+    """
+    Pulihkan satu ArsipReset: tulis ulang misi/jawaban/penguasaan/diagnostik dan poin
+    persis seperti sebelum direset. Ditolak bila siswa sudah mulai progres baru sejak
+    direset, supaya progres barunya tidak tertimpa data lama.
+    """
+    arsip = ArsipReset.objects.select_for_update().select_related("siswa").get(pk=arsip.pk)
+
+    if arsip.dipulihkan_pada is not None:
+        raise ValueError("Arsip ini sudah pernah dipulihkan sebelumnya.")
+    if timezone.now() >= arsip.kedaluwarsa_pada:
+        raise ValueError("Arsip ini sudah kedaluwarsa dan tidak bisa dipulihkan lagi.")
+
+    siswa = Siswa.objects.select_for_update().get(pk=arsip.siswa_id)
+    if ada_progres(siswa):
+        raise ValueError(
+            "Siswa ini sudah mulai main lagi sejak direset, jadi datanya tidak bisa "
+            "dipulihkan otomatis (supaya progres barunya tidak tertimpa)."
+        )
+
+    snap = arsip.data
+    kompetensi_valid = set(Kompetensi.objects.values_list("id", flat=True))
+
+    id_misi_baru = {}
+    for m in snap.get("misi", []):
+        if m["kompetensi_id"] not in kompetensi_valid:
+            continue
+        aktivitas = Aktivitas.objects.filter(pk=m["aktivitas_id"]).first() if m.get("aktivitas_id") else None
+        id_misi_baru[m["id"]] = Misi.objects.create(
+            siswa=siswa, kompetensi_id=m["kompetensi_id"], bagian=m["bagian"], level=m["level"],
+            status=m["status"], jenis=m["jenis"], dari_guru=m["dari_guru"], aktivitas=aktivitas,
+            soal_ids=m.get("soal_ids") or [], skor=m.get("skor"), durasi_detik=m.get("durasi_detik"),
+            mulai_pada=_dt(m.get("mulai_pada")), selesai_pada=_dt(m.get("selesai_pada")),
+            dibuat=_dt(m.get("dibuat")) or timezone.now(),
+        )
+
+    for j in snap.get("jawaban", []):
+        if j["kompetensi_id"] not in kompetensi_valid:
+            continue
+        Jawaban.objects.create(
+            siswa=siswa, kompetensi_id=j["kompetensi_id"], misi=id_misi_baru.get(j.get("misi_id")),
+            level=j["level"], item_id=j.get("item_id", ""), benar=j["benar"], pola=j.get("pola", ""),
+            waktu_ms=j.get("waktu_ms", 0), petunjuk=j.get("petunjuk", False), p_setelah=j.get("p_setelah"),
+            event_id=j.get("event_id"), dibuat=_dt(j.get("dibuat")) or timezone.now(),
+        )
+
+    for p in snap.get("penguasaan", []):
+        if p["kompetensi_id"] not in kompetensi_valid:
+            continue
+        Penguasaan.objects.update_or_create(
+            siswa=siswa, kompetensi_id=p["kompetensi_id"],
+            defaults={"p_l": p["p_l"], "level": p["level"], "salah_beruntun": p["salah_beruntun"]},
+        )
+
+    for d in snap.get("diagnostik", []):
+        if d["kompetensi_id"] not in kompetensi_valid:
+            continue
+        HasilDiagnostik.objects.create(
+            siswa=siswa, kompetensi_id=d["kompetensi_id"], benar=d["benar"], total=d["total"],
+            level_awal=d["level_awal"], p_awal=d["p_awal"], sumber=d.get("sumber", "manual"),
+            dibuat=_dt(d.get("dibuat")) or timezone.now(),
+        )
+
+    Siswa.objects.filter(pk=siswa.pk).update(poin=arsip.poin_lama)
+    arsip.dipulihkan_pada = timezone.now()
+    arsip.save(update_fields=["dipulihkan_pada"])
+
+    return arsip

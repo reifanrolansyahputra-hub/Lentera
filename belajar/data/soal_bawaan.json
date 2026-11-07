@@ -20,7 +20,9 @@
    ],
    "jawaban_lain": [],
    "urutan_bebas": false,
-   "urutan": 0
+   "urutan": 0,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-02",
@@ -43,7 +45,9 @@
    ],
    "jawaban_lain": [],
    "urutan_bebas": false,
-   "urutan": 1
+   "urutan": 1,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-03",
@@ -70,7 +74,9 @@
    ],
    "jawaban_lain": [],
    "urutan_bebas": false,
-   "urutan": 2
+   "urutan": 2,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-04",
@@ -93,7 +99,9 @@
    ],
    "jawaban_lain": [],
    "urutan_bebas": false,
-   "urutan": 3
+   "urutan": 3,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-05",
@@ -116,7 +124,9 @@
    ],
    "jawaban_lain": [],
    "urutan_bebas": false,
-   "urutan": 4
+   "urutan": 4,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-06",
@@ -139,7 +149,9 @@
    ],
    "jawaban_lain": [],
    "urutan_bebas": false,
-   "urutan": 5
+   "urutan": 5,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-07",
@@ -164,7 +176,9 @@
    ],
    "jawaban_lain": [],
    "urutan_bebas": false,
-   "urutan": 6
+   "urutan": 6,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-08",
@@ -198,11 +212,13 @@
     ]
    ],
    "urutan_bebas": false,
-   "urutan": 7
+   "urutan": 7,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-09",
-   "kompetensi": "LT-PAHAM",
+   "kompetensi": "LT-KOSAKATA",
    "level": 2,
    "gambar": "soal/bawaan/jamtujuh.jpg",
    "instruksi": "\"Pada pukul berapa Ahmad bangun tidur?\"",
@@ -227,11 +243,13 @@
     ]
    ],
    "urutan_bebas": false,
-   "urutan": 8
+   "urutan": 8,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-10",
-   "kompetensi": "LT-PAHAM",
+   "kompetensi": "LT-KOSAKATA",
    "level": 2,
    "gambar": "soal/bawaan/jamduabelas.jpg",
    "instruksi": "\"Pada pukul berapa Rendi memakan MBG?\"",
@@ -256,7 +274,9 @@
     ]
    ],
    "urutan_bebas": false,
-   "urutan": 9
+   "urutan": 9,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-11",
@@ -287,7 +307,9 @@
     ]
    ],
    "urutan_bebas": false,
-   "urutan": 10
+   "urutan": 10,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-12",
@@ -322,7 +344,9 @@
     ]
    ],
    "urutan_bebas": false,
-   "urutan": 11
+   "urutan": 11,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-13",
@@ -365,7 +389,9 @@
     ]
    ],
    "urutan_bebas": false,
-   "urutan": 12
+   "urutan": 12,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-14",
@@ -396,7 +422,9 @@
    ],
    "jawaban_lain": [],
    "urutan_bebas": true,
-   "urutan": 13
+   "urutan": 13,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-15",
@@ -437,7 +465,9 @@
    ],
    "jawaban_lain": [],
    "urutan_bebas": true,
-   "urutan": 14
+   "urutan": 14,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-16",
@@ -478,7 +508,9 @@
     ]
    ],
    "urutan_bebas": false,
-   "urutan": 15
+   "urutan": 15,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-17",
@@ -529,7 +561,9 @@
     ]
    ],
    "urutan_bebas": false,
-   "urutan": 16
+   "urutan": 16,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-18",
@@ -567,7 +601,9 @@
     ]
    ],
    "urutan_bebas": false,
-   "urutan": 17
+   "urutan": 17,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-19",
@@ -598,7 +634,9 @@
    ],
    "jawaban_lain": [],
    "urutan_bebas": true,
-   "urutan": 18
+   "urutan": 18,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-20",
@@ -629,7 +667,9 @@
    ],
    "jawaban_lain": [],
    "urutan_bebas": true,
-   "urutan": 19
+   "urutan": 19,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-21",
@@ -680,7 +720,9 @@
     ]
    ],
    "urutan_bebas": false,
-   "urutan": 20
+   "urutan": 20,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-22",
@@ -748,7 +790,9 @@
     ]
    ],
    "urutan_bebas": false,
-   "urutan": 21
+   "urutan": 21,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-23",
@@ -775,7 +819,9 @@
    ],
    "jawaban_lain": [],
    "urutan_bebas": true,
-   "urutan": 22
+   "urutan": 22,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-24",
@@ -805,7 +851,9 @@
    ],
    "jawaban_lain": [],
    "urutan_bebas": false,
-   "urutan": 23
+   "urutan": 23,
+   "bagian": 1,
+   "tipe": "susun"
   },
   {
    "kode": "LIT-SPO-25",
@@ -831,1687 +879,2285 @@
    ],
    "jawaban_lain": [],
    "urutan_bebas": false,
-   "urutan": 24
+   "urutan": 24,
+   "bagian": 1,
+   "tipe": "susun"
+  },
+  {
+   "kode": "LIT-BACA-01",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 1,
+   "tipe": "baca",
+   "instruksi": "Ibu memasak nasi.",
+   "emoji": "🍚",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 100
+  },
+  {
+   "kode": "LIT-BACA-02",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 1,
+   "tipe": "baca",
+   "instruksi": "Adik meminum susu.",
+   "emoji": "🥛",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 101
+  },
+  {
+   "kode": "LIT-BACA-03",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 1,
+   "tipe": "baca",
+   "instruksi": "Kucing memakan ikan.",
+   "emoji": "🐱",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 102
+  },
+  {
+   "kode": "LIT-BACA-04",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 1,
+   "tipe": "baca",
+   "instruksi": "Ayah membaca buku.",
+   "emoji": "📖",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 103
+  },
+  {
+   "kode": "LIT-BACA-05",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 1,
+   "tipe": "baca",
+   "instruksi": "Kakak menyapu lantai.",
+   "emoji": "🧹",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 104
+  },
+  {
+   "kode": "LIT-BACA-06",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 2,
+   "tipe": "baca",
+   "instruksi": "Ani menyanyi dengan riang.",
+   "emoji": "🎶",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 105
+  },
+  {
+   "kode": "LIT-BACA-07",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 2,
+   "tipe": "baca",
+   "instruksi": "Burung terbang di langit.",
+   "emoji": "🐦",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 106
+  },
+  {
+   "kode": "LIT-BACA-08",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 2,
+   "tipe": "baca",
+   "instruksi": "Dina menanam pohon jambu.",
+   "emoji": "🌳",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 107
+  },
+  {
+   "kode": "LIT-BACA-09",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 2,
+   "tipe": "baca",
+   "instruksi": "Kami makan siang bersama.",
+   "emoji": "🍱",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 108
+  },
+  {
+   "kode": "LIT-BACA-10",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 2,
+   "tipe": "baca",
+   "instruksi": "Ayam jantan berkokok setiap pagi.",
+   "emoji": "🐓",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 109
+  },
+  {
+   "kode": "LIT-BACA-11",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 3,
+   "tipe": "baca",
+   "instruksi": "Tono dan Rani pergi ke perpustakaan.",
+   "emoji": "📚",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 110
+  },
+  {
+   "kode": "LIT-BACA-12",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 3,
+   "tipe": "baca",
+   "instruksi": "Hujan turun deras di sore hari.",
+   "emoji": "🌧️",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 111
+  },
+  {
+   "kode": "LIT-BACA-13",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 3,
+   "tipe": "baca",
+   "instruksi": "Nenek membuat kue lapis untuk cucunya.",
+   "emoji": "🍰",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 112
+  },
+  {
+   "kode": "LIT-BACA-14",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 3,
+   "tipe": "baca",
+   "instruksi": "Nyamuk menggigit kaki adikku saat tidur.",
+   "emoji": "🦟",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 113
+  },
+  {
+   "kode": "LIT-BACA-15",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 3,
+   "tipe": "baca",
+   "instruksi": "Siswa kelas tiga membersihkan halaman sekolah.",
+   "emoji": "🏫",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 114
+  },
+  {
+   "kode": "LIT-BACA-16",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 4,
+   "tipe": "baca",
+   "instruksi": "Setiap pagi kami menyanyikan lagu kebangsaan sebelum belajar.",
+   "emoji": "🎵",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 115
+  },
+  {
+   "kode": "LIT-BACA-17",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 4,
+   "tipe": "baca",
+   "instruksi": "Petani menanam padi di sawah yang luas dan hijau.",
+   "emoji": "🌾",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 116
+  },
+  {
+   "kode": "LIT-BACA-18",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 4,
+   "tipe": "baca",
+   "instruksi": "Pak guru menjelaskan pelajaran dengan sabar kepada seluruh muridnya.",
+   "emoji": "🍎",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 117
+  },
+  {
+   "kode": "LIT-BACA-19",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 4,
+   "tipe": "baca",
+   "instruksi": "Kami menjaga kebersihan kelas agar belajar terasa nyaman.",
+   "emoji": "🧼",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 118
+  },
+  {
+   "kode": "LIT-BACA-20",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 4,
+   "tipe": "baca",
+   "instruksi": "Ayah mengajak kami bersepeda di taman setiap hari Minggu.",
+   "emoji": "🚲",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 119
+  },
+  {
+   "kode": "LIT-BACA-21",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 5,
+   "tipe": "baca",
+   "instruksi": "Dengan rajin membaca buku setiap hari, wawasan kita akan semakin luas.",
+   "emoji": "💡",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 120
+  },
+  {
+   "kode": "LIT-BACA-22",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 5,
+   "tipe": "baca",
+   "instruksi": "Menjaga lingkungan tetap bersih adalah tanggung jawab kita semua di sekolah.",
+   "emoji": "🌿",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 121
+  },
+  {
+   "kode": "LIT-BACA-23",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 5,
+   "tipe": "baca",
+   "instruksi": "Para pahlawan berjuang dengan gagah berani demi kemerdekaan bangsa Indonesia.",
+   "emoji": "🎖️",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 122
+  },
+  {
+   "kode": "LIT-BACA-24",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 5,
+   "tipe": "baca",
+   "instruksi": "Nelayan berangkat melaut pada dini hari untuk menangkap ikan segar.",
+   "emoji": "🎣",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 123
+  },
+  {
+   "kode": "LIT-BACA-25",
+   "kompetensi": "LT-KETEPATAN",
+   "bagian": 1,
+   "level": 5,
+   "tipe": "baca",
+   "instruksi": "Kejujuran membuat kita selalu dipercaya oleh teman, guru, dan keluarga.",
+   "emoji": "🤝",
+   "gambar": "",
+   "kolom_kata": [],
+   "jawaban": [],
+   "jawaban_lain": [],
+   "urutan_bebas": false,
+   "urutan": 124
   }
  ],
  "game2": [
   {
-   "kode": "M2-NM-CERITA-L1-Q1",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
+   "kode": "M2-NM-TAMBAH-L1-Q1",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
    "level": 1,
-   "petunjuk": "Hitung total apel dengan menjumlahkan 4 dan 3.",
-   "kunci": 7,
+   "petunjuk": "",
+   "kunci": 5,
    "urutan": 1,
-   "instruksi": "Lumi membawa **4 apel**, lalu membeli lagi **3 apel**. Berapa total apel yang dimiliki Lumi?",
+   "instruksi": "Lumi punya **2 apel**, lalu mendapat lagi **3 apel**. Berapa apel Lumi sekarang?",
    "data": {
-    "label1": "Apel Lumi",
-    "val1": 4,
-    "label2": "Beli Lagi",
-    "val2": 3,
+    "a": 2,
+    "b": 3,
+    "label1": "Punya",
+    "label2": "Dapat lagi",
     "icon": "fa-apple-whole",
     "color": "text-red-500",
-    "emoji": "1f34e",
-    "langkah": 1
+    "emoji": "1f34e"
    }
   },
   {
-   "kode": "M2-NM-CERITA-L1-Q2",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
+   "kode": "M2-NM-TAMBAH-L1-Q2",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
    "level": 1,
-   "petunjuk": "Jumlahkan 2 buku awal dengan 6 buku baru.",
-   "kunci": 8,
+   "petunjuk": "",
+   "kunci": 7,
    "urutan": 2,
-   "instruksi": "Di perpustakaan ada **2 buku** cerita. Pak Guru menambah **6 buku** baru. Berapa jumlah buku seluruhnya?",
+   "instruksi": "Di rak ada **4 buku**. Ibu menambahkan **3 buku** lagi. Berapa buku di rak sekarang?",
    "data": {
-    "label1": "Buku Awal",
-    "val1": 2,
-    "label2": "Buku Baru",
-    "val2": 6,
+    "a": 4,
+    "b": 3,
+    "label1": "Sudah ada",
+    "label2": "Ditambah",
     "icon": "fa-book",
     "color": "text-blue-500",
-    "emoji": "1f4da",
-    "langkah": 1
+    "emoji": "1f4da"
    }
   },
   {
-   "kode": "M2-NM-CERITA-L1-Q3",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
+   "kode": "M2-NM-TAMBAH-L1-Q3",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
    "level": 1,
-   "petunjuk": "Gabungkan 4 bintang kuning dan 5 bintang biru.",
-   "kunci": 9,
+   "petunjuk": "",
+   "kunci": 7,
    "urutan": 3,
-   "instruksi": "Ada **4 bintang** berwarna kuning dan **5 bintang** berwarna biru. Berapa total bintang semuanya?",
+   "instruksi": "Budi mengumpulkan **5 kue** pada pagi hari dan **2 kue** pada sore hari. Berapa kue yang terkumpul semuanya?",
    "data": {
-    "label1": "Bintang Kuning",
-    "val1": 4,
-    "label2": "Bintang Biru",
-    "val2": 5,
-    "icon": "fa-star",
-    "color": "text-amber-400",
-    "emoji": "2b50",
-    "langkah": 1
-   }
-  },
-  {
-   "kode": "M2-NM-CERITA-L1-Q4",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 1,
-   "petunjuk": "Tambahkan 2 kue Ibu dengan 4 kue Ani.",
-   "kunci": 6,
-   "urutan": 4,
-   "instruksi": "Ibu memasak **2 kue mangkuk**. Ani memasak lagi **4 kue mangkuk**. Berapa total kue mangkuk sekarang?",
-   "data": {
-    "label1": "Kue Ibu",
-    "val1": 2,
-    "label2": "Kue Ani",
-    "val2": 4,
+    "a": 5,
+    "b": 2,
+    "label1": "Pagi hari",
+    "label2": "Sore hari",
     "icon": "fa-cookie",
     "color": "text-orange-500",
-    "emoji": "1f9c1",
-    "langkah": 1
+    "emoji": "1f9c1"
    }
   },
   {
-   "kode": "M2-NM-CERITA-L1-Q5",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
+   "kode": "M2-NM-TAMBAH-L1-Q4",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
    "level": 1,
-   "petunjuk": "Jumlahkan 4 ikan mas dan 4 ikan lele.",
-   "kunci": 8,
-   "urutan": 5,
-   "instruksi": "Di kolam terdapat **4 ikan mas** dan **4 ikan lele**. Berapa ekor total ikan di kolam?",
+   "petunjuk": "",
+   "kunci": 9,
+   "urutan": 4,
+   "instruksi": "Raka punya **6 ikan**, lalu mendapat lagi **3 ikan**. Berapa ikan Raka sekarang?",
    "data": {
-    "label1": "Ikan Mas",
-    "val1": 4,
-    "label2": "Ikan Lele",
-    "val2": 4,
+    "a": 6,
+    "b": 3,
+    "label1": "Punya",
+    "label2": "Dapat lagi",
     "icon": "fa-fish",
     "color": "text-teal-500",
-    "emoji": "1f41f",
-    "langkah": 1
+    "emoji": "1f41f"
    }
   },
   {
-   "kode": "M2-NM-CERITA-L2-Q1",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 2,
-   "petunjuk": "Kurangi 32 dengan 13.",
-   "kunci": 19,
-   "urutan": 1,
-   "instruksi": "Siti memiliki **32 kelereng**. Dia memberikan **13 kelereng** kepada adiknya. Berapa sisa kelereng Siti?",
+   "kode": "M2-NM-TAMBAH-L1-Q5",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
+   "level": 1,
+   "petunjuk": "",
+   "kunci": 9,
+   "urutan": 5,
+   "instruksi": "Di kotak pensil ada **4 pensil**. Ibu menambahkan **5 pensil** lagi. Berapa pensil di kotak pensil sekarang?",
    "data": {
-    "label1": "Kelereng Awal",
-    "val1": 32,
-    "label2": "Diberikan",
-    "val2": 13,
-    "icon": "fa-circle",
-    "color": "text-emerald-500",
-    "emoji": "1f535",
-    "langkah": 1
-   }
-  },
-  {
-   "kode": "M2-NM-CERITA-L2-Q2",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 2,
-   "petunjuk": "Hitung sisa dengan mengurangi 40 dengan 15.",
-   "kunci": 25,
-   "urutan": 2,
-   "instruksi": "Di toko ada **40 pensil**. Sebanyak **15 pensil** telah terjual. Berapa pensil yang tersisa?",
-   "data": {
-    "label1": "Pensil Toko",
-    "val1": 40,
-    "label2": "Terjual",
-    "val2": 15,
+    "a": 4,
+    "b": 5,
+    "label1": "Sudah ada",
+    "label2": "Ditambah",
     "icon": "fa-pencil",
     "color": "text-purple-500",
-    "emoji": "270f",
-    "langkah": 1
+    "emoji": "270f"
    }
   },
   {
-   "kode": "M2-NM-CERITA-L2-Q3",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 2,
-   "petunjuk": "Kurangkan 14 jeruk busuk dari 30.",
-   "kunci": 16,
-   "urutan": 3,
-   "instruksi": "Paman memetik **30 buah jeruk**. Ternyata ada **14 jeruk** yang busuk. Berapa jeruk yang masih bagus?",
-   "data": {
-    "label1": "Total Jeruk",
-    "val1": 30,
-    "label2": "Jeruk Busuk",
-    "val2": 14,
-    "icon": "fa-lemon",
-    "color": "text-yellow-500",
-    "emoji": "1f34a",
-    "langkah": 1
-   }
-  },
-  {
-   "kode": "M2-NM-CERITA-L2-Q4",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 2,
-   "petunjuk": "Sisa pita = 35 dikurangi 12.",
-   "kunci": 23,
-   "urutan": 4,
-   "instruksi": "Mita memiliki **35 pita pesta**. Sebanyak **12 pita** digunakan untuk merangkai kado. Berapa sisa pita Mita?",
-   "data": {
-    "label1": "Total Pita",
-    "val1": 35,
-    "label2": "Dipakai",
-    "val2": 12,
-    "icon": "fa-ribbon",
-    "color": "text-rose-500",
-    "emoji": "1f380",
-    "langkah": 1
-   }
-  },
-  {
-   "kode": "M2-NM-CERITA-L2-Q5",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 2,
-   "petunjuk": "Hitung 29 dikurangi 17.",
-   "kunci": 12,
-   "urutan": 5,
-   "instruksi": "Eko membawa **29 keping biskuit**. Dia makan **17 biskuit** bersama temannya. Berapa sisa biskuit Eko?",
-   "data": {
-    "label1": "Biskuit Eko",
-    "val1": 29,
-    "label2": "Dimakan",
-    "val2": 17,
-    "icon": "fa-cookie-bite",
-    "color": "text-amber-600",
-    "emoji": "1f36a",
-    "langkah": 1
-   }
-  },
-  {
-   "kode": "M2-NM-CERITA-L3-Q1",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 3,
-   "petunjuk": "Hitung 30 + 25 terlebih dahulu, kemudian kurangi 12.",
-   "kunci": 43,
-   "urutan": 1,
-   "instruksi": "Dini punya **30 stiker**, membeli lagi **25 stiker**, lalu memberikan **12 stiker** kepada adiknya. Berapa stiker Dini sekarang?",
-   "data": {
-    "label1": "Total Setelah Beli",
-    "val1": 55,
-    "label2": "Diberikan",
-    "val2": 12,
-    "icon": "fa-note-sticky",
-    "color": "text-indigo-500",
-    "emoji": "1f31f",
-    "langkah": 2
-   }
-  },
-  {
-   "kode": "M2-NM-CERITA-L3-Q2",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 3,
-   "petunjuk": "Hitung 35 + 28 = 63, kemudian kurangi 18.",
-   "kunci": 45,
-   "urutan": 2,
-   "instruksi": "Di bus ada **35 penumpang**. Di halte A naik **28 orang**, lalu turun **18 orang**. Berapa penumpang sekarang?",
-   "data": {
-    "label1": "Total Setelah Naik",
-    "val1": 63,
-    "label2": "Turun Bus",
-    "val2": 18,
-    "icon": "fa-bus",
-    "color": "text-sky-500",
-    "emoji": "1f68c",
-    "langkah": 2
-   }
-  },
-  {
-   "kode": "M2-NM-CERITA-L3-Q3",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 3,
-   "petunjuk": "Hitung 48 + 30 = 78, lalu kurangi 23.",
-   "kunci": 55,
-   "urutan": 3,
-   "instruksi": "Toko punya **48 botol minuman**, mendapat pasokan **30 botol**, lalu terjual **23 botol**. Berapa sisa botol?",
-   "data": {
-    "label1": "Total Pasokan",
-    "val1": 78,
-    "label2": "Terjual",
-    "val2": 23,
-    "icon": "fa-bottle-water",
-    "color": "text-cyan-500",
-    "emoji": "1f964",
-    "langkah": 2
-   }
-  },
-  {
-   "kode": "M2-NM-CERITA-L3-Q4",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 3,
-   "petunjuk": "Hitung 38 + 22 = 60, lalu kurangi 14.",
-   "kunci": 46,
-   "urutan": 4,
-   "instruksi": "Budi mengumpulkan **38 daun**, menemukan lagi **22 daun**, tetapi **14 daun** hilang tertiup angin. Berapa sisa daun?",
-   "data": {
-    "label1": "Total Dikumpulkan",
-    "val1": 60,
-    "label2": "Daun Hilang",
-    "val2": 14,
-    "icon": "fa-leaf",
-    "color": "text-green-500",
-    "emoji": "1f343",
-    "langkah": 2
-   }
-  },
-  {
-   "kode": "M2-NM-CERITA-L3-Q5",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 3,
-   "petunjuk": "Hitung 45 + 18 = 63, lalu kurangi 21.",
-   "kunci": 42,
-   "urutan": 5,
-   "instruksi": "Ibu menyiapkan **45 potong roti**. Ayah menambah **18 potong**, lalu anak-anak memakan **21 potong**. Berapa sisa roti?",
-   "data": {
-    "label1": "Total Roti",
-    "val1": 63,
-    "label2": "Dimakan",
-    "val2": 21,
-    "icon": "fa-bread-slice",
-    "color": "text-amber-700",
-    "emoji": "1f35e",
-    "langkah": 2
-   }
-  },
-  {
-   "kode": "M2-NM-CERITA-L4-Q1",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 4,
-   "petunjuk": "Hitung 8 × 12 = 96, lalu kurangi 21.",
-   "kunci": 75,
-   "urutan": 1,
-   "instruksi": "Ibu membeli **8 kotak donat**. Setiap kotak berisi **12 donat**. Jika **21 donat** diberikan kepada tetangga, berapa sisanya?",
-   "data": {
-    "label1": "Total Donat",
-    "val1": 96,
-    "label2": "Diberikan",
-    "val2": 21,
-    "icon": "fa-circle-dot",
-    "color": "text-pink-500",
-    "emoji": "1f369",
-    "langkah": 2
-   }
-  },
-  {
-   "kode": "M2-NM-CERITA-L4-Q2",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 4,
-   "petunjuk": "Hitung 96 + 44 = 140, kemudian 140 ÷ 2.",
-   "kunci": 70,
-   "urutan": 2,
-   "instruksi": "Ada **96 buah salak**. Ibu memasukkan lagi **44 buah**. Seluruh salak dimasukkan sama rata ke **2 kantong**. Berapa salak per kantong?",
-   "data": {
-    "label1": "Total Salak",
-    "val1": 140,
-    "label2": "Jumlah Kantong",
-    "val2": 2,
-    "icon": "fa-basket-shopping",
-    "color": "text-emerald-600",
-    "emoji": "1f330",
-    "langkah": 2
-   }
-  },
-  {
-   "kode": "M2-NM-CERITA-L4-Q3",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 4,
-   "petunjuk": "Hitung 7 × 12 = 84, lalu kurangi 19.",
-   "kunci": 65,
-   "urutan": 3,
-   "instruksi": "Pak Tani memanen **7 kantong apel**. Setiap kantong berisi **12 apel**. Sebanyak **19 apel** dibagikan. Berapa sisa apel?",
-   "data": {
-    "label1": "Total Apel",
-    "val1": 84,
-    "label2": "Dibagikan",
-    "val2": 19,
-    "icon": "fa-apple-whole",
-    "color": "text-red-600",
-    "emoji": "1f34e",
-    "langkah": 2
-   }
-  },
-  {
-   "kode": "M2-NM-CERITA-L4-Q4",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 4,
-   "petunjuk": "Hitung 9 × 8 = 72, lalu tambahkan 11.",
-   "kunci": 83,
-   "urutan": 4,
-   "instruksi": "Ahmad memiliki **9 bungkus permen**. Setiap bungkus berisi **8 permen**. Ia membeli lagi **11 permen**. Berapa total permen?",
-   "data": {
-    "label1": "Permen Bungkus",
-    "val1": 72,
-    "label2": "Permen Eceran",
-    "val2": 11,
-    "icon": "fa-candy-cane",
-    "color": "text-violet-500",
-    "emoji": "1f36c",
-    "langkah": 2
-   }
-  },
-  {
-   "kode": "M2-NM-CERITA-L4-Q5",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 4,
-   "petunjuk": "Hitung 9 × 10 = 90, lalu kurangi 28.",
-   "kunci": 62,
-   "urutan": 5,
-   "instruksi": "Perpustakaan menerima **9 dus buku**, masing-masing berisi **10 buku**. Jika **28 buku** disumbangkan, berapa sisanya?",
-   "data": {
-    "label1": "Total Buku",
-    "val1": 90,
-    "label2": "Disumbangkan",
-    "val2": 28,
-    "icon": "fa-book-open",
-    "color": "text-indigo-600",
-    "emoji": "1f4da",
-    "langkah": 2
-   }
-  },
-  {
-   "kode": "M2-NM-CERITA-L5-Q1",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 5,
-   "petunjuk": "Hitung 7 × 15 = 105, lalu tambahkan 48.",
-   "kunci": 153,
-   "urutan": 1,
-   "instruksi": "Perpustakaan punya **7 rak**. Setiap rak berisi **15 buku**. Sekolah menerima **48 buku** sumbangan. Berapa total buku?",
-   "data": {
-    "label1": "Buku di Rak",
-    "val1": 105,
-    "label2": "Buku Sumbangan",
-    "val2": 48,
-    "icon": "fa-book",
-    "color": "text-blue-600",
-    "emoji": "1f4da",
-    "langkah": 3
-   }
-  },
-  {
-   "kode": "M2-NM-CERITA-L5-Q2",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 5,
-   "petunjuk": "Hitung 12 × 15 = 180, lalu 180 + 60 = 240, kemudian bagi 2.",
-   "kunci": 120,
-   "urutan": 2,
-   "instruksi": "Pak Tani memanen **12 keranjang mangga**, masing-masing berisi **15 mangga**. Ia membeli lagi **60 mangga**. Semuanya dibagi rata ke **2 kotak**. Berapa per kotak?",
-   "data": {
-    "label1": "Total Mangga",
-    "val1": 240,
-    "label2": "Jumlah Kotak",
-    "val2": 2,
-    "icon": "fa-apple-whole",
-    "color": "text-orange-500",
-    "emoji": "1f96d",
-    "langkah": 3
-   }
-  },
-  {
-   "kode": "M2-NM-CERITA-L5-Q3",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 5,
-   "petunjuk": "Hitung 8 × 15 = 120, lalu kurangi dari 250.",
-   "kunci": 130,
-   "urutan": 3,
-   "instruksi": "Dina punya **250 manik-manik**. Ia membuat **8 gelang**, setiap gelang memakai **15 manik-manik**. Berapa sisanya?",
-   "data": {
-    "label1": "Manik Awal",
-    "val1": 250,
-    "label2": "Manik Terpakai",
-    "val2": 120,
-    "icon": "fa-circle",
-    "color": "text-pink-500",
-    "emoji": "1f4ff",
-    "langkah": 3
-   }
-  },
-  {
-   "kode": "M2-NM-CERITA-L5-Q4",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 5,
-   "petunjuk": "Hitung 12 × 24 = 288, lalu 288 + 36 = 324, kemudian bagi 3.",
-   "kunci": 108,
-   "urutan": 4,
-   "instruksi": "Panitia menyiapkan **12 kotak nasi**, masing-masing berisi **24 bungkus**. Ada tambahan **36 bungkus**. Semuanya dibagikan ke **3 kelas**. Berapa per kelas?",
-   "data": {
-    "label1": "Total Nasi",
-    "val1": 324,
-    "label2": "Jumlah Kelas",
-    "val2": 3,
-    "icon": "fa-box",
-    "color": "text-amber-600",
-    "emoji": "1f371",
-    "langkah": 3
-   }
-  },
-  {
-   "kode": "M2-NM-CERITA-L5-Q5",
-   "kompetensi": "NM-CERITA",
-   "bagian": 4,
-   "level": 5,
-   "petunjuk": "Hitung 15 × 12 = 180, lalu 180 − 87 = 93, kemudian 93 + 34.",
-   "kunci": 127,
-   "urutan": 5,
-   "instruksi": "Toko memiliki **15 rak**, setiap rak berisi **12 buku**. Sebanyak **87 buku** terjual dan **34 buku** dikembalikan. Berapa buku sekarang?",
-   "data": {
-    "label1": "Buku Setelah Terjual",
-    "val1": 93,
-    "label2": "Buku Dikembalikan",
-    "val2": 34,
-    "icon": "fa-book-open",
-    "color": "text-indigo-600",
-    "emoji": "1f4d6",
-    "langkah": 3
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L1-Q1",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 1,
-   "petunjuk": "1 puluhan bernilai 10. Tambahkan 2 satuan.",
-   "kunci": 12,
-   "urutan": 1,
-   "instruksi": "",
-   "data": {
-    "puluhan": 1,
-    "satuan": 2
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L1-Q2",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 1,
-   "petunjuk": "1 puluhan bernilai 10. Tambahkan 4 satuan.",
-   "kunci": 14,
-   "urutan": 2,
-   "instruksi": "",
-   "data": {
-    "puluhan": 1,
-    "satuan": 4
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L1-Q3",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 1,
-   "petunjuk": "1 puluhan bernilai 10. Tambahkan 7 satuan.",
-   "kunci": 17,
-   "urutan": 3,
-   "instruksi": "",
-   "data": {
-    "puluhan": 1,
-    "satuan": 7
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L1-Q4",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 1,
-   "petunjuk": "2 puluhan bernilai 20. Tambahkan 1 satuan.",
-   "kunci": 21,
-   "urutan": 4,
-   "instruksi": "",
-   "data": {
-    "puluhan": 2,
-    "satuan": 1
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L1-Q5",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 1,
-   "petunjuk": "2 puluhan bernilai 20. Tambahkan 5 satuan.",
-   "kunci": 25,
-   "urutan": 5,
-   "instruksi": "",
-   "data": {
-    "puluhan": 2,
-    "satuan": 5
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L2-Q1",
-   "kompetensi": "NM-NILAI-TEMPAT",
+   "kode": "M2-NM-TAMBAH-L2-Q1",
+   "kompetensi": "NM-TAMBAH",
    "bagian": 1,
    "level": 2,
-   "petunjuk": "2 puluhan bernilai 20. Tambahkan 8 satuan.",
-   "kunci": 28,
+   "petunjuk": "",
+   "kunci": 13,
    "urutan": 1,
-   "instruksi": "",
-   "data": {
-    "puluhan": 2,
-    "satuan": 8
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L2-Q2",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 2,
-   "petunjuk": "3 puluhan bernilai 30. Tambahkan 4 satuan.",
-   "kunci": 34,
-   "urutan": 2,
-   "instruksi": "",
-   "data": {
-    "puluhan": 3,
-    "satuan": 4
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L2-Q3",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 2,
-   "petunjuk": "3 puluhan bernilai 30. Tambahkan 7 satuan.",
-   "kunci": 37,
-   "urutan": 3,
-   "instruksi": "",
-   "data": {
-    "puluhan": 3,
-    "satuan": 7
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L2-Q4",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 2,
-   "petunjuk": "4 puluhan bernilai 40. Tambahkan 2 satuan.",
-   "kunci": 42,
-   "urutan": 4,
-   "instruksi": "",
-   "data": {
-    "puluhan": 4,
-    "satuan": 2
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L2-Q5",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 2,
-   "petunjuk": "4 puluhan bernilai 40. Tambahkan 9 satuan.",
-   "kunci": 49,
-   "urutan": 5,
-   "instruksi": "",
-   "data": {
-    "puluhan": 4,
-    "satuan": 9
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L3-Q1",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 3,
-   "petunjuk": "4 puluhan bernilai 40. Tambahkan 6 satuan.",
-   "kunci": 46,
-   "urutan": 1,
-   "instruksi": "",
-   "data": {
-    "puluhan": 4,
-    "satuan": 6
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L3-Q2",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 3,
-   "petunjuk": "5 puluhan bernilai 50. Tambahkan 3 satuan.",
-   "kunci": 53,
-   "urutan": 2,
-   "instruksi": "",
-   "data": {
-    "puluhan": 5,
-    "satuan": 3
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L3-Q3",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 3,
-   "petunjuk": "5 puluhan bernilai 50. Tambahkan 8 satuan.",
-   "kunci": 58,
-   "urutan": 3,
-   "instruksi": "",
-   "data": {
-    "puluhan": 5,
-    "satuan": 8
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L3-Q4",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 3,
-   "petunjuk": "6 puluhan bernilai 60. Tambahkan 1 satuan.",
-   "kunci": 61,
-   "urutan": 4,
-   "instruksi": "",
-   "data": {
-    "puluhan": 6,
-    "satuan": 1
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L3-Q5",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 3,
-   "petunjuk": "6 puluhan bernilai 60. Tambahkan 7 satuan.",
-   "kunci": 67,
-   "urutan": 5,
-   "instruksi": "",
-   "data": {
-    "puluhan": 6,
-    "satuan": 7
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L4-Q1",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 4,
-   "petunjuk": "6 puluhan bernilai 60. Tambahkan 9 satuan.",
-   "kunci": 69,
-   "urutan": 1,
-   "instruksi": "",
-   "data": {
-    "puluhan": 6,
-    "satuan": 9
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L4-Q2",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 4,
-   "petunjuk": "7 puluhan bernilai 70. Tambahkan 4 satuan.",
-   "kunci": 74,
-   "urutan": 2,
-   "instruksi": "",
-   "data": {
-    "puluhan": 7,
-    "satuan": 4
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L4-Q3",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 4,
-   "petunjuk": "7 puluhan bernilai 70. Tambahkan 8 satuan.",
-   "kunci": 78,
-   "urutan": 3,
-   "instruksi": "",
-   "data": {
-    "puluhan": 7,
-    "satuan": 8
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L4-Q4",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 4,
-   "petunjuk": "8 puluhan bernilai 80. Tambahkan 2 satuan.",
-   "kunci": 82,
-   "urutan": 4,
-   "instruksi": "",
-   "data": {
-    "puluhan": 8,
-    "satuan": 2
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L4-Q5",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 4,
-   "petunjuk": "8 puluhan bernilai 80. Tambahkan 6 satuan.",
-   "kunci": 86,
-   "urutan": 5,
-   "instruksi": "",
-   "data": {
-    "puluhan": 8,
-    "satuan": 6
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L5-Q1",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 5,
-   "petunjuk": "8 puluhan bernilai 80. Tambahkan 9 satuan.",
-   "kunci": 89,
-   "urutan": 1,
-   "instruksi": "",
-   "data": {
-    "puluhan": 8,
-    "satuan": 9
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L5-Q2",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 5,
-   "petunjuk": "9 puluhan bernilai 90. Tambahkan 1 satuan.",
-   "kunci": 91,
-   "urutan": 2,
-   "instruksi": "",
-   "data": {
-    "puluhan": 9,
-    "satuan": 1
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L5-Q3",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 5,
-   "petunjuk": "9 puluhan bernilai 90. Tambahkan 4 satuan.",
-   "kunci": 94,
-   "urutan": 3,
-   "instruksi": "",
-   "data": {
-    "puluhan": 9,
-    "satuan": 4
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L5-Q4",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 5,
-   "petunjuk": "9 puluhan bernilai 90. Tambahkan 6 satuan.",
-   "kunci": 96,
-   "urutan": 4,
-   "instruksi": "",
-   "data": {
-    "puluhan": 9,
-    "satuan": 6
-   }
-  },
-  {
-   "kode": "M2-NM-NILAI-TEMPAT-L5-Q5",
-   "kompetensi": "NM-NILAI-TEMPAT",
-   "bagian": 1,
-   "level": 5,
-   "petunjuk": "9 puluhan bernilai 90. Tambahkan 9 satuan.",
-   "kunci": 99,
-   "urutan": 5,
-   "instruksi": "",
-   "data": {
-    "puluhan": 9,
-    "satuan": 9
-   }
-  },
-  {
-   "kode": "M2-NM-REGROUPING-L1-Q1",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 1,
-   "petunjuk": "Jumlahkan 8 dengan 7. Periksa apakah satuan mencapai 10 sehingga perlu menyimpan 1 puluhan.",
-   "kunci": 15,
-   "urutan": 1,
-   "instruksi": "",
+   "instruksi": "Ayah mengumpulkan **8 daun** pada pagi hari dan **5 daun** pada sore hari. Berapa daun yang terkumpul semuanya?",
    "data": {
     "a": 8,
-    "op": "+",
-    "b": 7
+    "b": 5,
+    "label1": "Pagi hari",
+    "label2": "Sore hari",
+    "icon": "fa-leaf",
+    "color": "text-green-500",
+    "emoji": "1f343"
    }
   },
   {
-   "kode": "M2-NM-REGROUPING-L1-Q2",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 1,
-   "petunjuk": "Jumlahkan 9 dengan 6. Periksa apakah satuan mencapai 10 sehingga perlu menyimpan 1 puluhan.",
-   "kunci": 15,
+   "kode": "M2-NM-TAMBAH-L2-Q2",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
+   "level": 2,
+   "petunjuk": "",
+   "kunci": 13,
    "urutan": 2,
-   "instruksi": "",
+   "instruksi": "Nenek punya **9 kelereng**, lalu mendapat lagi **4 kelereng**. Berapa kelereng Nenek sekarang?",
    "data": {
     "a": 9,
-    "op": "+",
-    "b": 6
+    "b": 4,
+    "label1": "Punya",
+    "label2": "Dapat lagi",
+    "icon": "fa-circle",
+    "color": "text-sky-500",
+    "emoji": "1f535"
    }
   },
   {
-   "kode": "M2-NM-REGROUPING-L1-Q3",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 1,
-   "petunjuk": "Kurangi 13 dengan 5. Jika satuan tidak cukup, pinjam 1 puluhan.",
-   "kunci": 8,
+   "kode": "M2-NM-TAMBAH-L2-Q3",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
+   "level": 2,
+   "petunjuk": "",
+   "kunci": 13,
    "urutan": 3,
-   "instruksi": "",
+   "instruksi": "Di toples ada **7 permen**. Ibu menambahkan **6 permen** lagi. Berapa permen di toples sekarang?",
    "data": {
-    "a": 13,
-    "op": "-",
-    "b": 5
+    "a": 7,
+    "b": 6,
+    "label1": "Sudah ada",
+    "label2": "Ditambah",
+    "icon": "fa-candy-cane",
+    "color": "text-violet-500",
+    "emoji": "1f36c"
    }
   },
   {
-   "kode": "M2-NM-REGROUPING-L1-Q4",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 1,
-   "petunjuk": "Kurangi 14 dengan 6. Jika satuan tidak cukup, pinjam 1 puluhan.",
-   "kunci": 8,
+   "kode": "M2-NM-TAMBAH-L2-Q4",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
+   "level": 2,
+   "petunjuk": "",
+   "kunci": 14,
    "urutan": 4,
-   "instruksi": "",
+   "instruksi": "Lumi mengumpulkan **6 jeruk** pada pagi hari dan **8 jeruk** pada sore hari. Berapa jeruk yang terkumpul semuanya?",
    "data": {
-    "a": 14,
-    "op": "-",
-    "b": 6
+    "a": 6,
+    "b": 8,
+    "label1": "Pagi hari",
+    "label2": "Sore hari",
+    "icon": "fa-lemon",
+    "color": "text-yellow-500",
+    "emoji": "1f34a"
    }
   },
   {
-   "kode": "M2-NM-REGROUPING-L1-Q5",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 1,
-   "petunjuk": "Kurangi 16 dengan 8. Jika satuan tidak cukup, pinjam 1 puluhan.",
-   "kunci": 8,
+   "kode": "M2-NM-TAMBAH-L2-Q5",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
+   "level": 2,
+   "petunjuk": "",
+   "kunci": 16,
    "urutan": 5,
-   "instruksi": "",
+   "instruksi": "Dina punya **9 bintang**, lalu mendapat lagi **7 bintang**. Berapa bintang Dina sekarang?",
    "data": {
-    "a": 16,
-    "op": "-",
-    "b": 8
+    "a": 9,
+    "b": 7,
+    "label1": "Punya",
+    "label2": "Dapat lagi",
+    "icon": "fa-star",
+    "color": "text-amber-400",
+    "emoji": "2b50"
    }
   },
   {
-   "kode": "M2-NM-REGROUPING-L2-Q1",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 2,
-   "petunjuk": "Jumlahkan 28 dengan 7. Periksa apakah satuan mencapai 10 sehingga perlu menyimpan 1 puluhan.",
-   "kunci": 35,
+   "kode": "M2-NM-TAMBAH-L3-Q1",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 37,
    "urutan": 1,
-   "instruksi": "",
+   "instruksi": "Di keranjang ada **23 apel**. Ibu menambahkan **14 apel** lagi. Berapa apel di keranjang sekarang?",
    "data": {
-    "a": 28,
-    "op": "+",
-    "b": 7
+    "a": 23,
+    "b": 14,
+    "label1": "Sudah ada",
+    "label2": "Ditambah",
+    "icon": "fa-apple-whole",
+    "color": "text-red-500",
+    "emoji": "1f34e"
    }
   },
   {
-   "kode": "M2-NM-REGROUPING-L2-Q2",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 2,
-   "petunjuk": "Kurangi 42 dengan 17. Jika satuan tidak cukup, pinjam 1 puluhan.",
-   "kunci": 25,
+   "kode": "M2-NM-TAMBAH-L3-Q2",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 56,
    "urutan": 2,
-   "instruksi": "",
+   "instruksi": "Raka mengumpulkan **31 buku** pada pagi hari dan **25 buku** pada sore hari. Berapa buku yang terkumpul semuanya?",
+   "data": {
+    "a": 31,
+    "b": 25,
+    "label1": "Pagi hari",
+    "label2": "Sore hari",
+    "icon": "fa-book",
+    "color": "text-blue-500",
+    "emoji": "1f4da"
+   }
+  },
+  {
+   "kode": "M2-NM-TAMBAH-L3-Q3",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 78,
+   "urutan": 3,
+   "instruksi": "Sari punya **42 kue**, lalu mendapat lagi **36 kue**. Berapa kue Sari sekarang?",
    "data": {
     "a": 42,
-    "op": "-",
-    "b": 17
+    "b": 36,
+    "label1": "Punya",
+    "label2": "Dapat lagi",
+    "icon": "fa-cookie",
+    "color": "text-orange-500",
+    "emoji": "1f9c1"
    }
   },
   {
-   "kode": "M2-NM-REGROUPING-L2-Q3",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 2,
-   "petunjuk": "Jumlahkan 36 dengan 18. Periksa apakah satuan mencapai 10 sehingga perlu menyimpan 1 puluhan.",
-   "kunci": 54,
-   "urutan": 3,
-   "instruksi": "",
-   "data": {
-    "a": 36,
-    "op": "+",
-    "b": 18
-   }
-  },
-  {
-   "kode": "M2-NM-REGROUPING-L2-Q4",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 2,
-   "petunjuk": "Kurangi 50 dengan 26. Jika satuan tidak cukup, pinjam 1 puluhan.",
-   "kunci": 24,
+   "kode": "M2-NM-TAMBAH-L3-Q4",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 77,
    "urutan": 4,
-   "instruksi": "",
+   "instruksi": "Di kolam ada **54 ikan**. Ibu menambahkan **23 ikan** lagi. Berapa ikan di kolam sekarang?",
    "data": {
-    "a": 50,
-    "op": "-",
-    "b": 26
+    "a": 54,
+    "b": 23,
+    "label1": "Sudah ada",
+    "label2": "Ditambah",
+    "icon": "fa-fish",
+    "color": "text-teal-500",
+    "emoji": "1f41f"
    }
   },
   {
-   "kode": "M2-NM-REGROUPING-L2-Q5",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 2,
-   "petunjuk": "Kurangi 63 dengan 28. Jika satuan tidak cukup, pinjam 1 puluhan.",
-   "kunci": 35,
+   "kode": "M2-NM-TAMBAH-L3-Q5",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 89,
    "urutan": 5,
-   "instruksi": "",
+   "instruksi": "Nenek mengumpulkan **61 pensil** pada pagi hari dan **28 pensil** pada sore hari. Berapa pensil yang terkumpul semuanya?",
    "data": {
-    "a": 63,
-    "op": "-",
-    "b": 28
+    "a": 61,
+    "b": 28,
+    "label1": "Pagi hari",
+    "label2": "Sore hari",
+    "icon": "fa-pencil",
+    "color": "text-purple-500",
+    "emoji": "270f"
    }
   },
   {
-   "kode": "M2-NM-REGROUPING-L3-Q1",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 3,
-   "petunjuk": "Jumlahkan 47 dengan 35. Periksa apakah satuan mencapai 10 sehingga perlu menyimpan 1 puluhan.",
-   "kunci": 82,
-   "urutan": 1,
-   "instruksi": "",
-   "data": {
-    "a": 47,
-    "op": "+",
-    "b": 35
-   }
-  },
-  {
-   "kode": "M2-NM-REGROUPING-L3-Q2",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 3,
-   "petunjuk": "Kurangi 62 dengan 27. Jika satuan tidak cukup, pinjam 1 puluhan.",
-   "kunci": 35,
-   "urutan": 2,
-   "instruksi": "",
-   "data": {
-    "a": 62,
-    "op": "-",
-    "b": 27
-   }
-  },
-  {
-   "kode": "M2-NM-REGROUPING-L3-Q3",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 3,
-   "petunjuk": "Jumlahkan 56 dengan 28. Periksa apakah satuan mencapai 10 sehingga perlu menyimpan 1 puluhan.",
-   "kunci": 84,
-   "urutan": 3,
-   "instruksi": "",
-   "data": {
-    "a": 56,
-    "op": "+",
-    "b": 28
-   }
-  },
-  {
-   "kode": "M2-NM-REGROUPING-L3-Q4",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 3,
-   "petunjuk": "Kurangi 71 dengan 36. Jika satuan tidak cukup, pinjam 1 puluhan.",
-   "kunci": 35,
-   "urutan": 4,
-   "instruksi": "",
-   "data": {
-    "a": 71,
-    "op": "-",
-    "b": 36
-   }
-  },
-  {
-   "kode": "M2-NM-REGROUPING-L3-Q5",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 3,
-   "petunjuk": "Jumlahkan 38 dengan 24. Periksa apakah satuan mencapai 10 sehingga perlu menyimpan 1 puluhan.",
-   "kunci": 62,
-   "urutan": 5,
-   "instruksi": "",
-   "data": {
-    "a": 38,
-    "op": "+",
-    "b": 24
-   }
-  },
-  {
-   "kode": "M2-NM-REGROUPING-L4-Q1",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
+   "kode": "M2-NM-TAMBAH-L4-Q1",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
    "level": 4,
-   "petunjuk": "Jumlahkan 58 dengan 37. Periksa apakah satuan mencapai 10 sehingga perlu menyimpan 1 puluhan.",
-   "kunci": 95,
-   "urutan": 1,
-   "instruksi": "",
-   "data": {
-    "a": 58,
-    "op": "+",
-    "b": 37
-   }
-  },
-  {
-   "kode": "M2-NM-REGROUPING-L4-Q2",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 4,
-   "petunjuk": "Kurangi 81 dengan 46. Jika satuan tidak cukup, pinjam 1 puluhan.",
-   "kunci": 35,
-   "urutan": 2,
-   "instruksi": "",
-   "data": {
-    "a": 81,
-    "op": "-",
-    "b": 46
-   }
-  },
-  {
-   "kode": "M2-NM-REGROUPING-L4-Q3",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 4,
-   "petunjuk": "Jumlahkan 67 dengan 28. Periksa apakah satuan mencapai 10 sehingga perlu menyimpan 1 puluhan.",
-   "kunci": 95,
-   "urutan": 3,
-   "instruksi": "",
-   "data": {
-    "a": 67,
-    "op": "+",
-    "b": 28
-   }
-  },
-  {
-   "kode": "M2-NM-REGROUPING-L4-Q4",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 4,
-   "petunjuk": "Kurangi 90 dengan 57. Jika satuan tidak cukup, pinjam 1 puluhan.",
-   "kunci": 33,
-   "urutan": 4,
-   "instruksi": "",
-   "data": {
-    "a": 90,
-    "op": "-",
-    "b": 57
-   }
-  },
-  {
-   "kode": "M2-NM-REGROUPING-L4-Q5",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 4,
-   "petunjuk": "Kurangi 76 dengan 38. Jika satuan tidak cukup, pinjam 1 puluhan.",
-   "kunci": 38,
-   "urutan": 5,
-   "instruksi": "",
-   "data": {
-    "a": 76,
-    "op": "-",
-    "b": 38
-   }
-  },
-  {
-   "kode": "M2-NM-REGROUPING-L5-Q1",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 5,
-   "petunjuk": "Jumlahkan 79 dengan 86. Periksa apakah satuan mencapai 10 sehingga perlu menyimpan 1 puluhan.",
-   "kunci": 165,
-   "urutan": 1,
-   "instruksi": "",
-   "data": {
-    "a": 79,
-    "op": "+",
-    "b": 86
-   }
-  },
-  {
-   "kode": "M2-NM-REGROUPING-L5-Q2",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 5,
-   "petunjuk": "Kurangi 82 dengan 57. Jika satuan tidak cukup, pinjam 1 puluhan.",
-   "kunci": 25,
-   "urutan": 2,
-   "instruksi": "",
-   "data": {
-    "a": 82,
-    "op": "-",
-    "b": 57
-   }
-  },
-  {
-   "kode": "M2-NM-REGROUPING-L5-Q3",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 5,
-   "petunjuk": "Jumlahkan 68 dengan 57. Periksa apakah satuan mencapai 10 sehingga perlu menyimpan 1 puluhan.",
-   "kunci": 125,
-   "urutan": 3,
-   "instruksi": "",
-   "data": {
-    "a": 68,
-    "op": "+",
-    "b": 57
-   }
-  },
-  {
-   "kode": "M2-NM-REGROUPING-L5-Q4",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 5,
-   "petunjuk": "Kurangi 91 dengan 68. Jika satuan tidak cukup, pinjam 1 puluhan.",
-   "kunci": 23,
-   "urutan": 4,
-   "instruksi": "",
-   "data": {
-    "a": 91,
-    "op": "-",
-    "b": 68
-   }
-  },
-  {
-   "kode": "M2-NM-REGROUPING-L5-Q5",
-   "kompetensi": "NM-REGROUPING",
-   "bagian": 2,
-   "level": 5,
-   "petunjuk": "Jumlahkan 57 dengan 68. Periksa apakah satuan mencapai 10 sehingga perlu menyimpan 1 puluhan.",
-   "kunci": 125,
-   "urutan": 5,
-   "instruksi": "",
-   "data": {
-    "a": 57,
-    "op": "+",
-    "b": 68
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L1-Q1",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 1,
-   "petunjuk": "Setiap angka bertambah 2.",
-   "kunci": 10,
-   "urutan": 1,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     2,
-     4,
-     6,
-     8
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L1-Q2",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 1,
-   "petunjuk": "Setiap angka bertambah 2.",
-   "kunci": 9,
-   "urutan": 2,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     1,
-     3,
-     5,
-     7
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L1-Q3",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 1,
-   "petunjuk": "Setiap angka bertambah 1.",
-   "kunci": 9,
-   "urutan": 3,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     5,
-     6,
-     7,
-     8
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L1-Q4",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 1,
-   "petunjuk": "Setiap angka berkurang 2.",
-   "kunci": 2,
-   "urutan": 4,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     10,
-     8,
-     6,
-     4
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L1-Q5",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 1,
-   "petunjuk": "Setiap angka bertambah 3.",
-   "kunci": 15,
-   "urutan": 5,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     3,
-     6,
-     9,
-     12
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L2-Q1",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 2,
-   "petunjuk": "Setiap angka bertambah 4.",
-   "kunci": 20,
-   "urutan": 1,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     4,
-     8,
-     12,
-     16
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L2-Q2",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 2,
-   "petunjuk": "Setiap angka bertambah 5.",
-   "kunci": 25,
-   "urutan": 2,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     5,
-     10,
-     15,
-     20
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L2-Q3",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 2,
-   "petunjuk": "Setiap angka bertambah 10.",
-   "kunci": 50,
-   "urutan": 3,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     10,
-     20,
-     30,
-     40
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L2-Q4",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 2,
-   "petunjuk": "Setiap angka berkurang 3.",
-   "kunci": 9,
-   "urutan": 4,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     21,
-     18,
-     15,
-     12
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L2-Q5",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 2,
-   "petunjuk": "Setiap angka berkurang 5.",
-   "kunci": 20,
-   "urutan": 5,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     40,
-     35,
-     30,
-     25
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L3-Q1",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 3,
-   "petunjuk": "Pola bergantian tambah 3 dan kurang 1. Setelah 6, tambahkan 3.",
-   "kunci": 9,
-   "urutan": 1,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     2,
-     5,
-     4,
-     7,
-     6
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L3-Q2",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 3,
-   "petunjuk": "Pola bergantian +1, +2, +1, +2, lalu +1.",
-   "kunci": 8,
-   "urutan": 2,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     1,
-     2,
-     4,
-     5,
-     7
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L3-Q3",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 3,
-   "petunjuk": "Pola bergantian kali 2 lalu kurang 1.",
-   "kunci": 18,
-   "urutan": 3,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     3,
-     6,
-     5,
-     10,
-     9
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L3-Q4",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 3,
-   "petunjuk": "Setiap angka dikali 2.",
-   "kunci": 32,
-   "urutan": 4,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     2,
-     4,
-     8,
-     16
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L3-Q5",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 3,
-   "petunjuk": "Pola bergantian kurang 10 lalu tambah 5.",
-   "kunci": 80,
-   "urutan": 5,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     100,
-     90,
-     95,
-     85,
-     90
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L4-Q1",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 4,
-   "petunjuk": "Deret kuadrat: 1², 2², 3², 4². Berikutnya 5².",
-   "kunci": 25,
-   "urutan": 1,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     1,
-     4,
-     9,
-     16
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L4-Q2",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 4,
-   "petunjuk": "Perkalian 1×2, 2×3, 3×4, 4×5. Berikutnya 5×6.",
-   "kunci": 30,
-   "urutan": 2,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     2,
-     6,
-     12,
-     20
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L4-Q3",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 4,
-   "petunjuk": "Penambahan berturut-turut +2, +3, +4, lalu +5.",
-   "kunci": 15,
-   "urutan": 3,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     1,
-     3,
-     6,
-     10
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L4-Q4",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 4,
-   "petunjuk": "Setiap angka dikali 3.",
-   "kunci": 81,
-   "urutan": 4,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     3,
-     9,
-     27
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L4-Q5",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 4,
-   "petunjuk": "Setiap angka dibagi 3.",
-   "kunci": 3,
-   "urutan": 5,
-   "instruksi": "",
-   "data": {
-    "deret": [
-     81,
-     27,
-     9
-    ]
-   }
-  },
-  {
-   "kode": "M2-NM-POLA-L5-Q1",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 5,
-   "petunjuk": "Selisihnya +4, +6, +8, +10. Berikutnya tambah 12.",
+   "petunjuk": "",
    "kunci": 42,
    "urutan": 1,
-   "instruksi": "",
+   "instruksi": "Kakak punya **27 daun**, lalu mendapat lagi **15 daun**. Berapa daun Kakak sekarang?",
    "data": {
-    "deret": [
-     2,
-     6,
-     12,
-     20,
-     30
-    ]
+    "a": 27,
+    "b": 15,
+    "label1": "Punya",
+    "label2": "Dapat lagi",
+    "icon": "fa-leaf",
+    "color": "text-green-500",
+    "emoji": "1f343"
    }
   },
   {
-   "kode": "M2-NM-POLA-L5-Q2",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 5,
-   "petunjuk": "Kalikan berturut-turut dengan 2, 3, 4, lalu 5.",
-   "kunci": 120,
+   "kode": "M2-NM-TAMBAH-L4-Q2",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
+   "level": 4,
+   "petunjuk": "",
+   "kunci": 62,
    "urutan": 2,
-   "instruksi": "",
+   "instruksi": "Di kantong ada **38 kelereng**. Ibu menambahkan **24 kelereng** lagi. Berapa kelereng di kantong sekarang?",
    "data": {
-    "deret": [
-     1,
-     2,
-     6,
-     24
-    ]
+    "a": 38,
+    "b": 24,
+    "label1": "Sudah ada",
+    "label2": "Ditambah",
+    "icon": "fa-circle",
+    "color": "text-sky-500",
+    "emoji": "1f535"
    }
   },
   {
-   "kode": "M2-NM-POLA-L5-Q3",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 5,
-   "petunjuk": "Setiap angka dikali 2 lalu dikurangi 1.",
-   "kunci": 65,
+   "kode": "M2-NM-TAMBAH-L4-Q3",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
+   "level": 4,
+   "petunjuk": "",
+   "kunci": 83,
    "urutan": 3,
-   "instruksi": "",
+   "instruksi": "Dina mengumpulkan **46 permen** pada pagi hari dan **37 permen** pada sore hari. Berapa permen yang terkumpul semuanya?",
    "data": {
-    "deret": [
-     5,
-     9,
-     17,
-     33
-    ]
+    "a": 46,
+    "b": 37,
+    "label1": "Pagi hari",
+    "label2": "Sore hari",
+    "icon": "fa-candy-cane",
+    "color": "text-violet-500",
+    "emoji": "1f36c"
    }
   },
   {
-   "kode": "M2-NM-POLA-L5-Q4",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
-   "level": 5,
-   "petunjuk": "Selisihnya +1, +2, +3, +4. Berikutnya tambah 5.",
-   "kunci": 17,
+   "kode": "M2-NM-TAMBAH-L4-Q4",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
+   "level": 4,
+   "petunjuk": "",
+   "kunci": 84,
    "urutan": 4,
-   "instruksi": "",
+   "instruksi": "Budi punya **58 jeruk**, lalu mendapat lagi **26 jeruk**. Berapa jeruk Budi sekarang?",
    "data": {
-    "deret": [
-     2,
-     3,
-     5,
-     8,
-     12
-    ]
+    "a": 58,
+    "b": 26,
+    "label1": "Punya",
+    "label2": "Dapat lagi",
+    "icon": "fa-lemon",
+    "color": "text-yellow-500",
+    "emoji": "1f34a"
    }
   },
   {
-   "kode": "M2-NM-POLA-L5-Q5",
-   "kompetensi": "NM-POLA",
-   "bagian": 3,
+   "kode": "M2-NM-TAMBAH-L4-Q5",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
+   "level": 4,
+   "petunjuk": "",
+   "kunci": 84,
+   "urutan": 5,
+   "instruksi": "Di kardus ada **49 bintang**. Ibu menambahkan **35 bintang** lagi. Berapa bintang di kardus sekarang?",
+   "data": {
+    "a": 49,
+    "b": 35,
+    "label1": "Sudah ada",
+    "label2": "Ditambah",
+    "icon": "fa-star",
+    "color": "text-amber-400",
+    "emoji": "2b50"
+   }
+  },
+  {
+   "kode": "M2-NM-TAMBAH-L5-Q1",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
    "level": 5,
-   "petunjuk": "Setiap angka dibagi 2.",
+   "petunjuk": "",
+   "kunci": 115,
+   "urutan": 1,
+   "instruksi": "Sari mengumpulkan **67 apel** pada pagi hari dan **48 apel** pada sore hari. Berapa apel yang terkumpul semuanya?",
+   "data": {
+    "a": 67,
+    "b": 48,
+    "label1": "Pagi hari",
+    "label2": "Sore hari",
+    "icon": "fa-apple-whole",
+    "color": "text-red-500",
+    "emoji": "1f34e"
+   }
+  },
+  {
+   "kode": "M2-NM-TAMBAH-L5-Q2",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
+   "level": 5,
+   "petunjuk": "",
+   "kunci": 114,
+   "urutan": 2,
+   "instruksi": "Ayah punya **75 buku**, lalu mendapat lagi **39 buku**. Berapa buku Ayah sekarang?",
+   "data": {
+    "a": 75,
+    "b": 39,
+    "label1": "Punya",
+    "label2": "Dapat lagi",
+    "icon": "fa-book",
+    "color": "text-blue-500",
+    "emoji": "1f4da"
+   }
+  },
+  {
+   "kode": "M2-NM-TAMBAH-L5-Q3",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
+   "level": 5,
+   "petunjuk": "",
+   "kunci": 143,
+   "urutan": 3,
+   "instruksi": "Di kotak ada **86 kue**. Ibu menambahkan **57 kue** lagi. Berapa kue di kotak sekarang?",
+   "data": {
+    "a": 86,
+    "b": 57,
+    "label1": "Sudah ada",
+    "label2": "Ditambah",
+    "icon": "fa-cookie",
+    "color": "text-orange-500",
+    "emoji": "1f9c1"
+   }
+  },
+  {
+   "kode": "M2-NM-TAMBAH-L5-Q4",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
+   "level": 5,
+   "petunjuk": "",
+   "kunci": 162,
+   "urutan": 4,
+   "instruksi": "Kakak mengumpulkan **94 ikan** pada pagi hari dan **68 ikan** pada sore hari. Berapa ikan yang terkumpul semuanya?",
+   "data": {
+    "a": 94,
+    "b": 68,
+    "label1": "Pagi hari",
+    "label2": "Sore hari",
+    "icon": "fa-fish",
+    "color": "text-teal-500",
+    "emoji": "1f41f"
+   }
+  },
+  {
+   "kode": "M2-NM-TAMBAH-L5-Q5",
+   "kompetensi": "NM-TAMBAH",
+   "bagian": 1,
+   "level": 5,
+   "petunjuk": "",
+   "kunci": 143,
+   "urutan": 5,
+   "instruksi": "Lumi punya **78 pensil**, lalu mendapat lagi **65 pensil**. Berapa pensil Lumi sekarang?",
+   "data": {
+    "a": 78,
+    "b": 65,
+    "label1": "Punya",
+    "label2": "Dapat lagi",
+    "icon": "fa-pencil",
+    "color": "text-purple-500",
+    "emoji": "270f"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L1-Q1",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 1,
+   "petunjuk": "",
+   "kunci": 4,
+   "urutan": 1,
+   "instruksi": "Raka punya **7 ikan**. Sebanyak **3 ikan** dipindahkan. Berapa ikan yang tersisa?",
+   "data": {
+    "a": 7,
+    "b": 3,
+    "label1": "Mula-mula",
+    "label2": "Berkurang",
+    "icon": "fa-fish",
+    "color": "text-teal-500",
+    "emoji": "1f41f"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L1-Q2",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 1,
+   "petunjuk": "",
+   "kunci": 5,
+   "urutan": 2,
+   "instruksi": "Di kotak pensil ada **9 pensil**. Sebanyak **4 pensil** diambil. Berapa pensil yang masih ada di kotak pensil?",
+   "data": {
+    "a": 9,
+    "b": 4,
+    "label1": "Ada",
+    "label2": "Diambil",
+    "icon": "fa-pencil",
+    "color": "text-purple-500",
+    "emoji": "270f"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L1-Q3",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 1,
+   "petunjuk": "",
+   "kunci": 3,
+   "urutan": 3,
+   "instruksi": "Ibu menyiapkan **8 daun**. Setelah **5 daun** dipakai, berapa daun yang tinggal?",
+   "data": {
+    "a": 8,
+    "b": 5,
+    "label1": "Disiapkan",
+    "label2": "Dipakai",
+    "icon": "fa-leaf",
+    "color": "text-green-500",
+    "emoji": "1f343"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L1-Q4",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 1,
+   "petunjuk": "",
+   "kunci": 4,
+   "urutan": 4,
+   "instruksi": "Nenek punya **10 kelereng**. Sebanyak **6 kelereng** diberikan kepada adik. Berapa kelereng yang tersisa?",
+   "data": {
+    "a": 10,
+    "b": 6,
+    "label1": "Mula-mula",
+    "label2": "Berkurang",
+    "icon": "fa-circle",
+    "color": "text-sky-500",
+    "emoji": "1f535"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L1-Q5",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 1,
+   "petunjuk": "",
+   "kunci": 4,
+   "urutan": 5,
+   "instruksi": "Di toples ada **6 permen**. Sebanyak **2 permen** diambil. Berapa permen yang masih ada di toples?",
+   "data": {
+    "a": 6,
+    "b": 2,
+    "label1": "Ada",
+    "label2": "Diambil",
+    "icon": "fa-candy-cane",
+    "color": "text-violet-500",
+    "emoji": "1f36c"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L2-Q1",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 2,
+   "petunjuk": "",
+   "kunci": 7,
+   "urutan": 1,
+   "instruksi": "Ibu menyiapkan **13 jeruk**. Setelah **6 jeruk** dipakai, berapa jeruk yang tinggal?",
+   "data": {
+    "a": 13,
+    "b": 6,
+    "label1": "Disiapkan",
+    "label2": "Dipakai",
+    "icon": "fa-lemon",
+    "color": "text-yellow-500",
+    "emoji": "1f34a"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L2-Q2",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 2,
+   "petunjuk": "",
+   "kunci": 7,
+   "urutan": 2,
+   "instruksi": "Dina punya **15 bintang**. Sebanyak **8 bintang** ditempel di dinding. Berapa bintang yang tersisa?",
+   "data": {
+    "a": 15,
+    "b": 8,
+    "label1": "Mula-mula",
+    "label2": "Berkurang",
+    "icon": "fa-star",
+    "color": "text-amber-400",
+    "emoji": "2b50"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L2-Q3",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 2,
+   "petunjuk": "",
+   "kunci": 5,
+   "urutan": 3,
+   "instruksi": "Di keranjang ada **12 apel**. Sebanyak **7 apel** diambil. Berapa apel yang masih ada di keranjang?",
+   "data": {
+    "a": 12,
+    "b": 7,
+    "label1": "Ada",
+    "label2": "Diambil",
+    "icon": "fa-apple-whole",
+    "color": "text-red-500",
+    "emoji": "1f34e"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L2-Q4",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 2,
+   "petunjuk": "",
+   "kunci": 8,
+   "urutan": 4,
+   "instruksi": "Ibu menyiapkan **17 buku**. Setelah **9 buku** dipakai, berapa buku yang tinggal?",
+   "data": {
+    "a": 17,
+    "b": 9,
+    "label1": "Disiapkan",
+    "label2": "Dipakai",
+    "icon": "fa-book",
+    "color": "text-blue-500",
+    "emoji": "1f4da"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L2-Q5",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 2,
+   "petunjuk": "",
    "kunci": 9,
    "urutan": 5,
-   "instruksi": "",
+   "instruksi": "Sari punya **14 kue**. Sebanyak **5 kue** dimakan. Berapa kue yang tersisa?",
    "data": {
-    "deret": [
-     144,
-     72,
-     36,
-     18
-    ]
+    "a": 14,
+    "b": 5,
+    "label1": "Mula-mula",
+    "label2": "Berkurang",
+    "icon": "fa-cookie",
+    "color": "text-orange-500",
+    "emoji": "1f9c1"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L3-Q1",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 25,
+   "urutan": 1,
+   "instruksi": "Di kolam ada **48 ikan**. Sebanyak **23 ikan** diambil. Berapa ikan yang masih ada di kolam?",
+   "data": {
+    "a": 48,
+    "b": 23,
+    "label1": "Ada",
+    "label2": "Diambil",
+    "icon": "fa-fish",
+    "color": "text-teal-500",
+    "emoji": "1f41f"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L3-Q2",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 23,
+   "urutan": 2,
+   "instruksi": "Ibu menyiapkan **57 pensil**. Setelah **34 pensil** dipakai, berapa pensil yang tinggal?",
+   "data": {
+    "a": 57,
+    "b": 34,
+    "label1": "Disiapkan",
+    "label2": "Dipakai",
+    "icon": "fa-pencil",
+    "color": "text-purple-500",
+    "emoji": "270f"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L3-Q3",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 44,
+   "urutan": 3,
+   "instruksi": "Kakak punya **69 daun**. Sebanyak **25 daun** diterbangkan angin. Berapa daun yang tersisa?",
+   "data": {
+    "a": 69,
+    "b": 25,
+    "label1": "Mula-mula",
+    "label2": "Berkurang",
+    "icon": "fa-leaf",
+    "color": "text-green-500",
+    "emoji": "1f343"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L3-Q4",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 35,
+   "urutan": 4,
+   "instruksi": "Di kantong ada **76 kelereng**. Sebanyak **41 kelereng** diambil. Berapa kelereng yang masih ada di kantong?",
+   "data": {
+    "a": 76,
+    "b": 41,
+    "label1": "Ada",
+    "label2": "Diambil",
+    "icon": "fa-circle",
+    "color": "text-sky-500",
+    "emoji": "1f535"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L3-Q5",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 52,
+   "urutan": 5,
+   "instruksi": "Ibu menyiapkan **88 permen**. Setelah **36 permen** dipakai, berapa permen yang tinggal?",
+   "data": {
+    "a": 88,
+    "b": 36,
+    "label1": "Disiapkan",
+    "label2": "Dipakai",
+    "icon": "fa-candy-cane",
+    "color": "text-violet-500",
+    "emoji": "1f36c"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L4-Q1",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 4,
+   "petunjuk": "",
+   "kunci": 25,
+   "urutan": 1,
+   "instruksi": "Budi punya **52 jeruk**. Sebanyak **27 jeruk** dimakan. Berapa jeruk yang tersisa?",
+   "data": {
+    "a": 52,
+    "b": 27,
+    "label1": "Mula-mula",
+    "label2": "Berkurang",
+    "icon": "fa-lemon",
+    "color": "text-yellow-500",
+    "emoji": "1f34a"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L4-Q2",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 4,
+   "petunjuk": "",
+   "kunci": 25,
+   "urutan": 2,
+   "instruksi": "Di kardus ada **63 bintang**. Sebanyak **38 bintang** diambil. Berapa bintang yang masih ada di kardus?",
+   "data": {
+    "a": 63,
+    "b": 38,
+    "label1": "Ada",
+    "label2": "Diambil",
+    "icon": "fa-star",
+    "color": "text-amber-400",
+    "emoji": "2b50"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L4-Q3",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 4,
+   "petunjuk": "",
+   "kunci": 25,
+   "urutan": 3,
+   "instruksi": "Ibu menyiapkan **71 apel**. Setelah **46 apel** dipakai, berapa apel yang tinggal?",
+   "data": {
+    "a": 71,
+    "b": 46,
+    "label1": "Disiapkan",
+    "label2": "Dipakai",
+    "icon": "fa-apple-whole",
+    "color": "text-red-500",
+    "emoji": "1f34e"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L4-Q4",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 4,
+   "petunjuk": "",
+   "kunci": 25,
+   "urutan": 4,
+   "instruksi": "Ayah punya **84 buku**. Sebanyak **59 buku** dipinjam teman. Berapa buku yang tersisa?",
+   "data": {
+    "a": 84,
+    "b": 59,
+    "label1": "Mula-mula",
+    "label2": "Berkurang",
+    "icon": "fa-book",
+    "color": "text-blue-500",
+    "emoji": "1f4da"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L4-Q5",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 4,
+   "petunjuk": "",
+   "kunci": 47,
+   "urutan": 5,
+   "instruksi": "Di kotak ada **90 kue**. Sebanyak **43 kue** diambil. Berapa kue yang masih ada di kotak?",
+   "data": {
+    "a": 90,
+    "b": 43,
+    "label1": "Ada",
+    "label2": "Diambil",
+    "icon": "fa-cookie",
+    "color": "text-orange-500",
+    "emoji": "1f9c1"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L5-Q1",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 5,
+   "petunjuk": "",
+   "kunci": 77,
+   "urutan": 1,
+   "instruksi": "Ibu menyiapkan **125 ikan**. Setelah **48 ikan** dipakai, berapa ikan yang tinggal?",
+   "data": {
+    "a": 125,
+    "b": 48,
+    "label1": "Disiapkan",
+    "label2": "Dipakai",
+    "icon": "fa-fish",
+    "color": "text-teal-500",
+    "emoji": "1f41f"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L5-Q2",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 5,
+   "petunjuk": "",
+   "kunci": 75,
+   "urutan": 2,
+   "instruksi": "Lumi punya **132 pensil**. Sebanyak **57 pensil** dipinjam teman. Berapa pensil yang tersisa?",
+   "data": {
+    "a": 132,
+    "b": 57,
+    "label1": "Mula-mula",
+    "label2": "Berkurang",
+    "icon": "fa-pencil",
+    "color": "text-purple-500",
+    "emoji": "270f"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L5-Q3",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 5,
+   "petunjuk": "",
+   "kunci": 75,
+   "urutan": 3,
+   "instruksi": "Di keranjang ada **141 daun**. Sebanyak **66 daun** diambil. Berapa daun yang masih ada di keranjang?",
+   "data": {
+    "a": 141,
+    "b": 66,
+    "label1": "Ada",
+    "label2": "Diambil",
+    "icon": "fa-leaf",
+    "color": "text-green-500",
+    "emoji": "1f343"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L5-Q4",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 5,
+   "petunjuk": "",
+   "kunci": 77,
+   "urutan": 4,
+   "instruksi": "Ibu menyiapkan **150 kelereng**. Setelah **73 kelereng** dipakai, berapa kelereng yang tinggal?",
+   "data": {
+    "a": 150,
+    "b": 73,
+    "label1": "Disiapkan",
+    "label2": "Dipakai",
+    "icon": "fa-circle",
+    "color": "text-sky-500",
+    "emoji": "1f535"
+   }
+  },
+  {
+   "kode": "M2-NM-KURANG-L5-Q5",
+   "kompetensi": "NM-KURANG",
+   "bagian": 2,
+   "level": 5,
+   "petunjuk": "",
+   "kunci": 59,
+   "urutan": 5,
+   "instruksi": "Raka punya **118 permen**. Sebanyak **59 permen** dimakan. Berapa permen yang tersisa?",
+   "data": {
+    "a": 118,
+    "b": 59,
+    "label1": "Mula-mula",
+    "label2": "Berkurang",
+    "icon": "fa-candy-cane",
+    "color": "text-violet-500",
+    "emoji": "1f36c"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L1-Q1",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 1,
+   "petunjuk": "",
+   "kunci": 6,
+   "urutan": 1,
+   "instruksi": "Ada **2 kantong**. Setiap kantong berisi **3 kelereng**. Berapa kelereng semuanya?",
+   "data": {
+    "a": 2,
+    "b": 3,
+    "label1": "Banyak kantong",
+    "label2": "Isi tiap kantong",
+    "icon": "fa-circle",
+    "color": "text-sky-500",
+    "emoji": "1f535"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L1-Q2",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 1,
+   "petunjuk": "",
+   "kunci": 6,
+   "urutan": 2,
+   "instruksi": "Kakak membuat **3 kelompok** permen. Setiap kelompok terdiri dari **2 permen**. Berapa permen semuanya?",
+   "data": {
+    "a": 3,
+    "b": 2,
+    "label1": "Banyak kelompok",
+    "label2": "Isi tiap kelompok",
+    "icon": "fa-candy-cane",
+    "color": "text-violet-500",
+    "emoji": "1f36c"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L1-Q3",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 1,
+   "petunjuk": "",
+   "kunci": 10,
+   "urutan": 3,
+   "instruksi": "Setiap hari Lumi menyiapkan **5 jeruk**. Berapa jeruk yang disiapkan selama **2 hari**?",
+   "data": {
+    "a": 2,
+    "b": 5,
+    "label1": "Banyak hari",
+    "label2": "Tiap hari",
+    "icon": "fa-lemon",
+    "color": "text-yellow-500",
+    "emoji": "1f34a"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L1-Q4",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 1,
+   "petunjuk": "",
+   "kunci": 8,
+   "urutan": 4,
+   "instruksi": "Ada **4 kardus**. Setiap kardus berisi **2 bintang**. Berapa bintang semuanya?",
+   "data": {
+    "a": 4,
+    "b": 2,
+    "label1": "Banyak kardus",
+    "label2": "Isi tiap kardus",
+    "icon": "fa-star",
+    "color": "text-amber-400",
+    "emoji": "2b50"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L1-Q5",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 1,
+   "petunjuk": "",
+   "kunci": 10,
+   "urutan": 5,
+   "instruksi": "Budi membuat **5 kelompok** apel. Setiap kelompok terdiri dari **2 apel**. Berapa apel semuanya?",
+   "data": {
+    "a": 5,
+    "b": 2,
+    "label1": "Banyak kelompok",
+    "label2": "Isi tiap kelompok",
+    "icon": "fa-apple-whole",
+    "color": "text-red-500",
+    "emoji": "1f34e"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L2-Q1",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 2,
+   "petunjuk": "",
+   "kunci": 12,
+   "urutan": 1,
+   "instruksi": "Setiap hari Raka menyiapkan **4 buku**. Berapa buku yang disiapkan selama **3 hari**?",
+   "data": {
+    "a": 3,
+    "b": 4,
+    "label1": "Banyak hari",
+    "label2": "Tiap hari",
+    "icon": "fa-book",
+    "color": "text-blue-500",
+    "emoji": "1f4da"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L2-Q2",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 2,
+   "petunjuk": "",
+   "kunci": 12,
+   "urutan": 2,
+   "instruksi": "Ada **4 kotak**. Setiap kotak berisi **3 kue**. Berapa kue semuanya?",
+   "data": {
+    "a": 4,
+    "b": 3,
+    "label1": "Banyak kotak",
+    "label2": "Isi tiap kotak",
+    "icon": "fa-cookie",
+    "color": "text-orange-500",
+    "emoji": "1f9c1"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L2-Q3",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 2,
+   "petunjuk": "",
+   "kunci": 15,
+   "urutan": 3,
+   "instruksi": "Ayah membuat **5 kelompok** ikan. Setiap kelompok terdiri dari **3 ikan**. Berapa ikan semuanya?",
+   "data": {
+    "a": 5,
+    "b": 3,
+    "label1": "Banyak kelompok",
+    "label2": "Isi tiap kelompok",
+    "icon": "fa-fish",
+    "color": "text-teal-500",
+    "emoji": "1f41f"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L2-Q4",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 2,
+   "petunjuk": "",
+   "kunci": 16,
+   "urutan": 4,
+   "instruksi": "Setiap hari Nenek menyiapkan **8 pensil**. Berapa pensil yang disiapkan selama **2 hari**?",
+   "data": {
+    "a": 2,
+    "b": 8,
+    "label1": "Banyak hari",
+    "label2": "Tiap hari",
+    "icon": "fa-pencil",
+    "color": "text-purple-500",
+    "emoji": "270f"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L2-Q5",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 2,
+   "petunjuk": "",
+   "kunci": 20,
+   "urutan": 5,
+   "instruksi": "Ada **5 keranjang**. Setiap keranjang berisi **4 daun**. Berapa daun semuanya?",
+   "data": {
+    "a": 5,
+    "b": 4,
+    "label1": "Banyak keranjang",
+    "label2": "Isi tiap keranjang",
+    "icon": "fa-leaf",
+    "color": "text-green-500",
+    "emoji": "1f343"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L3-Q1",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 24,
+   "urutan": 1,
+   "instruksi": "Lumi membuat **6 kelompok** kelereng. Setiap kelompok terdiri dari **4 kelereng**. Berapa kelereng semuanya?",
+   "data": {
+    "a": 6,
+    "b": 4,
+    "label1": "Banyak kelompok",
+    "label2": "Isi tiap kelompok",
+    "icon": "fa-circle",
+    "color": "text-sky-500",
+    "emoji": "1f535"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L3-Q2",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 21,
+   "urutan": 2,
+   "instruksi": "Setiap hari Dina menyiapkan **3 permen**. Berapa permen yang disiapkan selama **7 hari**?",
+   "data": {
+    "a": 7,
+    "b": 3,
+    "label1": "Banyak hari",
+    "label2": "Tiap hari",
+    "icon": "fa-candy-cane",
+    "color": "text-violet-500",
+    "emoji": "1f36c"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L3-Q3",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 40,
+   "urutan": 3,
+   "instruksi": "Ada **8 piring**. Setiap piring berisi **5 jeruk**. Berapa jeruk semuanya?",
+   "data": {
+    "a": 8,
+    "b": 5,
+    "label1": "Banyak piring",
+    "label2": "Isi tiap piring",
+    "icon": "fa-lemon",
+    "color": "text-yellow-500",
+    "emoji": "1f34a"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L3-Q4",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 18,
+   "urutan": 4,
+   "instruksi": "Raka membuat **9 kelompok** bintang. Setiap kelompok terdiri dari **2 bintang**. Berapa bintang semuanya?",
+   "data": {
+    "a": 9,
+    "b": 2,
+    "label1": "Banyak kelompok",
+    "label2": "Isi tiap kelompok",
+    "icon": "fa-star",
+    "color": "text-amber-400",
+    "emoji": "2b50"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L3-Q5",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 36,
+   "urutan": 5,
+   "instruksi": "Setiap hari Sari menyiapkan **6 apel**. Berapa apel yang disiapkan selama **6 hari**?",
+   "data": {
+    "a": 6,
+    "b": 6,
+    "label1": "Banyak hari",
+    "label2": "Tiap hari",
+    "icon": "fa-apple-whole",
+    "color": "text-red-500",
+    "emoji": "1f34e"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L4-Q1",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 4,
+   "petunjuk": "",
+   "kunci": 70,
+   "urutan": 1,
+   "instruksi": "Ada **10 rak**. Setiap rak berisi **7 buku**. Berapa buku semuanya?",
+   "data": {
+    "a": 10,
+    "b": 7,
+    "label1": "Banyak rak",
+    "label2": "Isi tiap rak",
+    "icon": "fa-book",
+    "color": "text-blue-500",
+    "emoji": "1f4da"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L4-Q2",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 4,
+   "petunjuk": "",
+   "kunci": 36,
+   "urutan": 2,
+   "instruksi": "Nenek membuat **12 kelompok** kue. Setiap kelompok terdiri dari **3 kue**. Berapa kue semuanya?",
+   "data": {
+    "a": 12,
+    "b": 3,
+    "label1": "Banyak kelompok",
+    "label2": "Isi tiap kelompok",
+    "icon": "fa-cookie",
+    "color": "text-orange-500",
+    "emoji": "1f9c1"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L4-Q3",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 4,
+   "petunjuk": "",
+   "kunci": 84,
+   "urutan": 3,
+   "instruksi": "Setiap hari Kakak menyiapkan **4 ikan**. Berapa ikan yang disiapkan selama **21 hari**?",
+   "data": {
+    "a": 21,
+    "b": 4,
+    "label1": "Banyak hari",
+    "label2": "Tiap hari",
+    "icon": "fa-fish",
+    "color": "text-teal-500",
+    "emoji": "1f41f"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L4-Q4",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 4,
+   "petunjuk": "",
+   "kunci": 55,
+   "urutan": 4,
+   "instruksi": "Ada **11 kotak pensil**. Setiap kotak pensil berisi **5 pensil**. Berapa pensil semuanya?",
+   "data": {
+    "a": 11,
+    "b": 5,
+    "label1": "Banyak kotak pensil",
+    "label2": "Isi tiap kotak pensil",
+    "icon": "fa-pencil",
+    "color": "text-purple-500",
+    "emoji": "270f"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L4-Q5",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 4,
+   "petunjuk": "",
+   "kunci": 39,
+   "urutan": 5,
+   "instruksi": "Dina membuat **13 kelompok** daun. Setiap kelompok terdiri dari **3 daun**. Berapa daun semuanya?",
+   "data": {
+    "a": 13,
+    "b": 3,
+    "label1": "Banyak kelompok",
+    "label2": "Isi tiap kelompok",
+    "icon": "fa-leaf",
+    "color": "text-green-500",
+    "emoji": "1f343"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L5-Q1",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 5,
+   "petunjuk": "",
+   "kunci": 60,
+   "urutan": 1,
+   "instruksi": "Setiap hari Budi menyiapkan **4 kelereng**. Berapa kelereng yang disiapkan selama **15 hari**?",
+   "data": {
+    "a": 15,
+    "b": 4,
+    "label1": "Banyak hari",
+    "label2": "Tiap hari",
+    "icon": "fa-circle",
+    "color": "text-sky-500",
+    "emoji": "1f535"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L5-Q2",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 5,
+   "petunjuk": "",
+   "kunci": 115,
+   "urutan": 2,
+   "instruksi": "Ada **23 toples**. Setiap toples berisi **5 permen**. Berapa permen semuanya?",
+   "data": {
+    "a": 23,
+    "b": 5,
+    "label1": "Banyak toples",
+    "label2": "Isi tiap toples",
+    "icon": "fa-candy-cane",
+    "color": "text-violet-500",
+    "emoji": "1f36c"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L5-Q3",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 5,
+   "petunjuk": "",
+   "kunci": 54,
+   "urutan": 3,
+   "instruksi": "Sari membuat **18 kelompok** jeruk. Setiap kelompok terdiri dari **3 jeruk**. Berapa jeruk semuanya?",
+   "data": {
+    "a": 18,
+    "b": 3,
+    "label1": "Banyak kelompok",
+    "label2": "Isi tiap kelompok",
+    "icon": "fa-lemon",
+    "color": "text-yellow-500",
+    "emoji": "1f34a"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L5-Q4",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 5,
+   "petunjuk": "",
+   "kunci": 104,
+   "urutan": 4,
+   "instruksi": "Setiap hari Ayah menyiapkan **4 bintang**. Berapa bintang yang disiapkan selama **26 hari**?",
+   "data": {
+    "a": 26,
+    "b": 4,
+    "label1": "Banyak hari",
+    "label2": "Tiap hari",
+    "icon": "fa-star",
+    "color": "text-amber-400",
+    "emoji": "2b50"
+   }
+  },
+  {
+   "kode": "M2-NM-KALI-L5-Q5",
+   "kompetensi": "NM-KALI",
+   "bagian": 3,
+   "level": 5,
+   "petunjuk": "",
+   "kunci": 102,
+   "urutan": 5,
+   "instruksi": "Ada **17 keranjang**. Setiap keranjang berisi **6 apel**. Berapa apel semuanya?",
+   "data": {
+    "a": 17,
+    "b": 6,
+    "label1": "Banyak keranjang",
+    "label2": "Isi tiap keranjang",
+    "icon": "fa-apple-whole",
+    "color": "text-red-500",
+    "emoji": "1f34e"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L1-Q1",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 1,
+   "petunjuk": "",
+   "kunci": 3,
+   "urutan": 1,
+   "instruksi": "Dina membagi **6 bintang** sama banyak ke **2 kardus**. Berapa bintang di setiap kardus?",
+   "data": {
+    "a": 6,
+    "b": 2,
+    "label1": "Semua bintang",
+    "label2": "Banyak kardus",
+    "icon": "fa-star",
+    "color": "text-amber-400",
+    "emoji": "2b50"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L1-Q2",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 1,
+   "petunjuk": "",
+   "kunci": 4,
+   "urutan": 2,
+   "instruksi": "Ada **8 apel** yang akan dibagikan rata kepada **2 anak**. Berapa apel yang diterima setiap anak?",
+   "data": {
+    "a": 8,
+    "b": 2,
+    "label1": "Semua apel",
+    "label2": "Banyak anak",
+    "icon": "fa-apple-whole",
+    "color": "text-red-500",
+    "emoji": "1f34e"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L1-Q3",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 1,
+   "petunjuk": "",
+   "kunci": 2,
+   "urutan": 3,
+   "instruksi": "**10 buku** disusun sama banyak dalam **5 baris**. Berapa buku di setiap baris?",
+   "data": {
+    "a": 10,
+    "b": 5,
+    "label1": "Semua buku",
+    "label2": "Banyak baris",
+    "icon": "fa-book",
+    "color": "text-blue-500",
+    "emoji": "1f4da"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L1-Q4",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 1,
+   "petunjuk": "",
+   "kunci": 3,
+   "urutan": 4,
+   "instruksi": "Sari membagi **9 kue** sama banyak ke **3 kotak**. Berapa kue di setiap kotak?",
+   "data": {
+    "a": 9,
+    "b": 3,
+    "label1": "Semua kue",
+    "label2": "Banyak kotak",
+    "icon": "fa-cookie",
+    "color": "text-orange-500",
+    "emoji": "1f9c1"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L1-Q5",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 1,
+   "petunjuk": "",
+   "kunci": 6,
+   "urutan": 5,
+   "instruksi": "Ada **12 ikan** yang akan dibagikan rata kepada **2 anak**. Berapa ikan yang diterima setiap anak?",
+   "data": {
+    "a": 12,
+    "b": 2,
+    "label1": "Semua ikan",
+    "label2": "Banyak anak",
+    "icon": "fa-fish",
+    "color": "text-teal-500",
+    "emoji": "1f41f"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L2-Q1",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 2,
+   "petunjuk": "",
+   "kunci": 4,
+   "urutan": 1,
+   "instruksi": "**12 pensil** disusun sama banyak dalam **3 baris**. Berapa pensil di setiap baris?",
+   "data": {
+    "a": 12,
+    "b": 3,
+    "label1": "Semua pensil",
+    "label2": "Banyak baris",
+    "icon": "fa-pencil",
+    "color": "text-purple-500",
+    "emoji": "270f"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L2-Q2",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 2,
+   "petunjuk": "",
+   "kunci": 3,
+   "urutan": 2,
+   "instruksi": "Kakak membagi **15 daun** sama banyak ke **5 keranjang**. Berapa daun di setiap keranjang?",
+   "data": {
+    "a": 15,
+    "b": 5,
+    "label1": "Semua daun",
+    "label2": "Banyak keranjang",
+    "icon": "fa-leaf",
+    "color": "text-green-500",
+    "emoji": "1f343"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L2-Q3",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 2,
+   "petunjuk": "",
+   "kunci": 4,
+   "urutan": 3,
+   "instruksi": "Ada **16 kelereng** yang akan dibagikan rata kepada **4 anak**. Berapa kelereng yang diterima setiap anak?",
+   "data": {
+    "a": 16,
+    "b": 4,
+    "label1": "Semua kelereng",
+    "label2": "Banyak anak",
+    "icon": "fa-circle",
+    "color": "text-sky-500",
+    "emoji": "1f535"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L2-Q4",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 2,
+   "petunjuk": "",
+   "kunci": 6,
+   "urutan": 4,
+   "instruksi": "**18 permen** disusun sama banyak dalam **3 baris**. Berapa permen di setiap baris?",
+   "data": {
+    "a": 18,
+    "b": 3,
+    "label1": "Semua permen",
+    "label2": "Banyak baris",
+    "icon": "fa-candy-cane",
+    "color": "text-violet-500",
+    "emoji": "1f36c"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L2-Q5",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 2,
+   "petunjuk": "",
+   "kunci": 5,
+   "urutan": 5,
+   "instruksi": "Budi membagi **20 jeruk** sama banyak ke **4 piring**. Berapa jeruk di setiap piring?",
+   "data": {
+    "a": 20,
+    "b": 4,
+    "label1": "Semua jeruk",
+    "label2": "Banyak piring",
+    "icon": "fa-lemon",
+    "color": "text-yellow-500",
+    "emoji": "1f34a"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L3-Q1",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 6,
+   "urutan": 1,
+   "instruksi": "Ada **24 bintang** yang akan dibagikan rata kepada **4 anak**. Berapa bintang yang diterima setiap anak?",
+   "data": {
+    "a": 24,
+    "b": 4,
+    "label1": "Semua bintang",
+    "label2": "Banyak anak",
+    "icon": "fa-star",
+    "color": "text-amber-400",
+    "emoji": "2b50"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L3-Q2",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 7,
+   "urutan": 2,
+   "instruksi": "**35 apel** disusun sama banyak dalam **5 baris**. Berapa apel di setiap baris?",
+   "data": {
+    "a": 35,
+    "b": 5,
+    "label1": "Semua apel",
+    "label2": "Banyak baris",
+    "icon": "fa-apple-whole",
+    "color": "text-red-500",
+    "emoji": "1f34e"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L3-Q3",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 6,
+   "urutan": 3,
+   "instruksi": "Ayah membagi **36 buku** sama banyak ke **6 rak**. Berapa buku di setiap rak?",
+   "data": {
+    "a": 36,
+    "b": 6,
+    "label1": "Semua buku",
+    "label2": "Banyak rak",
+    "icon": "fa-book",
+    "color": "text-blue-500",
+    "emoji": "1f4da"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L3-Q4",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 7,
+   "urutan": 4,
+   "instruksi": "Ada **42 kue** yang akan dibagikan rata kepada **6 anak**. Berapa kue yang diterima setiap anak?",
+   "data": {
+    "a": 42,
+    "b": 6,
+    "label1": "Semua kue",
+    "label2": "Banyak anak",
+    "icon": "fa-cookie",
+    "color": "text-orange-500",
+    "emoji": "1f9c1"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L3-Q5",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 3,
+   "petunjuk": "",
+   "kunci": 6,
+   "urutan": 5,
+   "instruksi": "**48 ikan** disusun sama banyak dalam **8 baris**. Berapa ikan di setiap baris?",
+   "data": {
+    "a": 48,
+    "b": 8,
+    "label1": "Semua ikan",
+    "label2": "Banyak baris",
+    "icon": "fa-fish",
+    "color": "text-teal-500",
+    "emoji": "1f41f"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L4-Q1",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 4,
+   "petunjuk": "",
+   "kunci": 12,
+   "urutan": 1,
+   "instruksi": "Lumi membagi **48 pensil** sama banyak ke **4 kotak pensil**. Berapa pensil di setiap kotak pensil?",
+   "data": {
+    "a": 48,
+    "b": 4,
+    "label1": "Semua pensil",
+    "label2": "Banyak kotak pensil",
+    "icon": "fa-pencil",
+    "color": "text-purple-500",
+    "emoji": "270f"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L4-Q2",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 4,
+   "petunjuk": "",
+   "kunci": 20,
+   "urutan": 2,
+   "instruksi": "Ada **60 daun** yang akan dibagikan rata kepada **3 anak**. Berapa daun yang diterima setiap anak?",
+   "data": {
+    "a": 60,
+    "b": 3,
+    "label1": "Semua daun",
+    "label2": "Banyak anak",
+    "icon": "fa-leaf",
+    "color": "text-green-500",
+    "emoji": "1f343"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L4-Q3",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 4,
+   "petunjuk": "",
+   "kunci": 42,
+   "urutan": 3,
+   "instruksi": "**84 kelereng** disusun sama banyak dalam **2 baris**. Berapa kelereng di setiap baris?",
+   "data": {
+    "a": 84,
+    "b": 2,
+    "label1": "Semua kelereng",
+    "label2": "Banyak baris",
+    "icon": "fa-circle",
+    "color": "text-sky-500",
+    "emoji": "1f535"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L4-Q4",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 4,
+   "petunjuk": "",
+   "kunci": 11,
+   "urutan": 4,
+   "instruksi": "Raka membagi **66 permen** sama banyak ke **6 toples**. Berapa permen di setiap toples?",
+   "data": {
+    "a": 66,
+    "b": 6,
+    "label1": "Semua permen",
+    "label2": "Banyak toples",
+    "icon": "fa-candy-cane",
+    "color": "text-violet-500",
+    "emoji": "1f36c"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L4-Q5",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 4,
+   "petunjuk": "",
+   "kunci": 10,
+   "urutan": 5,
+   "instruksi": "Ada **90 jeruk** yang akan dibagikan rata kepada **9 anak**. Berapa jeruk yang diterima setiap anak?",
+   "data": {
+    "a": 90,
+    "b": 9,
+    "label1": "Semua jeruk",
+    "label2": "Banyak anak",
+    "icon": "fa-lemon",
+    "color": "text-yellow-500",
+    "emoji": "1f34a"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L5-Q1",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 5,
+   "petunjuk": "",
+   "kunci": 24,
+   "urutan": 1,
+   "instruksi": "**96 bintang** disusun sama banyak dalam **4 baris**. Berapa bintang di setiap baris?",
+   "data": {
+    "a": 96,
+    "b": 4,
+    "label1": "Semua bintang",
+    "label2": "Banyak baris",
+    "icon": "fa-star",
+    "color": "text-amber-400",
+    "emoji": "2b50"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L5-Q2",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 5,
+   "petunjuk": "",
+   "kunci": 15,
+   "urutan": 2,
+   "instruksi": "Nenek membagi **75 apel** sama banyak ke **5 keranjang**. Berapa apel di setiap keranjang?",
+   "data": {
+    "a": 75,
+    "b": 5,
+    "label1": "Semua apel",
+    "label2": "Banyak keranjang",
+    "icon": "fa-apple-whole",
+    "color": "text-red-500",
+    "emoji": "1f34e"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L5-Q3",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 5,
+   "petunjuk": "",
+   "kunci": 13,
+   "urutan": 3,
+   "instruksi": "Ada **91 buku** yang akan dibagikan rata kepada **7 anak**. Berapa buku yang diterima setiap anak?",
+   "data": {
+    "a": 91,
+    "b": 7,
+    "label1": "Semua buku",
+    "label2": "Banyak anak",
+    "icon": "fa-book",
+    "color": "text-blue-500",
+    "emoji": "1f4da"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L5-Q4",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 5,
+   "petunjuk": "",
+   "kunci": 11,
+   "urutan": 4,
+   "instruksi": "**88 kue** disusun sama banyak dalam **8 baris**. Berapa kue di setiap baris?",
+   "data": {
+    "a": 88,
+    "b": 8,
+    "label1": "Semua kue",
+    "label2": "Banyak baris",
+    "icon": "fa-cookie",
+    "color": "text-orange-500",
+    "emoji": "1f9c1"
+   }
+  },
+  {
+   "kode": "M2-NM-BAGI-L5-Q5",
+   "kompetensi": "NM-BAGI",
+   "bagian": 4,
+   "level": 5,
+   "petunjuk": "",
+   "kunci": 14,
+   "urutan": 5,
+   "instruksi": "Dina membagi **84 ikan** sama banyak ke **6 kolam**. Berapa ikan di setiap kolam?",
+   "data": {
+    "a": 84,
+    "b": 6,
+    "label1": "Semua ikan",
+    "label2": "Banyak kolam",
+    "icon": "fa-fish",
+    "color": "text-teal-500",
+    "emoji": "1f41f"
    }
   }
  ]

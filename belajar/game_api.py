@@ -31,7 +31,7 @@ from django.views.decorators.http import require_GET, require_POST
 
 from accounts.utils import role_required
 from . import engine, jalur
-from .bank_soal import serialkan
+from .bank_soal import KOMPETENSI_BACA, KOMPETENSI_UTAMA_LITERASI, serialkan
 from .models import Jawaban, Kompetensi, Misi, Penguasaan, Siswa
 from .services import KODE_LITERASI, catat_jawaban, selesaikan_diagnostik
 
@@ -276,7 +276,7 @@ def _misi_token(klaim, kunci=False):
 # 5. NORMALISASI EVENT DARI GAME
 # ==========================================================
 
-def _norm(event, misi, id_soal=()):
+def _norm(event, misi, id_soal=(), kode_item=None):
     """
     Menerima event Game 1 dan Game 2.
 
@@ -287,6 +287,9 @@ def _norm(event, misi, id_soal=()):
     - pola / error_code / error_pattern
     - waktu_ms / response_time_ms / response_time_seconds
     - petunjuk / used_hint
+
+    `kode_item` (item_id -> kode kompetensi soal) membuat server yang menentukan kompetensi pada level Literasi:
+    bacaan mikrofon selalu milik LT-KETEPATAN, dan soal susun kalimat tidak pernah dihitung sebagai LT-KETEPATAN.
     """
     if not isinstance(event, dict):
         raise ValueError("Setiap event harus berbentuk objek JSON.")
@@ -322,6 +325,13 @@ def _norm(event, misi, id_soal=()):
 
     if id_soal and item_id not in id_soal:
         raise ValueError("Soal tidak termasuk dalam misi ini.")
+
+    if misi.kompetensi.ranah == "literasi" and kode_item:
+        asal = kode_item.get(item_id)
+        if asal == KOMPETENSI_BACA:
+            kode = KOMPETENSI_BACA
+        elif kode == KOMPETENSI_BACA:
+            kode = asal or KOMPETENSI_UTAMA_LITERASI
 
     raw_ms = event.get("waktu_ms")
 
@@ -553,7 +563,8 @@ def api_event(request):
             id_soal = {s.item_id for s in soal}
 
             # Semua event divalidasi terlebih dahulu.
-            events = [_norm(event, misi, id_soal) for event in events_raw]
+            kode_item = {s.item_id: s.kompetensi.kode for s in soal}
+            events = [_norm(event, misi, id_soal, kode_item) for event in events_raw]
 
             if misi.status == "gagal":
                 if gagal_diminta and not events:

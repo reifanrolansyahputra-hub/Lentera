@@ -63,92 +63,87 @@ BANK_AWAL = [
     ),
 
     (
-        "Pemahaman Konteks Bergambar",
-        "LT-PAHAM",
+        "Baca Kalimat dengan Mikrofon",
+        "LT-KETEPATAN",
         1,
         5,
         8,
         (
-            "Aktivitas yang direncanakan menggunakan soal lama "
-            "berbasis gambar untuk memahami informasi dan "
-            "konteks. Soal berbasis gambar tidak otomatis "
-            "merupakan tes pemahaman bacaan teks. Aktivitas "
-            "belum divalidasi sampai pemetaan soal diperbaiki."
+            "Membaca kalimat dengan suara lantang; mikrofon memeriksa "
+            "ketepatan bacaan. Menjadi satu kesatuan dengan Menyusun "
+            "Kalimat: dua dari lima soal pada tiap level Game 1 "
+            "berupa kalimat yang harus dibaca."
         ),
-        False,
+        True,
     ),
 
     (
-        "Menyusun Kalimat",
+        "Susun & Baca Kalimat",
         "LT-KALIMAT",
         1,
         5,
         8,
         (
-            "Menyusun kata menjadi kalimat sesuai gambar, "
-            "menggunakan materi asli Game 1. Pemetaan butir "
-            "soal ke kompetensi akan disesuaikan di kode game."
+            "Menyusun kata menjadi kalimat sesuai gambar, lalu membaca "
+            "kalimat dengan suara dalam level Game 1 yang sama. "
+            "Pemetaan butir soal ke kompetensi mengikuti kode game."
         ),
         True,
     ),
 
     # ==================================================
     # NUMERASI — GAME 2
-    # Aktivitas lama tetap dipertahankan.
+    # Empat operasi hitung: satu bagian = satu operasi.
     # ==================================================
 
     (
-        "Nilai Tempat: Puluhan & Satuan",
-        "NM-NILAI-TEMPAT",
+        "Penjumlahan Seru",
+        "NM-TAMBAH",
         1,
         5,
         10,
         (
-            "Menghitung total benda dari sejumlah ikat puluhan "
-            "dan satuan untuk memahami konsep nilai tempat. "
-            "Bilangan yang dipakai makin besar di level lanjut."
+            "Latihan menjumlahkan bilangan: dari jumlah sampai 10, "
+            "melewati 10, sampai penjumlahan dengan menyimpan."
         ),
         True,
     ),
 
     (
-        "Berhitung Simpan & Pinjam",
-        "NM-REGROUPING",
+        "Pengurangan Seru",
+        "NM-KURANG",
         1,
         5,
         10,
         (
-            "Latihan penjumlahan dengan teknik menyimpan dan "
-            "pengurangan dengan teknik meminjam. Tingkat "
-            "kesulitan bertambah pada level selanjutnya."
+            "Latihan mengurangkan bilangan: dari pengurangan sederhana "
+            "sampai pengurangan dengan meminjam puluhan."
         ),
         True,
     ),
 
     (
-        "Pola Bilangan",
-        "NM-POLA",
+        "Perkalian Seru",
+        "NM-KALI",
         1,
         5,
-        8,
+        10,
         (
-            "Menentukan angka berikutnya dari deret bilangan "
-            "dengan pola naik, turun, kelipatan, atau aturan "
-            "gabungan."
+            "Perkalian sebagai kelompok sama banyak: dari tabel kecil "
+            "sampai perkalian bilangan dua angka."
         ),
         True,
     ),
 
     (
-        "Soal Cerita Berhitung",
-        "NM-CERITA",
+        "Pembagian Seru",
+        "NM-BAGI",
         1,
         5,
         10,
         (
-            "Soal cerita berhitung sehari-hari. Tingkat "
-            "kesulitan dan jumlah langkah bertambah pada "
-            "level yang lebih tinggi."
+            "Membagi rata benda ke beberapa kelompok: dari pembagian "
+            "kecil sampai pembagian bilangan dua angka."
         ),
         True,
     ),

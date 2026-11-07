@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.utils import timezone
 
@@ -122,8 +123,11 @@ class Misi(models.Model):
 class SoalGame(models.Model):
     """Bank soal Game 1 (Literasi) dan Game 2 (Numerasi) yang dikelola guru dari dashboard.
 
-    Game 1  : gambar soal + kolom kata + jawaban benar (urutan kata).
-    Game 2  : teks/angka soal + jawaban benar (angka), tergantung kompetensi.
+    Game 1  : satu level memuat dua jenis soal yang satu kesatuan.
+              Susun kalimat: gambar soal + kolom kata + jawaban benar (urutan kata).
+              Baca kalimat (LT-KETEPATAN): kalimat di `instruksi` + emoji di `data`, dibaca lantang lewat mikrofon.
+    Game 2  : empat operasi hitung (penjumlahan, pengurangan, perkalian, pembagian): dua bilangan di `data`
+              (a, b), cerita di `instruksi` (opsional), jawaban benar dihitung otomatis.
     """
     GAME = [("literasi", "Game 1 · Literasi"), ("numerasi", "Game 2 · Numerasi")]
     game = models.CharField(max_length=10, choices=GAME)
@@ -212,3 +216,32 @@ class Penugasan(models.Model):
     class Meta:
         ordering = ["-dibuat"]
         verbose_name_plural = "Penugasan"
+
+
+class ArsipReset(models.Model):
+    """Cadangan progres satu siswa sebelum tombol 'Reset' guru dipakai (proposal: reset + log pulihkan).
+
+    Dibuat oleh services.reset_progres_siswa() sesaat sebelum Misi/Jawaban/Penguasaan/
+    HasilDiagnostik siswa itu dihapus. Bisa dipulihkan lewat services.pulihkan_arsip()
+    selama belum dipulihkan, belum kedaluwarsa, dan siswa belum mulai progres baru.
+    """
+    siswa = models.ForeignKey(Siswa, on_delete=models.CASCADE, related_name="arsip_reset")
+    oleh = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, help_text="Guru yang menekan tombol reset")
+    poin_lama = models.PositiveIntegerField(default=0)
+    ringkasan = models.CharField(max_length=160, blank=True, help_text="Ringkasan isi arsip untuk ditampilkan di Log Reset")
+    data = models.JSONField(default=dict, encoder=DjangoJSONEncoder, help_text="Salinan baris misi/jawaban/penguasaan/diagnostik sebelum dihapus")
+    dibuat = models.DateTimeField(default=timezone.now)
+    dipulihkan_pada = models.DateTimeField(null=True, blank=True)
+    kedaluwarsa_pada = models.DateTimeField(help_text="Setelah waktu ini arsip dihapus permanen dan tidak bisa dipulihkan lagi")
+
+    class Meta:
+        ordering = ["-dibuat"]
+        verbose_name_plural = "Arsip reset"
+
+    @property
+    def status(self):
+        if self.dipulihkan_pada:
+            return "dipulihkan"
+        if timezone.now() >= self.kedaluwarsa_pada:
+            return "kedaluwarsa"
+        return "aktif"
